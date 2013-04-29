@@ -136,9 +136,9 @@
         </dependencies>
     </dependencyManagement>
     <scm>
-        <url>git@github.com:reconf/reconf-jvm.git</url>
-        <connection>scm:git:git@github.com:reconf/reconf-jvm.git</connection>
-        <developerConnection>scm:git:git@github.com:reconf/reconf-jvm.git</developerConnection>
+        <url>https://github.com/reconf/reconf-jvm.git</url>
+        <connection>scm:git:https://github.com/reconf/reconf-jvm.git</connection>
+        <developerConnection>scm:git:https://github.com/reconf/reconf-jvm.git</developerConnection>
     </scm>
     <issueManagement>
         <system>GitHub Issue Management</system>
