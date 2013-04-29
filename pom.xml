@@ -24,14 +24,14 @@
     <contributors>
         <contributor>
             <name>Danilo Mutti</name>
-            <email>dmutti at gmail</email>
+            <url>http://github.com/dmutti</url>
         </contributor>
         <contributor>
             <name>Marcio Augusto Paes de Moraes</name>
         </contributor>
         <contributor>
             <name>Pedro Henrique Simões de Oliveira</name>
-            <email>pedrohenriquesimoesdeoliveira at gmail</email>
+            <url>http://github.com/pedrohso</url>
         </contributor>
         <contributor>
             <name>Marcos Eduardo Bolelli Broinizi</name>
@@ -43,11 +43,11 @@
         </contributor>
         <contributor>
             <name>André Paris de Oliveira</name>
-            <email>andre.paris at gmail</email>
+            <url>http://github.com/andre-paris</url>
         </contributor>
         <contributor>
             <name>Leonardo Nascimento Ferreira</name>
-            <email>ferreira at leonardonascimento.com</email>
+            <url>http://github.com/lnferreira</url>
         </contributor>
     </contributors>
     <dependencyManagement>
