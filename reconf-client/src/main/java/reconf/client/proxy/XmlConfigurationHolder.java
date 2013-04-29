@@ -16,13 +16,16 @@
 package reconf.client.proxy;
 
 import java.io.*;
+import javax.xml.parsers.*;
+import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
+import org.w3c.dom.*;
 import reconf.client.elements.*;
 import reconf.infra.i18n.*;
-import reconf.infra.log.*;
-import reconf.infra.throwables.*;
 import reconf.infra.io.*;
 import reconf.infra.io.InputStreamReader;
+import reconf.infra.log.*;
+import reconf.infra.throwables.*;
 import reconf.infra.xml.*;
 
 
@@ -32,7 +35,7 @@ public class XmlConfigurationHolder {
     private static final String SYSTEM_PROPERTY = "reconf.client.xml.location";
     private static final ConfigurationElement config;
     private static final DatabaseManager mgr;
-    private static final MessagesBundle msg = MessagesBundle.getBundle(XmlConfigurationHolder.class);
+    private static MessagesBundle msg;
 
     static {
         try {
@@ -40,25 +43,47 @@ public class XmlConfigurationHolder {
 
             String prop = System.getProperty(SYSTEM_PROPERTY);
             if (StringUtils.isNotBlank(prop)) {
-                LoggerHolder.getLog().info(msg.format("system.property.found", SYSTEM_PROPERTY, prop));
+                LoggerHolder.getLog().info(String.format("system property [%] found. trying to read file [%s]", SYSTEM_PROPERTY, prop));
                 raw = InputStreamReader.read(new FileInputStream(new File(prop)));
 
             } else {
-                LoggerHolder.getLog().info(msg.format("system.property.not.found", RECONF_DEFAULT_FILE));
+                LoggerHolder.getLog().info(String.format("trying to read file [%s] from classpath", RECONF_DEFAULT_FILE));
                 raw = ClasspathReader.read(RECONF_DEFAULT_FILE);
             }
             if (StringUtils.isBlank(raw)) {
-                throw new ReConfInitializationError(msg.get("file.empty.not.found"));
+                throw new ReConfInitializationError("configuration file is either empty or could not be found");
             }
 
-            LoggerHolder.getLog().info(msg.get("file.load"));
+            findLocale(raw);
+            msg = MessagesBundle.getBundle(XmlConfigurationHolder.class);
+
+            LoggerHolder.getLog().info("configuration file read successfully. setting up execution environment");
             config = Serializer.fromXml(raw, ConfigurationElement.class);
+
+            System.setProperty("reconf.locale", config.getLocale());
+
 
             LoggerHolder.getLog().info(msg.get("db.setup"));
             mgr = new DatabaseManager(config.getBackupLocation());
 
         } catch (Throwable t) {
             throw new ReConfInitializationError(t);
+        }
+    }
+
+
+    private static void findLocale(String raw) throws Exception {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(IOUtils.toInputStream(raw));
+        doc.getDocumentElement().normalize();
+
+        NodeList nodeList = doc.getElementsByTagName("locale");
+        if (nodeList != null && nodeList.getLength() > 0) {
+            Node node = nodeList.item(0);
+            if (node != null && node.getFirstChild() != null) {
+                MessagesBundle.setLocale(node.getFirstChild().getTextContent());
+            }
         }
     }
 

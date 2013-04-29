@@ -18,14 +18,11 @@ package reconf.infra.io;
 import java.io.*;
 import java.util.*;
 import org.apache.commons.io.*;
-import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 import reconf.infra.system.*;
 
 
 public class InputStreamReader {
-
-    private static final MessagesBundle msg = MessagesBundle.getBundle(InputStreamReader.class);
 
     public static String read(InputStream is) {
         if (null == is) {
@@ -50,7 +47,7 @@ public class InputStreamReader {
             lines.addAll(IOUtils.readLines(is));
 
         } catch (Exception e) {
-            LoggerHolder.getLog().error(msg.get("error"), e);
+            LoggerHolder.getLog().error("error while reading the inputstream", e);
 
         } finally {
             Closeables.closeQuietly(is);

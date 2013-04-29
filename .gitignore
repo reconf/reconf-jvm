@@ -1,0 +1,15 @@
+.project
+.classpath
+.settings/*
+reconf-client/.settings/*
+reconf-client/target/*
+reconf-client/.classpath
+reconf-client/.project
+reconf-infra/.settings/*
+reconf-infra/target/*
+reconf-infra/.classpath
+reconf-infra/.project
+reconf-spring/.settings/*
+reconf-spring/target/*
+reconf-spring/.classpath
+reconf-spring/.project

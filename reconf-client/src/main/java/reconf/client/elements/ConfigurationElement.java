@@ -32,6 +32,7 @@ public class ConfigurationElement {
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationElement.class);
     private DatabaseConfigurationElement backupLocation;
     private GlobalSettingsElement globalSettings;
+    private String locale;
 
     public ConfigurationRepositoryElement getConfigurationRepository(Class<?> arg) {
         ConfigurationRepositoryElement result = createNewRepositoryFor(arg);
@@ -119,12 +120,20 @@ public class ConfigurationElement {
 
     }
 
-    @XmlElement(name="backup-location")
+    @XmlElement(name="cache-location")
     public DatabaseConfigurationElement getBackupLocation() {
         return backupLocation;
     }
     public void setBackupLocation(DatabaseConfigurationElement backupLocation) {
         this.backupLocation = backupLocation;
+    }
+
+    @XmlElement(name="locale")
+    public String getLocale() {
+        return locale;
+    }
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 
     @XmlElement(name="global-settings") @Valid

@@ -17,13 +17,10 @@ package reconf.infra.io;
 
 import java.io.*;
 import java.net.*;
-import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 
 
 public class ClasspathReader {
-
-    private static final MessagesBundle msg = MessagesBundle.getBundle(InputStreamReader.class);
 
     public static String read(URI uri) {
         if (null == uri) {
@@ -58,7 +55,7 @@ public class ClasspathReader {
             sb.append(InputStreamReader.read(is));
 
         } catch (Exception e) {
-            LoggerHolder.getLog().error(msg.get("error"), e);
+            LoggerHolder.getLog().error("error while reading a file from classpath", e);
 
         } finally {
             Closeables.closeQuietly(is);

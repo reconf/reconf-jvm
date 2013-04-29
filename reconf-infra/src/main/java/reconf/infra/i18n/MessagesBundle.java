@@ -24,14 +24,17 @@ public class MessagesBundle {
 
     private ResourceBundle bundle;
     private String className;
+    private static String providedLocale;
 
     private MessagesBundle(Class<?> cls, String arg) {
         Locale locale = Locale.getDefault();
 
-        String providedLocale = System.getProperty("reconf.locale");
-
         if (StringUtils.isNotBlank(providedLocale)) {
-            locale = new Locale(StringUtils.substringBefore(providedLocale, "_"), StringUtils.substringAfter(providedLocale, "_"));
+            try {
+                locale = LocaleUtils.toLocale(providedLocale);
+            } catch (IllegalArgumentException e) {
+                LoggerHolder.getLog().error(String.format("invalid locale [%s]. assuming default [%s]", providedLocale, Locale.getDefault()));
+            }
         }
 
         LoggerHolder.getLog().debug("MessagesBundle locale [{}]", locale);
@@ -41,6 +44,12 @@ public class MessagesBundle {
 
     public static MessagesBundle getBundle(Class<?> cls) {
         return new MessagesBundle(cls, StringUtils.replaceChars(cls.getPackage().getName(), '.', '_'));
+    }
+
+    public static void setLocale(String value) {
+        if (providedLocale == null) {
+            providedLocale = value;
+        }
     }
 
     public String get(String key) {

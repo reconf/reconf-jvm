@@ -21,5 +21,4 @@ public class Constants {
     public static final String SERVICE_URL = "reader.reconf.intranet";
     public static final String HTTP_SERVICE_URL = "http://" + SERVICE_URL;
     public static final String HTTPS_SERVICE_URL = "https://" + SERVICE_URL;
-
 }

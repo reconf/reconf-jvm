@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <configuration>
-    <backup-location compressed="true">/tmp/other/hsqldb2-tester/db</backup-location>
+    <locale>pt_BR</locale>
+    <cache-location compressed="true">/tmp/other/hsqldb2-tester/db</cache-location>
     <global-settings server="http://config-reader.remote-admin.intranet"/>
     <!-- global-reload-policy interval="10" timeUnit="MINUTES"/-->
 </configuration>
