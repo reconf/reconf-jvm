@@ -144,7 +144,7 @@
         <url>https://github.com/reconf/reconf-jvm.git</url>
         <connection>scm:git:https://github.com/reconf/reconf-jvm.git</connection>
         <developerConnection>scm:git:https://github.com/reconf/reconf-jvm.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>reconf-parent-1.0.3</tag>
     </scm>
     <issueManagement>
         <system>GitHub Issue Management</system>
@@ -161,33 +161,14 @@
         <plugins>
             <!-- Enforce JVM compatibility of sources and binaries. -->
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>source-compilation</id>
-                        <phase>compile</phase>
-                        <configuration>
-                            <source>1.5</source>
-                            <target>1.5</target>
-                        </configuration>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Produce also dbunit-express-sources.jar when packaging. -->
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
