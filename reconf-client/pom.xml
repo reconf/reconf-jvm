@@ -28,7 +28,7 @@
         <dependency>
             <groupId>br.com.uol.reconf</groupId>
             <artifactId>reconf-infra</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.xml.bind</groupId>
