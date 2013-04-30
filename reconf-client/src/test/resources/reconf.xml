@@ -2,6 +2,6 @@
 <configuration>
     <locale>pt_BR</locale>
     <cache-location compressed="true">/tmp/other/hsqldb2-tester/db</cache-location>
-    <global-settings server="http://config-reader.remote-admin.intranet"/>
-    <!-- global-reload-policy interval="10" timeUnit="MINUTES"/-->
+    <server>http://config-reader.remote-admin.intranet</server>
+    <!-- reload-policy interval="10" time-unit="MINUTES"/-->
 </configuration>

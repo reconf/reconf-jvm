@@ -31,8 +31,9 @@ public class ConfigurationElement {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationElement.class);
     private DatabaseConfigurationElement backupLocation;
-    private GlobalSettingsElement globalSettings;
     private String locale;
+    private String server;
+    private ReloadPolicyElement overrideReloadPolicy;
 
     public ConfigurationRepositoryElement getConfigurationRepository(Class<?> arg) {
         ConfigurationRepositoryElement result = createNewRepositoryFor(arg);
@@ -62,8 +63,8 @@ public class ConfigurationElement {
         result.setComponent(ann.component());
 
         if (StringUtils.isBlank(ann.server())) {
-            if (globalSettings != null && StringUtils.isNotBlank(globalSettings.getServer())) {
-                result.setServer(globalSettings.getServer());
+            if (StringUtils.isNotBlank(server)) {
+                result.setServer(server);
             } else {
                 result.setServer(Constants.HTTP_SERVICE_URL);
             }
@@ -95,11 +96,8 @@ public class ConfigurationElement {
         }
 
         if (arg.isAnnotationPresent(ConfigurationReloadPolicy.class)) {
-            if (globalSettings != null && globalSettings.getReloadPolicy() != null) {
-                ReloadPolicyElement reloadPolicy = new ReloadPolicyElement();
-                reloadPolicy.setInterval(globalSettings.getReloadPolicy().getInterval());
-                reloadPolicy.setTimeUnit(globalSettings.getReloadPolicy().getTimeUnit());
-                result.setConfigurationReloadPolicy(reloadPolicy);
+            if (overrideReloadPolicy != null) {
+                result.setConfigurationReloadPolicy(overrideReloadPolicy);
                 LoggerHolder.getLog().info(msg.format("global.reload.policy.override", arg));
                 return;
             }
@@ -136,11 +134,19 @@ public class ConfigurationElement {
         this.locale = locale;
     }
 
-    @XmlElement(name="global-settings") @Valid
-    public GlobalSettingsElement getGlobalSettings() {
-        return globalSettings;
+    @XmlElement(name="server")
+    public String getServer() {
+        return server;
     }
-    public void setGlobalSettings(GlobalSettingsElement globalSettings) {
-        this.globalSettings = globalSettings;
+    public void setServer(String server) {
+        this.server = server;
+    }
+
+    @XmlElement(name="reload-policy") @Valid
+    public ReloadPolicyElement getOverrideReloadPolicy() {
+        return overrideReloadPolicy;
+    }
+    public void setOverrideReloadPolicy(ReloadPolicyElement overrideReloadPolicy) {
+        this.overrideReloadPolicy = overrideReloadPolicy;
     }
 }

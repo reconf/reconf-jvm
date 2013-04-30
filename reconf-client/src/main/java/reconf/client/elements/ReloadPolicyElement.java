@@ -17,6 +17,7 @@ package reconf.client.elements;
 
 import java.util.concurrent.*;
 import javax.validation.constraints.*;
+import javax.xml.bind.annotation.*;
 import org.apache.commons.lang.builder.*;
 
 
@@ -25,7 +26,7 @@ public class ReloadPolicyElement {
     private Integer interval;
     private TimeUnit timeUnit;
 
-    @NotNull @Min(1)
+    @NotNull @Min(1) @XmlAttribute(name="interval")
     public Integer getInterval() {
         return interval;
     }
@@ -33,7 +34,7 @@ public class ReloadPolicyElement {
         this.interval = interval;
     }
 
-    @NotNull
+    @NotNull @XmlAttribute(name="time-unit")
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }

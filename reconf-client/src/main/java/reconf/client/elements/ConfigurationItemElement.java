@@ -104,9 +104,9 @@ public class ConfigurationItemElement {
         }
         if (annItem.timeout() > 0) {
             resultItem.setTimeout(annItem.timeout());
-        }
-        if (annItem.timeUnit() != null) {
-            resultItem.setTimeUnit(annItem.timeUnit());
+            if (annItem.timeUnit() != null) {
+                resultItem.setTimeUnit(annItem.timeUnit());
+            }
         }
     }
 

@@ -13,3 +13,4 @@ reconf-spring/.settings/*
 reconf-spring/target/*
 reconf-spring/.classpath
 reconf-spring/.project
+target/*
