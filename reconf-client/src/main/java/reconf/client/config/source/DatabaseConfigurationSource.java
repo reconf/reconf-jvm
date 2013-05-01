@@ -18,7 +18,7 @@ package reconf.client.config.source;
 import java.lang.reflect.*;
 import org.apache.commons.lang.*;
 import reconf.client.adapters.*;
-import reconf.client.proxy.*;
+import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 
@@ -63,7 +63,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
 
     public String get() {
         try {
-            DatabaseManager proxy = XmlConfigurationHolder.getManager();
+            DatabaseManager proxy = Environment.getManager();
             return proxy.get(product, component, method, key);
 
         } catch (Throwable t) {
@@ -74,7 +74,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
 
     public void update(String value) {
         try {
-            DatabaseManager manager = XmlConfigurationHolder.getManager();
+            DatabaseManager manager = Environment.getManager();
             manager.upsert(product, component, method, key, value);
 
         } catch (Throwable t) {
@@ -84,7 +84,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
 
     public void temporaryUpdate(String value) {
         try {
-            DatabaseManager manager = XmlConfigurationHolder.getManager();
+            DatabaseManager manager = Environment.getManager();
             manager.temporaryUpsert(product, component, method, key, value);
 
         } catch (Throwable t) {

@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.proxy;
+package reconf.client.setup;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -25,11 +25,10 @@ import org.apache.commons.codec.binary.*;
 import org.apache.commons.dbcp.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang.StringUtils;
-import reconf.client.elements.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
-import reconf.infra.throwables.*;
 import reconf.infra.shutdown.*;
+import reconf.infra.throwables.*;
 
 
 public class DatabaseManager implements ShutdownBean {
@@ -56,7 +55,7 @@ public class DatabaseManager implements ShutdownBean {
     private final String DEFINITIVE_UPDATE = "UPDATE PUBLIC.PRD_COMP_CONFIG_V1 SET VALUE = ?, UPDATED = ? WHERE PROD = ? AND COMP = ? AND PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ?";
     private final String TEMPORARY_UPDATE = "UPDATE PUBLIC.PRD_COMP_CONFIG_V1 SET NEW_VALUE = ?, UPDATED = ? WHERE PROD = ? AND COMP = ? AND PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ?";
 
-    public DatabaseManager(DatabaseConfigurationElement config) {
+    public DatabaseManager(LocalCacheSettings config) {
         new ShutdownInterceptor(this).register();
         try {
             if (null == config) {
@@ -69,7 +68,7 @@ public class DatabaseManager implements ShutdownBean {
             firstConnection();
             dataSource = createDataSource();
             useCompressed(config.isCompressed());
-            if (config.getMaxLogFileSize() >= 0) {
+            if (config.getMaxLogFileSize() > 0) {
                 logFileSize(config.getMaxLogFileSize());
             }
             if (!tableExists()) {

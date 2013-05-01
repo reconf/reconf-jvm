@@ -23,7 +23,7 @@ public class ProxyFactoryTest {
     public static void main(String[] args) throws Exception {
         System.out.println(System.getProperties());
 
-        WelcomeText welcome = ConfigurationRepositoryFactory.newInstance(WelcomeText.class);
+        WelcomeText welcome = ConfigurationRepositoryFactory.create(WelcomeText.class);
         System.out.println(welcome.getText());
         System.out.println(welcome.getMap());
         System.out.println(welcome.getRawMap());

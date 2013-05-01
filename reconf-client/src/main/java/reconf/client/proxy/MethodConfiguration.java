@@ -22,6 +22,7 @@ import reconf.client.adapters.*;
 import reconf.client.config.source.*;
 import reconf.client.elements.*;
 import reconf.client.http.*;
+import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 
 
@@ -69,17 +70,8 @@ public class MethodConfiguration {
     }
 
     private ProxyFactoryRemoteConfigStub createStub() {
-    	final long timeout;
-    	final TimeUnit timeunit;
-    	if (remoteItem.getTimeout() != null && remoteItem.getTimeout() > 0){
-    		timeout = remoteItem.getTimeout();
-    		timeunit = remoteItem.getTimeUnit();
-    	} else {
-    		timeout = cfgRepository.getTimeout();
-    		timeunit = cfgRepository.getTimeUnit();
-    	}
-    	final ProxyFactoryRemoteConfigStub stub = new ProxyFactoryRemoteConfigStub(timeout, timeunit);
-        stub.setServiceUri(StringUtils.isNotBlank(remoteItem.getServer()) ? remoteItem.getServer() : cfgRepository.getServer());
+        ConnectionSettings settings = cfgRepository.getConnectionSettings();
+    	ProxyFactoryRemoteConfigStub stub = new ProxyFactoryRemoteConfigStub(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit());
         stub.setComponent(StringUtils.isNotBlank(remoteItem.getComponent()) ? remoteItem.getComponent() : cfgRepository.getComponent());
         stub.setProduct(StringUtils.isNotBlank(remoteItem.getProduct()) ? remoteItem.getProduct() : cfgRepository.getProduct());
         return stub;

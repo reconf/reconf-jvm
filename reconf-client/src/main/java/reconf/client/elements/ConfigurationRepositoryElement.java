@@ -16,49 +16,30 @@
 package reconf.client.elements;
 
 import java.util.*;
-import java.util.concurrent.*;
 import javax.validation.*;
 import javax.validation.constraints.*;
 import org.apache.commons.lang.builder.*;
 import org.hibernate.validator.constraints.*;
-import reconf.infra.throwables.*;
+import reconf.client.setup.*;
+import reconf.infra.http.*;
 
 
 public class ConfigurationRepositoryElement {
 
-    private String server;
-    private Integer timeout;
-    private TimeUnit timeUnit;
+    private ConnectionSettings connectionSettings;
     private String product;
     private String component;
     private DoNotReloadPolicyElement doNotReloadPolicy;
     private ReloadPolicyElement configurationReloadPolicy;
     private Class<?> interfaceClass;
     private List<ConfigurationItemElement> configurationItems = new ArrayList<ConfigurationItemElement>();
-    private static final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
 
-    @NotNull @NotEmpty
-    public String getServer() {
-        return server;
+    @NotNull @Valid
+    public ConnectionSettings getConnectionSettings() {
+        return connectionSettings;
     }
-    public void setServer(String server) {
-        this.server = server;
-    }
-
-    @NotNull @Min(1)
-    public Integer getTimeout() {
-        return timeout;
-    }
-    public void setTimeout(Integer timeout) {
-        this.timeout = timeout;
-    }
-
-    @NotNull
-    public TimeUnit getTimeUnit() {
-        return timeUnit;
-    }
-    public void setTimeUnit(TimeUnit timeUnit) {
-        this.timeUnit = timeUnit;
+    public void setConnectionSettings(ConnectionSettings connectionSettings) {
+        this.connectionSettings = connectionSettings;
     }
 
     @NotNull @NotEmpty
@@ -109,22 +90,12 @@ public class ConfigurationRepositoryElement {
         this.configurationItems = configurationItems;
     }
 
-    public void validate() {
-        Set<ConstraintViolation<ConfigurationRepositoryElement>> violations = validatorFactory.getValidator().validate(this);
-        if (violations.size() > 0) {
-            throw new ReConfInitializationError(violations.toString());
-        }
-    }
-
     @Override
     public String toString() {
         ToStringBuilder result = new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
         .append("class", getInterfaceClass())
         .append("product", getProduct())
         .append("component", getComponent())
-        .append("server", getServer())
-        .append("timeout", getTimeout())
-        .append("timeUnit", getTimeUnit())
         .append("do-not-reload-policy", null == doNotReloadPolicy ? "false" : "true");
         if (null == getConfigurationReloadPolicy()) {
             result.append("configuration-reload-policy", "n/a");

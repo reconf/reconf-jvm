@@ -24,6 +24,7 @@ import reconf.client.config.update.*;
 import reconf.client.elements.*;
 import reconf.client.proxy.*;
 import reconf.client.proxy.MethodConfiguration.ReloadStrategy;
+import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 import reconf.infra.system.*;
@@ -223,7 +224,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
     }
 
     private void commitTemporaryDatabaseChanges() {
-        XmlConfigurationHolder.getManager().commitTemporaryUpdate(cfgRepository.getProduct(), cfgRepository.getComponent(), cfgRepository.getInterfaceClass());
+        Environment.getManager().commitTemporaryUpdate(cfgRepository.getProduct(), cfgRepository.getComponent(), cfgRepository.getInterfaceClass());
     }
 
     public int getReloadInterval() {

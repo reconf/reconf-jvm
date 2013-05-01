@@ -17,7 +17,6 @@ package reconf.client.elements;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.concurrent.*;
 import javax.validation.*;
 import javax.validation.constraints.*;
 import org.apache.commons.lang.*;
@@ -25,6 +24,8 @@ import org.apache.commons.lang.builder.*;
 import org.hibernate.validator.constraints.*;
 import reconf.client.adapters.*;
 import reconf.client.annotations.*;
+import reconf.client.setup.*;
+import reconf.infra.http.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 
@@ -35,9 +36,7 @@ public class ConfigurationItemElement {
     private String methodName;
     private Method method;
     private String key;
-    private String server;
-    private Integer timeout;
-    private TimeUnit timeUnit;
+    private ConnectionSettings connectionSettings;
     private String component;
     private String product;
     private DoNotReloadPolicyElement doNotReloadPolicy;
@@ -67,7 +66,6 @@ public class ConfigurationItemElement {
                 resultItem.setAdapter(ann.adapter());
             }
             resultItem.setMethod(method);
-            defineRequestParameters(resultItem, ann);
             defineReloadStrategy(repository, resultItem, ann);
             defineItemProductComponenetOverride(resultItem, ann);
             result.add(resultItem);
@@ -95,18 +93,6 @@ public class ConfigurationItemElement {
 
         if (resultItem.getMethod().isAnnotationPresent(DoNotReloadPolicy.class)) {
             resultItem.setDoNotReloadPolicy(new DoNotReloadPolicyElement());
-        }
-    }
-
-    private static void defineRequestParameters(ConfigurationItemElement resultItem, ConfigurationItem annItem) {
-        if (StringUtils.isNotBlank(annItem.server())) {
-            resultItem.setServer(annItem.server());
-        }
-        if (annItem.timeout() > 0) {
-            resultItem.setTimeout(annItem.timeout());
-            if (annItem.timeUnit() != null) {
-                resultItem.setTimeUnit(annItem.timeUnit());
-            }
         }
     }
 
@@ -152,25 +138,12 @@ public class ConfigurationItemElement {
         this.method = method;
     }
 
-    public String getServer() {
-        return server;
+    @NotNull @Valid
+    public ConnectionSettings getConnectionSettings() {
+        return connectionSettings;
     }
-    public void setServer(String server) {
-        this.server = server;
-    }
-
-    public Integer getTimeout() {
-        return timeout;
-    }
-    public void setTimeout(Integer timeout) {
-        this.timeout = timeout;
-    }
-
-    public TimeUnit getTimeUnit() {
-        return timeUnit;
-    }
-    public void setTimeUnit(TimeUnit timeUnit) {
-        this.timeUnit = timeUnit;
+    public void setConnectionSettings(ConnectionSettings connectionSettings) {
+        this.connectionSettings = connectionSettings;
     }
 
     public String getComponent() {
@@ -208,14 +181,6 @@ public class ConfigurationItemElement {
         addToString(result, "product", getProduct());
         addToString(result, "component", getComponent());
         result.append("key", getKey());
-        addToString(result, "server", getServer());
-
-        if (null != getTimeout()) {
-            result.append("timeout", getTimeout());
-        }
-        if (null != getTimeUnit()) {
-            result.append("timeUnit", getTimeUnit());
-        }
         result.append("do-not-reload-policy", null == doNotReloadPolicy ? "false" : "true");
         if (null == getConfigurationReloadPolicy()) {
             result.append("configuration-reload-policy", "n/a");

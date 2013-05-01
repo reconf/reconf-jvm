@@ -13,31 +13,40 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.elements;
+package reconf.client.setup;
 
 import java.util.concurrent.*;
 import javax.validation.constraints.*;
-import javax.xml.bind.annotation.*;
 import org.apache.commons.lang.builder.*;
+import org.hibernate.validator.constraints.*;
 
 
-public class ReloadPolicyElement {
+public class ConnectionSettings {
 
-    private Integer interval;
-    private TimeUnit timeUnit;
+    private String url;
+    private Integer timeout = 20;
+    private TimeUnit timeUnit = TimeUnit.SECONDS;
 
-    @NotNull(message="{ReloadPolicyElement.interval.error}")
-    @Min(value=1,message="{ReloadPolicyElement.interval.error}")
-    @XmlElement(name="interval")
-    public Integer getInterval() {
-        return interval;
+    @URL(message="{ConnectionSettings.url.error}") @NotNull(message="{ConnectionSettings.url.error}")
+    @NotBlank(message="{ConnectionSettings.url.error}")
+    @Size(min=1,message="{ConnectionSettings.url.error}")
+    public String getUrl() {
+        return url;
     }
-    public void setInterval(Integer interval) {
-        this.interval = interval;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    @NotNull(message="{ReloadPolicyElement.timeUnit.null}")
-    @XmlElement(name="time-unit")
+    @NotNull(message="{ConnectionSettings.timeout.error}")
+    @Min(value=1,message="{ConnectionSettings.timeout.error}")
+    public int getTimeout() {
+        return timeout;
+    }
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
+
+    @NotNull(message="{ConnectionSettings.timeUnit.null}")
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }
@@ -47,8 +56,9 @@ public class ReloadPolicyElement {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
-        .append("interval", getInterval())
+        return new ToStringBuilder(this, ToStringStyle.DEFAULT_STYLE)
+        .append("url", getUrl())
+        .append("timeout", getTimeout())
         .append("timeUnit", getTimeUnit())
         .toString();
     }

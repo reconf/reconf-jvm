@@ -13,27 +13,31 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.proxy;
+package reconf.client.setup;
 
 import java.io.*;
-import javax.xml.parsers.*;
-import org.apache.commons.io.*;
+import java.util.*;
+import javax.validation.*;
+import org.apache.commons.collections.*;
 import org.apache.commons.lang.*;
-import org.w3c.dom.*;
 import reconf.client.elements.*;
 import reconf.infra.i18n.*;
 import reconf.infra.io.*;
 import reconf.infra.io.InputStreamReader;
 import reconf.infra.log.*;
+import reconf.infra.system.*;
 import reconf.infra.throwables.*;
 import reconf.infra.xml.*;
 
 
-public class XmlConfigurationHolder {
+public class Environment {
+
+    public static final String PROTOCOL = "application/vnd.reconf.client-v1+text/plain";
 
     private static final String RECONF_DEFAULT_FILE = "reconf.xml";
     private static final String SYSTEM_PROPERTY = "reconf.client.xml.location";
-    private static final ConfigurationElement config;
+    private static final XmlConfiguration config;
+    private static final ConfigurationRepositoryElementFactory factory;
     private static final DatabaseManager mgr;
     private static MessagesBundle msg;
 
@@ -54,41 +58,44 @@ public class XmlConfigurationHolder {
                 throw new ReConfInitializationError("configuration file is either empty or could not be found");
             }
 
-            findLocale(raw);
-            msg = MessagesBundle.getBundle(XmlConfigurationHolder.class);
+            LocaleHolder.set(LocaleFinder.find(raw));
 
-            LoggerHolder.getLog().info("configuration file read successfully. setting up execution environment");
-            config = Serializer.fromXml(raw, ConfigurationElement.class);
+            msg = MessagesBundle.getBundle(Environment.class);
+            LoggerHolder.getLog().info(msg.get("file.load"));
 
-            System.setProperty("reconf.locale", config.getLocale());
+            config = Serializer.fromXml(raw, XmlConfiguration.class);
+            validate(config);
+            LoggerHolder.getLog().info(msg.format("configured", LineSeparator.value(), config.toString()));
 
-
+            factory = new ConfigurationRepositoryElementFactory(config);
             LoggerHolder.getLog().info(msg.get("db.setup"));
-            mgr = new DatabaseManager(config.getBackupLocation());
+            mgr = new DatabaseManager(config.getLocalCacheSettings());
+
+        } catch (ReConfInitializationError e) {
+            throw e;
 
         } catch (Throwable t) {
             throw new ReConfInitializationError(t);
         }
     }
 
-
-    private static void findLocale(String raw) throws Exception {
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(IOUtils.toInputStream(raw));
-        doc.getDocumentElement().normalize();
-
-        NodeList nodeList = doc.getElementsByTagName("locale");
-        if (nodeList != null && nodeList.getLength() > 0) {
-            Node node = nodeList.item(0);
-            if (node != null && node.getFirstChild() != null) {
-                MessagesBundle.setLocale(node.getFirstChild().getTextContent());
-            }
+    private static void validate(XmlConfiguration xmlConfig) {
+        if (xmlConfig == null) {
+            throw new ReConfInitializationError(msg.get("error.internal"));
         }
+        Set<ConstraintViolation<XmlConfiguration>> violations = ClassValidatorFactory.create(Environment.class).validate(xmlConfig);
+        if (CollectionUtils.isEmpty(violations)) {
+            return;
+        }
+        List<String> errors = new ArrayList<String>();
+        int i = 1;
+        for (ConstraintViolation<XmlConfiguration> violation : violations) {
+            errors.add(i++ + " - " + violation.getMessage());
+        }
+        throw new ReConfInitializationError(msg.format("error.xml", LineSeparator.value(), StringUtils.join(errors, ", ")));
     }
 
-
-    public static void init() {
+    public static void setUp() {
         LoggerHolder.getLog().info(msg.get("start"));
     }
 
@@ -96,7 +103,7 @@ public class XmlConfigurationHolder {
         return mgr;
     }
 
-    public static ConfigurationElement getOverrideConfiguration() {
-        return config;
+    public static ConfigurationRepositoryElementFactory getFactory() {
+        return factory;
     }
 }

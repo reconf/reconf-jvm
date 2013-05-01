@@ -19,6 +19,7 @@ import java.lang.reflect.*;
 import java.util.concurrent.*;
 import reconf.client.annotations.*;
 import reconf.client.elements.*;
+import reconf.client.setup.*;
 import reconf.client.update.*;
 import reconf.infra.i18n.*;
 
@@ -28,15 +29,15 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
     private ConfigurationRepositoryUpdater updater;
 
     static {
-        XmlConfigurationHolder.init();
+        Environment.setUp();
     }
 
-    public static synchronized <T> T newInstance(Class<T> arg) {
-        return newInstance(arg, XmlConfigurationHolder.getOverrideConfiguration().getConfigurationRepository(arg));
+    public static synchronized <T> T create(Class<T> arg) {
+        return newInstance(arg, Environment.getFactory().create(arg));
     }
 
     public static synchronized <T> T create(Class<T> arg, Customization customization) {
-        ConfigurationRepositoryElement repo = XmlConfigurationHolder.getOverrideConfiguration().getConfigurationRepository(arg);
+        ConfigurationRepositoryElement repo = Environment.getFactory().create(arg);
         if (customization == null) {
             customization = Customization.EMPTY;
         }

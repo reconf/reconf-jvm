@@ -16,31 +16,33 @@
 package reconf.client.http;
 
 import java.util.concurrent.*;
-import reconf.client.*;
-import reconf.infra.i18n.*;
+import reconf.client.setup.*;
 import reconf.infra.http.*;
+import reconf.infra.i18n.*;
 import reconf.infra.network.*;
 
 public class ProxyFactoryRemoteConfigStub {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(ProxyFactoryRemoteConfigStub.class);
-    private String serviceUri = Constants.HTTP_SERVICE_URL;
+    private final String serviceUri;
+    private final long timeout;
+    private final TimeUnit timeunit;
     private String product;
     private String component;
     private String instance;
-    private long timeout;
-    private TimeUnit timeunit;
 
-    public ProxyFactoryRemoteConfigStub(long timeout, TimeUnit timeunit) {
+    public ProxyFactoryRemoteConfigStub(String serviceUri, long timeout, TimeUnit timeUnit) {
+        this.serviceUri = serviceUri;
         this.timeout = timeout;
-        this.timeunit = timeunit;
+        this.timeunit = timeUnit;
         this.instance = LocalHostname.getName();
     }
 
     public String get(String property) throws Exception {
         final SimpleHttpRequest httpGet = SimpleHttpClient.newGetRequest(serviceUri, product, component, property)
                 .addQueryParam("instance", instance)
-                .addHeaderField("Accept-Encoding", "gzip,deflate");
+                .addHeaderField("Accept-Encoding", "gzip,deflate")
+                .addHeaderField("Content-Type", Environment.PROTOCOL);
 
         int status = 0;
         try {
@@ -58,18 +60,9 @@ public class ProxyFactoryRemoteConfigStub {
         throw new IllegalStateException(msg.format("error.generic", httpGet.getURI()));
     }
 
-    public String getServiceUri() {
-        return serviceUri;
-    }
-
-    public void setServiceUri(String serviceUri) {
-        this.serviceUri = serviceUri;
-    }
-
     public String getComponent() {
         return component;
     }
-
     public void setComponent(String component) {
         this.component = component;
     }
@@ -77,7 +70,6 @@ public class ProxyFactoryRemoteConfigStub {
     public String getProduct() {
         return product;
     }
-
     public void setProduct(String product) {
         this.product = product;
     }

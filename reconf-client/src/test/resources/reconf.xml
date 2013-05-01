@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <configuration>
     <locale>pt_BR</locale>
-    <cache-location compressed="true">/tmp/other/hsqldb2-tester/db</cache-location>
-    <server>http://config-reader.remote-admin.intranet</server>
-    <!-- reload-policy interval="10" time-unit="MINUTES"/-->
+    <local-cache>
+        <location>/tmp/other/hsqldb2-tester/db</location>
+        <max-log-file-size-mb>10</max-log-file-size-mb>
+        <compressed>true</compressed>
+    </local-cache>
+    <server>
+        <url>http://config-reader.remote-admin.intranet</url>
+        <timeout>20</timeout>
+        <time-unit>SECONDS</time-unit>
+    </server>
+    <override-reload-policy>
+        <interval>10</interval>
+        <time-unit>MINUTES</time-unit>
+    </override-reload-policy>
 </configuration>

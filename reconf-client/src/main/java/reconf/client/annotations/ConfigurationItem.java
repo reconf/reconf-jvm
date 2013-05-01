@@ -18,7 +18,6 @@ package reconf.client.annotations;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.*;
 import java.lang.annotation.*;
-import java.util.concurrent.*;
 import org.apache.commons.lang.*;
 import reconf.client.adapters.*;
 
@@ -30,10 +29,6 @@ public @interface ConfigurationItem {
     String name();
 
     String component() default StringUtils.EMPTY;
-    String server() default StringUtils.EMPTY;
     String product() default StringUtils.EMPTY;
-    int timeout() default 0;
-    TimeUnit timeUnit() default TimeUnit.SECONDS;
-
     Class<? extends ConfigurationAdapter> adapter() default NoConfigurationAdapter.class;
 }
