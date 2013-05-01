@@ -21,9 +21,9 @@ import reconf.infra.http.*;
 import reconf.infra.i18n.*;
 import reconf.infra.network.*;
 
-public class ProxyFactoryRemoteConfigStub {
+public class ServerStub {
 
-    private static final MessagesBundle msg = MessagesBundle.getBundle(ProxyFactoryRemoteConfigStub.class);
+    private static final MessagesBundle msg = MessagesBundle.getBundle(ServerStub.class);
     private final String serviceUri;
     private final long timeout;
     private final TimeUnit timeunit;
@@ -31,7 +31,7 @@ public class ProxyFactoryRemoteConfigStub {
     private String component;
     private String instance;
 
-    public ProxyFactoryRemoteConfigStub(String serviceUri, long timeout, TimeUnit timeUnit) {
+    public ServerStub(String serviceUri, long timeout, TimeUnit timeUnit) {
         this.serviceUri = serviceUri;
         this.timeout = timeout;
         this.timeunit = timeUnit;
@@ -42,7 +42,7 @@ public class ProxyFactoryRemoteConfigStub {
         final SimpleHttpRequest httpGet = SimpleHttpClient.newGetRequest(serviceUri, product, component, property)
                 .addQueryParam("instance", instance)
                 .addHeaderField("Accept-Encoding", "gzip,deflate")
-                .addHeaderField("Content-Type", Environment.PROTOCOL);
+                .addHeaderField("X-ReConf-Protocol", Environment.PROTOCOL);
 
         int status = 0;
         try {

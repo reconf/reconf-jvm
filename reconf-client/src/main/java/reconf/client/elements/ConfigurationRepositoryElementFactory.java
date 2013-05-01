@@ -16,6 +16,9 @@
 package reconf.client.elements;
 
 import java.util.*;
+import javax.validation.*;
+import org.apache.commons.collections.*;
+import org.apache.commons.lang.*;
 import reconf.client.annotations.*;
 import reconf.client.setup.*;
 import reconf.infra.i18n.*;
@@ -89,10 +92,20 @@ public class ConfigurationRepositoryElementFactory {
         }
     }
 
-    private Set<?> validate(ConfigurationRepositoryElement arg) {
+    private void validate(ConfigurationRepositoryElement arg) {
         if (arg == null) {
             throw new ReConfInitializationError(msg.get("error.internal"));
         }
-        return ClassValidatorFactory.create(ConfigurationRepositoryElement.class).validate(arg);
+
+        Set<ConstraintViolation<ConfigurationRepositoryElement>> violations = ClassValidatorFactory.create(ConfigurationRepositoryElement.class).validate(arg);
+        if (CollectionUtils.isEmpty(violations)) {
+            return;
+        }
+        List<String> errors = new ArrayList<String>();
+        int i = 1;
+        for (ConstraintViolation<ConfigurationRepositoryElement> violation : violations) {
+            errors.add(i++ + " - " + violation.getMessage());
+        }
+        throw new ReConfInitializationError(msg.format("error.factory", LineSeparator.value(), StringUtils.join(errors, ", ")));
     }
 }

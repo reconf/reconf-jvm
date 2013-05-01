@@ -24,8 +24,6 @@ import org.apache.commons.lang.builder.*;
 import org.hibernate.validator.constraints.*;
 import reconf.client.adapters.*;
 import reconf.client.annotations.*;
-import reconf.client.setup.*;
-import reconf.infra.http.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 
@@ -36,7 +34,6 @@ public class ConfigurationItemElement {
     private String methodName;
     private Method method;
     private String key;
-    private ConnectionSettings connectionSettings;
     private String component;
     private String product;
     private DoNotReloadPolicyElement doNotReloadPolicy;
@@ -106,7 +103,8 @@ public class ConfigurationItemElement {
         }
     }
 
-    @NotNull @NotEmpty
+    @NotNull(message="method.name.null")
+    @NotEmpty(message="method.name.empty")
     public String getMethodName() {
         return methodName;
     }
@@ -114,7 +112,8 @@ public class ConfigurationItemElement {
         this.methodName = methodName;
     }
 
-    @NotNull @NotEmpty
+    @NotNull(message="key.null")
+    @NotEmpty(message="key.empty")
     public String getKey() {
         return key;
     }
@@ -122,7 +121,7 @@ public class ConfigurationItemElement {
         this.key = key;
     }
 
-    @NotNull
+    @NotNull(message="adapter.null")
     public Class<? extends ConfigurationAdapter> getAdapter() {
         return adapter;
     }
@@ -130,20 +129,12 @@ public class ConfigurationItemElement {
         this.adapter = adapter;
     }
 
-    @NotNull
+    @NotNull(message="method.null")
     public Method getMethod() {
         return method;
     }
     public void setMethod(Method method) {
         this.method = method;
-    }
-
-    @NotNull @Valid
-    public ConnectionSettings getConnectionSettings() {
-        return connectionSettings;
-    }
-    public void setConnectionSettings(ConnectionSettings connectionSettings) {
-        this.connectionSettings = connectionSettings;
     }
 
     public String getComponent() {

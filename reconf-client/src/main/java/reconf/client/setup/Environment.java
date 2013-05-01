@@ -32,7 +32,7 @@ import reconf.infra.xml.*;
 
 public class Environment {
 
-    public static final String PROTOCOL = "application/vnd.reconf.client-v1+text/plain";
+    public static final String PROTOCOL = "reconf.client-v1+text/plain";
 
     private static final String RECONF_DEFAULT_FILE = "reconf.xml";
     private static final String SYSTEM_PROPERTY = "reconf.client.xml.location";

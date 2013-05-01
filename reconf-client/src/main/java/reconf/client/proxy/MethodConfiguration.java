@@ -37,7 +37,7 @@ public class MethodConfiguration {
     private final ConfigurationRepositoryElement cfgRepository;
     private final ConfigurationItemElement remoteItem;
 
-    private final ProxyFactoryRemoteConfigStub stub;
+    private final ServerStub stub;
 
     public MethodConfiguration(ConfigurationRepositoryElement cfgRepository, ConfigurationItemElement itemConfiguration) {
         this.cfgRepository = cfgRepository;
@@ -69,9 +69,9 @@ public class MethodConfiguration {
         }
     }
 
-    private ProxyFactoryRemoteConfigStub createStub() {
+    private ServerStub createStub() {
         ConnectionSettings settings = cfgRepository.getConnectionSettings();
-    	ProxyFactoryRemoteConfigStub stub = new ProxyFactoryRemoteConfigStub(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit());
+    	ServerStub stub = new ServerStub(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit());
         stub.setComponent(StringUtils.isNotBlank(remoteItem.getComponent()) ? remoteItem.getComponent() : cfgRepository.getComponent());
         stub.setProduct(StringUtils.isNotBlank(remoteItem.getProduct()) ? remoteItem.getProduct() : cfgRepository.getProduct());
         return stub;
@@ -113,7 +113,7 @@ public class MethodConfiguration {
         return remoteItem.getMethod();
     }
 
-    public ProxyFactoryRemoteConfigStub getStub() {
+    public ServerStub getServerStub() {
         return stub;
     }
 }

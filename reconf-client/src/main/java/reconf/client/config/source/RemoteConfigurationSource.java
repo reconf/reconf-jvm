@@ -26,10 +26,10 @@ public class RemoteConfigurationSource implements ConfigurationSource {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(RemoteConfigurationSource.class);
     private final String key;
-    private final ProxyFactoryRemoteConfigStub stub;
+    private final ServerStub stub;
     private final ConfigurationAdapter adapter;
 
-    public RemoteConfigurationSource(String key, ProxyFactoryRemoteConfigStub stub, ConfigurationAdapter adapter) {
+    public RemoteConfigurationSource(String key, ServerStub stub, ConfigurationAdapter adapter) {
         if (null == stub) {
             throw new NullPointerException(msg.get("error.stub"));
         }

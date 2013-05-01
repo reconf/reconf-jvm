@@ -21,7 +21,6 @@ import javax.validation.constraints.*;
 import org.apache.commons.lang.builder.*;
 import org.hibernate.validator.constraints.*;
 import reconf.client.setup.*;
-import reconf.infra.http.*;
 
 
 public class ConfigurationRepositoryElement {
