@@ -24,7 +24,7 @@
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.7-SNAPSHOT</version>
+    <version>1.0.8-SNAPSHOT</version>
     <name>ReConf JVM Parent</name>
     <contributors>
         <contributor>
