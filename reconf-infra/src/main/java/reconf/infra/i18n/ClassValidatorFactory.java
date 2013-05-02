@@ -17,32 +17,21 @@ package reconf.infra.i18n;
 
 import java.util.*;
 import javax.validation.*;
-import org.apache.commons.lang.*;
 import org.hibernate.validator.messageinterpolation.*;
 import org.hibernate.validator.resourceloading.*;
 
 
 public class ClassValidatorFactory implements ResourceBundleLocator {
 
-    private String resourceName;
-
-    private ClassValidatorFactory(String resourceName) {
-        this.resourceName = resourceName;
-    }
+    private BundleSettings settings;
 
     private ClassValidatorFactory(Class<?> cls) {
-        this.resourceName = StringUtils.replaceChars(cls.getPackage().getName(), '.', '_');
+        settings = new BundleSettings(cls);
     }
 
     @Override
     public ResourceBundle getResourceBundle(Locale ignored) {
-        return ResourceBundle.getBundle(resourceName, LocaleHolder.value());
-    }
-
-    public static Validator create(String resourceName) {
-        Configuration<?> configure = getConfiguration();
-        configure.messageInterpolator(new ResourceBundleMessageInterpolator(new ClassValidatorFactory(resourceName)));
-        return buildIt(configure).getValidator();
+        return ResourceBundle.getBundle(settings.getBundleResourceName(), LocaleHolder.value());
     }
 
     public static Validator create(Class<?> cls) {

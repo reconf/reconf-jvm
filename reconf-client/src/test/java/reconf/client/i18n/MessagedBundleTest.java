@@ -23,6 +23,7 @@ import reconf.client.config.update.*;
 import reconf.client.constructors.*;
 import reconf.client.elements.*;
 import reconf.client.proxy.*;
+import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 
 public class MessagedBundleTest {
@@ -33,13 +34,15 @@ public class MessagedBundleTest {
     Class<?>[] constructors = new Class<?>[] {ArrayConstructor.class, CollectionConstructor.class, MapConstructor.class, MethodData.class, ObjectConstructors.class, SimpleConstructor.class, StringParser.class};
     Class<?>[] elements = new Class<?>[] {ConfigurationItemElement.class, ConfigurationRepositoryElement.class, ConfigurationRepositoryElementFactory.class, DatabaseConfigurationElement.class, DoNotReloadPolicyElement.class, ReloadPolicyElement.class};
     Class<?>[] proxy = new Class<?>[] {ConfigurationRepositoryFactory.class, Customization.class, MethodConfiguration.class};
+    Class<?>[] setup = new Class<?>[] {ConnectionSettings.class, DatabaseManager.class, Environment.class, LocalCacheSettings.class, XmlConfiguration.class};
 
     Class<?>[][] allPackages = new Class<?>[][] { adapters,
                                                   configSource,
                                                   configUpdate,
                                                   constructors,
                                                   elements,
-                                                  proxy
+                                                  proxy,
+                                                  setup
                                                 };
 
     @Test

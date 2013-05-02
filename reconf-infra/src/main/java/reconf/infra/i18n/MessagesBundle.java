@@ -16,45 +16,35 @@
 package reconf.infra.i18n;
 
 import java.util.*;
-
-import org.apache.commons.lang.*;
-
 import reconf.infra.log.*;
 
 
 public class MessagesBundle {
 
     private ResourceBundle bundle;
-    private String className;
-    private String headPackageName;
-    private String tailPackageName = StringUtils.EMPTY;
+    private final BundleSettings settings;
 
-    private MessagesBundle(Class<?> cls, String arg) {
+    private MessagesBundle(Class<?> cls) {
         Locale locale = LocaleHolder.value();
         LoggerHolder.getLog().debug("MessagesBundle locale [{}]", locale);
-        className = cls.getSimpleName();
 
-        String[] packages = StringUtils.split(cls.getPackage().getName(), '.');
-        if (packages.length == 0 || packages.length == 1) {
-            throw new IllegalArgumentException("only meant to be used inside reconf");
-        }
-
-        headPackageName = packages[1];
-        if (packages.length >= 2) {
-            tailPackageName = StringUtils.substringAfter(cls.getPackage().getName(), "reconf." + headPackageName + ".");
-        }
-        bundle = ResourceBundle.getBundle(arg + headPackageName, locale);
+        settings = new BundleSettings(cls);
+        bundle = ResourceBundle.getBundle(settings.getBundleResourceName(), locale);
     }
 
     public static MessagesBundle getBundle(Class<?> cls) {
-        return new MessagesBundle(cls, "messages_");
+        return new MessagesBundle(cls);
     }
 
     public String get(String key) {
-        return bundle.getString(tailPackageName + "." + className + "." + key);
+        return bundle.getString(getPath(key));
     }
 
     public String format(String key, Object...args) {
-        return String.format(bundle.getString(className + "." + key), args);
+        return String.format(bundle.getString(getPath(key)), args);
+    }
+
+    private String getPath(String key) {
+        return settings.getTailPackageName() + "." + settings.getClassName() + "." + key;
     }
 }

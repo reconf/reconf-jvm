@@ -26,8 +26,8 @@ public class ReloadPolicyElement {
     private Integer interval;
     private TimeUnit timeUnit;
 
-    @NotNull(message="{ReloadPolicyElement.interval.error}")
-    @Min(value=1,message="{ReloadPolicyElement.interval.error}")
+    @NotNull(message="{elements.ReloadPolicyElement.interval.error}")
+    @Min(value=1,message="{elements.ReloadPolicyElement.interval.error}")
     @XmlElement(name="interval")
     public Integer getInterval() {
         return interval;
@@ -36,7 +36,7 @@ public class ReloadPolicyElement {
         this.interval = interval;
     }
 
-    @NotNull(message="{ReloadPolicyElement.timeUnit.null}")
+    @NotNull(message="{elements.ReloadPolicyElement.timeUnit.null}")
     @XmlElement(name="time-unit")
     public TimeUnit getTimeUnit() {
         return timeUnit;

@@ -27,9 +27,10 @@ public class ConnectionSettings {
     private Integer timeout = 20;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
 
-    @URL(message="{ConnectionSettings.url.error}") @NotNull(message="{ConnectionSettings.url.error}")
-    @NotBlank(message="{ConnectionSettings.url.error}")
-    @Size(min=1,message="{ConnectionSettings.url.error}")
+    @URL(message="{setup.ConnectionSettings.url.error}")
+    @NotNull(message="{setup.ConnectionSettings.url.error}")
+    @NotBlank(message="{setup.ConnectionSettings.url.error}")
+    @Size(min=1,message="{setup.ConnectionSettings.url.error}")
     public String getUrl() {
         return url;
     }
@@ -37,8 +38,8 @@ public class ConnectionSettings {
         this.url = url;
     }
 
-    @NotNull(message="{ConnectionSettings.timeout.error}")
-    @Min(value=1,message="{ConnectionSettings.timeout.error}")
+    @NotNull(message="{setup.ConnectionSettings.timeout.error}")
+    @Min(value=1,message="{setup.ConnectionSettings.timeout.error}")
     public int getTimeout() {
         return timeout;
     }
@@ -46,7 +47,7 @@ public class ConnectionSettings {
         this.timeout = timeout;
     }
 
-    @NotNull(message="{ConnectionSettings.timeUnit.null}")
+    @NotNull(message="{setup.ConnectionSettings.timeUnit.null}")
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }

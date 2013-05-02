@@ -28,8 +28,8 @@ public class LocalCacheSettings {
     private File backupLocation;
 
     @XmlElement(name="max-log-file-size-mb")
-    @Min(value=1,message="{LocalCacheSettings.backup.max.log.error}")
-    @Max(value=50,message="{LocalCacheSettings.backup.max.log.error}")
+    @Min(value=1,message="{setup.LocalCacheSettings.backup.max.log.error}")
+    @Max(value=50,message="{setup.LocalCacheSettings.backup.max.log.error}")
     public int getMaxLogFileSize() {
         return maxLogFileSize;
     }
@@ -46,7 +46,7 @@ public class LocalCacheSettings {
     }
 
     @XmlElement(name="location")
-    @NotNull(message="{LocalCacheSettings.backup.location.error.null}")
+    @NotNull(message="{setup.LocalCacheSettings.backup.location.error.null}")
     public File getBackupLocation() {
         return backupLocation;
     }

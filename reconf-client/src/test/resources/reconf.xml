@@ -12,7 +12,7 @@
         <time-unit>SECONDS</time-unit>
     </server>
     <override-reload-policy>
-        <interval>10</interval>
+<!--         <interval>10</interval> -->
         <time-unit>MINUTES</time-unit>
     </override-reload-policy>
 </configuration>
