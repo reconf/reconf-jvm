@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.collection;
+package reconf.client.constructors.map;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -21,26 +21,31 @@ import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class CollectionConstructorSetTest {
+public class MapConstructorFloatArrayTest {
 
     private MethodData data;
     private Method method;
-    private final Class<?> targetClass = HashSet.class;
+    private Class<?> targetClass = HashMap.class;
 
     @Before
     public void prepare() throws Exception {
-        method = CollectionConstructorSetTarget.class.getMethod("get", new Class<?>[]{});
+        method = MapConstructorFloatArrayValueTarget.class.getMethod("get", new Class<?>[]{});
     }
 
     @Test
-    public void test_null_string_list() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), null);
-        Object o = new CollectionConstructor().construct(data);
+    public void test_normal_value() throws Throwable {
+        data = new MethodData(method, method.getGenericReturnType(), "['k':['1.01','-1.000001']]");
+        Object o = new MapConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(targetClass));
-        Assert.assertTrue(((Collection<Collection<?>>) o).isEmpty());
+        Map<String, Float[]> cast = (Map<String,Float[]>) o;
+        Assert.assertTrue(cast.size() == 1);
+        Assert.assertTrue(cast.entrySet().iterator().next().getKey().equals("k"));
+        Float[] value = cast.entrySet().iterator().next().getValue();
+        Assert.assertTrue(Float.compare(value[0], 1.01f) == 0);
+        Assert.assertTrue(Float.compare(value[1], -1.000001f) == 0);
     }
 }
 
-interface CollectionConstructorSetTarget {
-    Set<String> get();
+interface MapConstructorFloatArrayValueTarget {
+    HashMap<String, Float[]> get();
 }

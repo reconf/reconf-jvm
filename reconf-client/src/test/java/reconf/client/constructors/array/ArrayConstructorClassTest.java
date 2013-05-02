@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.array;
+package reconf.client.constructors.array;
 
 import java.lang.reflect.*;
 import java.math.*;

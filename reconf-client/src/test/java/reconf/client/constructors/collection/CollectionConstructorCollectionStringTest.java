@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.collection;
+package reconf.client.constructors.collection;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -21,15 +21,15 @@ import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class CollectionConstructorStringTest {
+public class CollectionConstructorCollectionStringTest {
 
     private MethodData data;
     private Method method;
-    private final Class<?> targetClass = Vector.class;
+    private final Class<?> targetClass = ArrayList.class;
 
     @Before
     public void prepare() throws Exception {
-        method = CollectionConstructorStringTarget.class.getMethod("get", new Class<?>[]{});
+        method = CollectionConstructorCollectionStringTarget.class.getMethod("get", new Class<?>[]{});
     }
 
     @Test
@@ -37,16 +37,16 @@ public class CollectionConstructorStringTest {
         data = new MethodData(method, method.getGenericReturnType(), null);
         Object o = new CollectionConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(targetClass));
-        Assert.assertTrue(((Collection<?>) o).isEmpty());
+        Assert.assertTrue(((Collection<Collection<?>>) o).isEmpty());
     }
 
     @Test
     public void test_blank_string_list() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "[' ']");
+        data = new MethodData(method, method.getGenericReturnType(), "[[]]");
         Object o = new CollectionConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(targetClass));
-        Assert.assertTrue(((Collection<?>) o).size() == 1);
-        Assert.assertTrue(((Vector<String>) o).get(0).equals(" "));
+        Assert.assertTrue(((Collection<Collection<?>>) o).size() == 1);
+        Assert.assertTrue(((ArrayList<ArrayList<String>>) o).get(0).isEmpty());
     }
 
     @Test
@@ -59,15 +59,18 @@ public class CollectionConstructorStringTest {
 
     @Test
     public void test_two_elem_string_list() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "['x', ' y']");
+        data = new MethodData(method, method.getGenericReturnType(), "[['x'], ['y']]");
         Object o = new CollectionConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(targetClass));
-        Assert.assertTrue(((Collection<?>) o).size() == 2);
-        Assert.assertTrue(((Vector<String>) o).get(0).equals("x"));
-        Assert.assertTrue(((Vector<String>) o).get(1).equals(" y"));
+        ArrayList<ArrayList<String>> outer = (ArrayList<ArrayList<String>>) o;
+        Assert.assertTrue(outer.size() == 2);
+        Assert.assertTrue(outer.get(0).size() == 1);
+        Assert.assertTrue(outer.get(0).get(0).equals("x"));
+
+        Assert.assertTrue(outer.get(1).size() == 1);
+        Assert.assertTrue(outer.get(1).get(0).equals("y"));
     }
 }
 
-interface CollectionConstructorStringTarget {
-    Vector<String> get();
+interface CollectionConstructorCollectionStringTarget {
+    ArrayList<ArrayList<String>> get();
 }

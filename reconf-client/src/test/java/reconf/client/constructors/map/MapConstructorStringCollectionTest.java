@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.map;
+package reconf.client.constructors.map;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -21,7 +21,7 @@ import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class MapConstructorStringArrayTest {
+public class MapConstructorStringCollectionTest {
 
     private MethodData data;
     private Method method;
@@ -29,7 +29,7 @@ public class MapConstructorStringArrayTest {
 
     @Before
     public void prepare() throws Exception {
-        method = MapConstructorStringArrayValueTarget.class.getMethod("get", new Class<?>[]{});
+        method = MapConstructorStringListValueTarget.class.getMethod("get", new Class<?>[]{});
     }
 
     @Test
@@ -37,33 +37,44 @@ public class MapConstructorStringArrayTest {
         data = new MethodData(method, method.getGenericReturnType(), "['k':[]]");
         Object o = new MapConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(targetClass));
-        Map<String, String[]> cast = (Map<String,String[]>) o;
+        Map<String, ArrayList<String>> cast = (Map<String,ArrayList<String>>) o;
         Assert.assertTrue(cast.size() == 1);
         Assert.assertTrue(cast.entrySet().iterator().next().getKey().equals("k"));
-        Assert.assertTrue(cast.entrySet().iterator().next().getValue().length == 0);
+        Assert.assertTrue(cast.entrySet().iterator().next().getValue().isEmpty());
     }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void test_open_right_error() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "['k':[]");
+    @Test(expected=Exception.class)
+    public void test_open_right_array() throws Throwable {
+        data = new MethodData(method, method.getGenericReturnType(), "k:[");
         new MapConstructor().construct(data);
     }
 
+    @Test(expected=Exception.class)
+    public void test_open_left_array() throws Throwable {
+        data = new MethodData(method, method.getGenericReturnType(), "k:]");
+        new MapConstructor().construct(data);
+    }
+
+    @Test(expected=Exception.class)
+    public void test_open_array() throws Throwable {
+        data = new MethodData(method, method.getGenericReturnType(), "k:x");
+        new MapConstructor().construct(data);
+    }
 
     @Test
     public void test_normal_value() throws Throwable {
         data = new MethodData(method, method.getGenericReturnType(), "['k':['v1', 'v2']]");
         Object o = new MapConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(targetClass));
-        Map<String, String[]> cast = (Map<String,String[]>) o;
+        Map<String, ArrayList<String>> cast = (Map<String,ArrayList<String>>) o;
         Assert.assertTrue(cast.size() == 1);
         Assert.assertTrue(cast.entrySet().iterator().next().getKey().equals("k"));
-        String[] value = cast.entrySet().iterator().next().getValue();
-        Assert.assertEquals(value[0], "v1");
-        Assert.assertEquals(value[1], "v2");
+        ArrayList<String> value = cast.entrySet().iterator().next().getValue();
+        Assert.assertEquals(value.get(0), "v1");
+        Assert.assertEquals(value.get(1), "v2");
     }
 }
 
-interface MapConstructorStringArrayValueTarget {
-    HashMap<String, String[]> get();
+interface MapConstructorStringListValueTarget {
+    HashMap<String, ArrayList<String>> get();
 }

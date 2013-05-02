@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.collection;
+package reconf.client.constructors.collection;
 
 import java.lang.reflect.*;
 import java.util.*;

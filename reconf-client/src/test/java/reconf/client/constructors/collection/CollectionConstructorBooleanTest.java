@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.collection;
+package reconf.client.constructors.collection;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -21,52 +21,52 @@ import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class CollectionConstructorCharTest {
+public class CollectionConstructorBooleanTest {
 
     private MethodData data;
     private Method methodList;
 
     @Before
     public void prepare() throws Exception {
-        methodList = CollectionConstructorCharTestTarget.class.getMethod("list", new Class<?>[]{});
+        methodList = CollectionConstructorBooleanTestTarget.class.getMethod("list", new Class<?>[]{});
     }
 
     @Test
-    public void test_null_char_list() throws Throwable {
+    public void test_null_boolean_list() throws Throwable {
         data = new MethodData(methodList, methodList.getGenericReturnType(), null);
         Object o = new CollectionConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(LinkedList.class));
+        Assert.assertTrue(o.getClass().equals(ArrayList.class));
         Assert.assertTrue(((Collection<?>) o).isEmpty());
     }
 
     @Test
-    public void test_empty_char_list() throws Throwable {
-        data = new MethodData(methodList, methodList.getGenericReturnType(), "[]");
+    public void test_empty_boolean_list() throws Throwable {
+        data = new MethodData(methodList, methodList.getGenericReturnType(), "");
         Object o = new CollectionConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(LinkedList.class));
+        Assert.assertTrue(o.getClass().equals(ArrayList.class));
         Assert.assertTrue(((Collection<?>) o).isEmpty());
     }
 
     @Test
-    public void test_one_elem_char_list() throws Throwable {
-        data = new MethodData(methodList, methodList.getGenericReturnType(), "['a']");
+    public void test_one_elem_boolean_list() throws Throwable {
+        data = new MethodData(methodList, methodList.getGenericReturnType(), "['TrUe',]");
         Object o = new CollectionConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(LinkedList.class));
+        Assert.assertTrue(o.getClass().equals(ArrayList.class));
         Assert.assertTrue(((Collection<?>) o).size() == 1);
-        Assert.assertTrue(((LinkedList<Character>) o).get(0).equals('a'));
+        Assert.assertTrue(((ArrayList<Boolean>) o).get(0).equals(Boolean.TRUE));
     }
 
     @Test
-    public void test_two_elem_char_list() throws Throwable {
-        data = new MethodData(methodList, methodList.getGenericReturnType(), "['a','b']");
+    public void test_two_elem_boolean_list() throws Throwable {
+        data = new MethodData(methodList, methodList.getGenericReturnType(), "['TrUe', 'false'] ");
         Object o = new CollectionConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(LinkedList.class));
+        Assert.assertTrue(o.getClass().equals(ArrayList.class));
         Assert.assertTrue(((Collection<?>) o).size() == 2);
-        Assert.assertTrue(((LinkedList<Character>) o).get(0).equals('a'));
-        Assert.assertTrue(((LinkedList<Character>) o).get(1).equals('b'));
+        Assert.assertTrue(((ArrayList<Boolean>) o).get(0).equals(Boolean.TRUE));
+        Assert.assertTrue(((ArrayList<Boolean>) o).get(1).equals(Boolean.FALSE));
     }
 }
 
-interface CollectionConstructorCharTestTarget {
-    LinkedList<Character> list();
+interface CollectionConstructorBooleanTestTarget {
+    ArrayList<Boolean> list();
 }

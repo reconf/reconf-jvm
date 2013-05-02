@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.map;
+package reconf.client.constructors.map;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -21,15 +21,27 @@ import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class MapConstructorStringValueTest {
+public class MapConstructorMapStringValueTest {
 
     private MethodData data;
     private Method method;
-    private Class<?> targetClass = HashMap.class;
+    private Class<?> targetClass = LinkedHashMap.class;
 
     @Before
     public void prepare() throws Exception {
-        method = MapConstructorStringValueTarget.class.getMethod("get", new Class<?>[]{});
+        method = MapConstructorMapStringValueTarget.class.getMethod("get", new Class<?>[]{});
+    }
+
+    @Test
+    public void test_complex_map() throws Throwable {
+        data = new MethodData(method, method.getGenericReturnType(), "['k1':['ik1':'iv1','ik2':'iv2'],'k2':[]]");
+        Object o = new MapConstructor().construct(data);
+        Assert.assertTrue(o.getClass().equals(targetClass));
+        Map<String, Map<String,String>> cast = (Map<String,Map<String,String>>) o;
+        Assert.assertTrue("iv1".equals(cast.get("k1").get("ik1")));
+        Assert.assertTrue("iv2".equals(cast.get("k1").get("ik2")));
+        Assert.assertTrue(cast.containsKey("k2"));
+        Assert.assertTrue(cast.get("k2").isEmpty());
     }
 
     @Test
@@ -55,37 +67,6 @@ public class MapConstructorStringValueTest {
     }
 
     @Test
-    public void test_new_line() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "[ '\n' : '\n' ]");
-        Object o = new MapConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(targetClass));
-        Map<String, String> cast = (Map<String,String>) o;
-        Assert.assertTrue(cast.size() == 1);
-        Assert.assertTrue(cast.entrySet().iterator().next().getKey().equals("\n"));
-        Assert.assertTrue(cast.entrySet().iterator().next().getValue().equals("\n"));
-    }
-
-    @Test
-    public void test_separator_value() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "['x':'http://bla']");
-        Object o = new MapConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(targetClass));
-        Map<String, String> cast = (Map<String,String>) o;
-        Assert.assertTrue(cast.size() == 1);
-        Assert.assertTrue(cast.entrySet().iterator().next().getKey().equals("x"));
-        Assert.assertTrue(cast.entrySet().iterator().next().getValue().equals("http://bla"));
-    }
-
-    @Test
-    public void test_two_entries() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "['a':'b', 'c':'d']");
-        Object o = new MapConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(targetClass));
-        Map<String, String> cast = (Map<String,String>) o;
-        Assert.assertTrue(cast.size() == 2);
-    }
-
-    @Test
     public void empty_map() throws Throwable {
         data = new MethodData(method, method.getGenericReturnType(), "[]");
         Object o = new MapConstructor().construct(data);
@@ -95,6 +76,6 @@ public class MapConstructorStringValueTest {
     }
 }
 
-interface MapConstructorStringValueTarget {
-    HashMap<String, String> get();
+interface MapConstructorMapStringValueTarget {
+    LinkedHashMap<String, LinkedHashMap<String,String>> get();
 }

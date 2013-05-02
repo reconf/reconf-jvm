@@ -13,15 +13,15 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.map;
+package reconf.client.constructors.map;
 
 import java.lang.reflect.*;
+import java.math.*;
 import java.util.*;
 import org.junit.*;
 import reconf.client.constructors.*;
 
-
-public class MapConstructorFloatArrayTest {
+public class MapConstructorBigDecimalArrayTest {
 
     private MethodData data;
     private Method method;
@@ -29,23 +29,23 @@ public class MapConstructorFloatArrayTest {
 
     @Before
     public void prepare() throws Exception {
-        method = MapConstructorFloatArrayValueTarget.class.getMethod("get", new Class<?>[]{});
+        method = MapConstructorBigDecimalArrayValueTarget.class.getMethod("get", new Class<?>[]{});
     }
 
     @Test
     public void test_normal_value() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "['k':['1.01','-1.000001']]");
+        data = new MethodData(method, method.getGenericReturnType(), "[ 'k': ['1', '10'] ]");
         Object o = new MapConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(targetClass));
-        Map<String, Float[]> cast = (Map<String,Float[]>) o;
+        Map<String, BigDecimal[]> cast = (Map<String,BigDecimal[]>) o;
         Assert.assertTrue(cast.size() == 1);
         Assert.assertTrue(cast.entrySet().iterator().next().getKey().equals("k"));
-        Float[] value = cast.entrySet().iterator().next().getValue();
-        Assert.assertTrue(Float.compare(value[0], 1.01f) == 0);
-        Assert.assertTrue(Float.compare(value[1], -1.000001f) == 0);
+        BigDecimal[] value = cast.entrySet().iterator().next().getValue();
+        Assert.assertEquals(value[0], BigDecimal.ONE);
+        Assert.assertEquals(value[1], BigDecimal.TEN);
     }
 }
 
-interface MapConstructorFloatArrayValueTarget {
-    HashMap<String, Float[]> get();
+interface MapConstructorBigDecimalArrayValueTarget {
+    HashMap<String, BigDecimal[]> get();
 }

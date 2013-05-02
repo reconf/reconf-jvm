@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.collection;
+package reconf.client.constructors.collection;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -21,15 +21,15 @@ import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class CollectionConstructorCollectionStringTest {
+public class CollectionConstructorClassTest {
 
     private MethodData data;
     private Method method;
-    private final Class<?> targetClass = ArrayList.class;
+    private final Class<?> targetClass = Stack.class;
 
     @Before
     public void prepare() throws Exception {
-        method = CollectionConstructorCollectionStringTarget.class.getMethod("get", new Class<?>[]{});
+        method = CollectionConstructorClassTarget.class.getMethod("get", new Class<?>[]{});
     }
 
     @Test
@@ -37,21 +37,18 @@ public class CollectionConstructorCollectionStringTest {
         data = new MethodData(method, method.getGenericReturnType(), null);
         Object o = new CollectionConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(targetClass));
-        Assert.assertTrue(((Collection<Collection<?>>) o).isEmpty());
+        Assert.assertTrue(((Collection<?>) o).isEmpty());
     }
 
-    @Test
+    @Test(expected=Exception.class)
     public void test_blank_string_list() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "[[]]");
-        Object o = new CollectionConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(targetClass));
-        Assert.assertTrue(((Collection<Collection<?>>) o).size() == 1);
-        Assert.assertTrue(((ArrayList<ArrayList<String>>) o).get(0).isEmpty());
+        data = new MethodData(method, method.getGenericReturnType(), " ");
+        new CollectionConstructor().construct(data);
     }
 
     @Test
     public void test_empty_string_list() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "[]");
+        data = new MethodData(method, method.getGenericReturnType(), "");
         Object o = new CollectionConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(targetClass));
         Assert.assertTrue(((Collection<?>) o).isEmpty());
@@ -59,18 +56,22 @@ public class CollectionConstructorCollectionStringTest {
 
     @Test
     public void test_two_elem_string_list() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "[['x'], ['y']]");
+        data = new MethodData(method, method.getGenericReturnType(), "[   'x', ' y ' ]  ");
         Object o = new CollectionConstructor().construct(data);
-        ArrayList<ArrayList<String>> outer = (ArrayList<ArrayList<String>>) o;
-        Assert.assertTrue(outer.size() == 2);
-        Assert.assertTrue(outer.get(0).size() == 1);
-        Assert.assertTrue(outer.get(0).get(0).equals("x"));
-
-        Assert.assertTrue(outer.get(1).size() == 1);
-        Assert.assertTrue(outer.get(1).get(0).equals("y"));
+        Assert.assertTrue(o.getClass().equals(targetClass));
+        Assert.assertTrue(((Collection<?>) o).size() == 2);
+        Assert.assertTrue(((Stack<SimpleConstructorClass>) o).get(0).getClass().equals(SimpleConstructorClass.class));
+        Assert.assertTrue(((Stack<SimpleConstructorClass>) o).get(1).getClass().equals(SimpleConstructorClass.class));
     }
 }
 
-interface CollectionConstructorCollectionStringTarget {
-    ArrayList<ArrayList<String>> get();
+interface CollectionConstructorClassTarget {
+    Stack<SimpleConstructorClass> get();
+}
+
+class SimpleConstructorClass {
+
+    public SimpleConstructorClass(String arg) {
+
+    }
 }

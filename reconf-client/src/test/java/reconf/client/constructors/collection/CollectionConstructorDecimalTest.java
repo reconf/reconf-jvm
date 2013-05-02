@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.collection;
+package reconf.client.constructors.collection;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -21,57 +21,50 @@ import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class CollectionConstructorClassTest {
+public class CollectionConstructorDecimalTest {
 
     private MethodData data;
     private Method method;
-    private final Class<?> targetClass = Stack.class;
 
     @Before
     public void prepare() throws Exception {
-        method = CollectionConstructorClassTarget.class.getMethod("get", new Class<?>[]{});
+        method = CollectionConstructorDecimalTarget.class.getMethod("get", new Class<?>[]{});
     }
 
     @Test
-    public void test_null_string_list() throws Throwable {
+    public void test_null_float_list() throws Throwable {
         data = new MethodData(method, method.getGenericReturnType(), null);
         Object o = new CollectionConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(targetClass));
+        Assert.assertTrue(o.getClass().equals(HashSet.class));
         Assert.assertTrue(((Collection<?>) o).isEmpty());
     }
 
     @Test(expected=Exception.class)
-    public void test_blank_string_list() throws Throwable {
+    public void test_empty_float_list() throws Throwable {
         data = new MethodData(method, method.getGenericReturnType(), " ");
         new CollectionConstructor().construct(data);
     }
 
     @Test
-    public void test_empty_string_list() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "");
+    public void test_one_elem_float_list() throws Throwable {
+        data = new MethodData(method, method.getGenericReturnType(), "['1']");
         Object o = new CollectionConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(targetClass));
-        Assert.assertTrue(((Collection<?>) o).isEmpty());
+        Assert.assertTrue(o.getClass().equals(HashSet.class));
+        Assert.assertTrue(((Collection<?>) o).size() == 1);
+        Assert.assertTrue(((HashSet<Float>) o).contains(1F));
     }
 
     @Test
-    public void test_two_elem_string_list() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "[   'x', ' y ' ]  ");
+    public void test_two_elem_float_list() throws Throwable {
+        data = new MethodData(method, method.getGenericReturnType(), "['1.00000' , '-2.0000']");
         Object o = new CollectionConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(targetClass));
+        Assert.assertTrue(o.getClass().equals(HashSet.class));
         Assert.assertTrue(((Collection<?>) o).size() == 2);
-        Assert.assertTrue(((Stack<SimpleConstructorClass>) o).get(0).getClass().equals(SimpleConstructorClass.class));
-        Assert.assertTrue(((Stack<SimpleConstructorClass>) o).get(1).getClass().equals(SimpleConstructorClass.class));
+        Assert.assertTrue(((HashSet<Float>) o).contains(1F));
+        Assert.assertTrue(((HashSet<Float>) o).contains(-2F));
     }
 }
 
-interface CollectionConstructorClassTarget {
-    Stack<SimpleConstructorClass> get();
-}
-
-class SimpleConstructorClass {
-
-    public SimpleConstructorClass(String arg) {
-
-    }
+interface CollectionConstructorDecimalTarget {
+    HashSet<Float> get();
 }

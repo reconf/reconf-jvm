@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.map;
+package reconf.client.constructors.map;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -21,27 +21,15 @@ import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class MapConstructorMapStringValueTest {
+public class MapConstructorCharValueTest {
 
     private MethodData data;
     private Method method;
-    private Class<?> targetClass = LinkedHashMap.class;
+    private Class<?> targetClass = HashMap.class;
 
     @Before
     public void prepare() throws Exception {
-        method = MapConstructorMapStringValueTarget.class.getMethod("get", new Class<?>[]{});
-    }
-
-    @Test
-    public void test_complex_map() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "['k1':['ik1':'iv1','ik2':'iv2'],'k2':[]]");
-        Object o = new MapConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(targetClass));
-        Map<String, Map<String,String>> cast = (Map<String,Map<String,String>>) o;
-        Assert.assertTrue("iv1".equals(cast.get("k1").get("ik1")));
-        Assert.assertTrue("iv2".equals(cast.get("k1").get("ik2")));
-        Assert.assertTrue(cast.containsKey("k2"));
-        Assert.assertTrue(cast.get("k2").isEmpty());
+        method = MapConstructorCharValueTarget.class.getMethod("get", new Class<?>[]{});
     }
 
     @Test
@@ -67,15 +55,28 @@ public class MapConstructorMapStringValueTest {
     }
 
     @Test
-    public void empty_map() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "[]");
+    public void test_new_line() throws Throwable {
+        data = new MethodData(method, method.getGenericReturnType(), "['\t':'\t']");
         Object o = new MapConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(targetClass));
-        Map<String, String> cast = (Map<String,String>) o;
-        Assert.assertTrue(cast.isEmpty());
+        Map<Character, Character> cast = (Map<Character,Character>) o;
+        Assert.assertTrue(cast.size() == 1);
+        Assert.assertTrue(cast.entrySet().iterator().next().getKey().equals('\t'));
+        Assert.assertTrue(cast.entrySet().iterator().next().getValue().equals('\t'));
+    }
+
+    @Test
+    public void test_blank_value() throws Throwable {
+        data = new MethodData(method, method.getGenericReturnType(), "['\t':' ']");
+        Object o = new MapConstructor().construct(data);
+        Assert.assertTrue(o.getClass().equals(targetClass));
+        Map<Character, Character> cast = (Map<Character,Character>) o;
+        Assert.assertTrue(cast.size() == 1);
+        Assert.assertTrue(cast.entrySet().iterator().next().getKey().equals('\t'));
+        Assert.assertTrue(cast.entrySet().iterator().next().getValue().equals(' '));
     }
 }
 
-interface MapConstructorMapStringValueTarget {
-    LinkedHashMap<String, LinkedHashMap<String,String>> get();
+interface MapConstructorCharValueTarget {
+    HashMap<Character, Character> get();
 }

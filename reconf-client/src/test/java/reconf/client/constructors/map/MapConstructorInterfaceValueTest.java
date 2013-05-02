@@ -13,15 +13,15 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.map;
+package reconf.client.constructors.map;
 
 import java.lang.reflect.*;
-import java.math.*;
 import java.util.*;
 import org.junit.*;
 import reconf.client.constructors.*;
 
-public class MapConstructorBigDecimalArrayTest {
+
+public class MapConstructorInterfaceValueTest {
 
     private MethodData data;
     private Method method;
@@ -29,23 +29,18 @@ public class MapConstructorBigDecimalArrayTest {
 
     @Before
     public void prepare() throws Exception {
-        method = MapConstructorBigDecimalArrayValueTarget.class.getMethod("get", new Class<?>[]{});
+        method = MapConstructorInterfaceValueTarget.class.getMethod("get", new Class<?>[]{});
     }
 
     @Test
-    public void test_normal_value() throws Throwable {
-        data = new MethodData(method, method.getGenericReturnType(), "[ 'k': ['1', '10'] ]");
+    public void test_null() throws Throwable {
+        data = new MethodData(method, method.getGenericReturnType(), null);
         Object o = new MapConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(targetClass));
-        Map<String, BigDecimal[]> cast = (Map<String,BigDecimal[]>) o;
-        Assert.assertTrue(cast.size() == 1);
-        Assert.assertTrue(cast.entrySet().iterator().next().getKey().equals("k"));
-        BigDecimal[] value = cast.entrySet().iterator().next().getValue();
-        Assert.assertEquals(value[0], BigDecimal.ONE);
-        Assert.assertEquals(value[1], BigDecimal.TEN);
+        Assert.assertTrue(((Map<?,?>) o).isEmpty());
     }
 }
 
-interface MapConstructorBigDecimalArrayValueTarget {
-    HashMap<String, BigDecimal[]> get();
+interface MapConstructorInterfaceValueTarget {
+    Map<String, String> get();
 }

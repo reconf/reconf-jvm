@@ -13,23 +13,23 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.array;
+package reconf.client.constructors.array;
 
 import java.lang.reflect.*;
 import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class ArrayConstructorNumberTest {
+public class ArrayConstructorBooleanTest {
 
     private MethodData data;
     private Method method;
-    private final Class<?> arrayClass = new Integer[0].getClass();
-    private final Class<?> targetClass = Integer.class;
+    private final Class<?> arrayClass = new Boolean[0].getClass();
+    private final Class<?> targetClass = Boolean.class;
 
     @Before
     public void prepare() throws Exception {
-        method = ArrayConstructorNumberTarget.class.getMethod("get", new Class<?>[]{});
+        method = ArrayConstructorBooleanTarget.class.getMethod("get", new Class<?>[]{});
     }
 
     @Test
@@ -40,14 +40,8 @@ public class ArrayConstructorNumberTest {
         Assert.assertTrue(((Object[]) o).length == 0);
     }
 
-    @Test(expected=Exception.class)
-    public void test_blank() throws Throwable {
-        data = new MethodData(method, targetClass, " ");
-        new ArrayConstructor().construct(data);
-    }
-
     @Test
-    public void test_empty() throws Throwable {
+    public void test_blank() throws Throwable {
         data = new MethodData(method, targetClass, "");
         Object o = new ArrayConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(arrayClass));
@@ -55,16 +49,24 @@ public class ArrayConstructorNumberTest {
     }
 
     @Test
+    public void test_empty() throws Throwable {
+        data = new MethodData(method, targetClass, "[]");
+        Object o = new ArrayConstructor().construct(data);
+        Assert.assertTrue(o.getClass().equals(arrayClass));
+        Assert.assertTrue(((Object[]) o).length == 0);
+    }
+
+    @Test
     public void test_two_elem() throws Throwable {
-        data = new MethodData(method, targetClass, "[ '1 ', '2' ]");
+        data = new MethodData(method, targetClass, "[ 'TrUe' , 'faLse' ]");
         Object o = new ArrayConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(arrayClass));
         Assert.assertTrue(((Object[]) o).length == 2);
-        Assert.assertTrue(((Object[]) o)[0].equals(1));
-        Assert.assertTrue(((Object[]) o)[1].equals(2));
+        Assert.assertTrue(((Object[]) o)[0].equals(true));
+        Assert.assertTrue(((Object[]) o)[1].equals(false));
     }
 }
 
-interface ArrayConstructorNumberTarget {
-    int[] get();
+interface ArrayConstructorBooleanTarget {
+    boolean[] get();
 }

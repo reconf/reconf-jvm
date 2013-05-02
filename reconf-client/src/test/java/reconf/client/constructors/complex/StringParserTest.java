@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.complex;
+package reconf.client.constructors.complex;
 
 import java.util.*;
 import org.junit.*;

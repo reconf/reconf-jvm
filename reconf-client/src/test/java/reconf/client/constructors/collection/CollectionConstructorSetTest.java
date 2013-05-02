@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.map;
+package reconf.client.constructors.collection;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -21,26 +21,26 @@ import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class MapConstructorInterfaceValueTest {
+public class CollectionConstructorSetTest {
 
     private MethodData data;
     private Method method;
-    private Class<?> targetClass = HashMap.class;
+    private final Class<?> targetClass = HashSet.class;
 
     @Before
     public void prepare() throws Exception {
-        method = MapConstructorInterfaceValueTarget.class.getMethod("get", new Class<?>[]{});
+        method = CollectionConstructorSetTarget.class.getMethod("get", new Class<?>[]{});
     }
 
     @Test
-    public void test_null() throws Throwable {
+    public void test_null_string_list() throws Throwable {
         data = new MethodData(method, method.getGenericReturnType(), null);
-        Object o = new MapConstructor().construct(data);
+        Object o = new CollectionConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(targetClass));
-        Assert.assertTrue(((Map<?,?>) o).isEmpty());
+        Assert.assertTrue(((Collection<Collection<?>>) o).isEmpty());
     }
 }
 
-interface MapConstructorInterfaceValueTarget {
-    Map<String, String> get();
+interface CollectionConstructorSetTarget {
+    Set<String> get();
 }
