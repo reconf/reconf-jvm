@@ -17,9 +17,12 @@ package reconf.client.setup;
 
 import java.io.*;
 import java.util.*;
+
 import javax.validation.*;
+
 import org.apache.commons.collections.*;
 import org.apache.commons.lang.*;
+
 import reconf.client.elements.*;
 import reconf.infra.i18n.*;
 import reconf.infra.io.*;
@@ -31,8 +34,6 @@ import reconf.infra.xml.*;
 
 
 public class Environment {
-
-    public static final String PROTOCOL = "reconf.client-v1+text/plain";
 
     private static final String RECONF_DEFAULT_FILE = "reconf.xml";
     private static final String SYSTEM_PROPERTY = "reconf.client.xml.location";

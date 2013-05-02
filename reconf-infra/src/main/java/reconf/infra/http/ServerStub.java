@@ -13,17 +13,16 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.http;
+package reconf.infra.http;
 
 import java.util.concurrent.*;
-import reconf.client.setup.*;
-import reconf.infra.http.*;
+
 import reconf.infra.i18n.*;
-import reconf.infra.network.*;
 
 public class ServerStub {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(ServerStub.class);
+    private static final String PROTOCOL = "reconf.client-v1+text/plain";
     private final String serviceUri;
     private final long timeout;
     private final TimeUnit timeunit;
@@ -42,7 +41,7 @@ public class ServerStub {
         final SimpleHttpRequest httpGet = SimpleHttpClient.newGetRequest(serviceUri, product, component, property)
                 .addQueryParam("instance", instance)
                 .addHeaderField("Accept-Encoding", "gzip,deflate")
-                .addHeaderField("X-ReConf-Protocol", Environment.PROTOCOL);
+                .addHeaderField("X-ReConf-Protocol", PROTOCOL);
 
         int status = 0;
         try {

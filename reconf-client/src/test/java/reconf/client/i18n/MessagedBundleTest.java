@@ -16,13 +16,13 @@
 package reconf.client.i18n;
 
 import java.util.*;
-
 import org.junit.*;
-
 import reconf.client.adapters.*;
 import reconf.client.config.source.*;
 import reconf.client.config.update.*;
 import reconf.client.constructors.*;
+import reconf.client.elements.*;
+import reconf.client.proxy.*;
 import reconf.infra.i18n.*;
 
 public class MessagedBundleTest {
@@ -31,11 +31,15 @@ public class MessagedBundleTest {
     Class<?>[] configSource = new Class<?>[] {ConfigurationSourceHolder.class, DatabaseConfigurationSource.class, RemoteConfigurationSource.class};
     Class<?>[] configUpdate = new Class<?>[] {ConfigurationUpdater.class, LocalConfigurationUpdater.class, RemoteConfigurationUpdater.class};
     Class<?>[] constructors = new Class<?>[] {ArrayConstructor.class, CollectionConstructor.class, MapConstructor.class, MethodData.class, ObjectConstructors.class, SimpleConstructor.class, StringParser.class};
+    Class<?>[] elements = new Class<?>[] {ConfigurationItemElement.class, ConfigurationRepositoryElement.class, ConfigurationRepositoryElementFactory.class, DatabaseConfigurationElement.class, DoNotReloadPolicyElement.class, ReloadPolicyElement.class};
+    Class<?>[] proxy = new Class<?>[] {ConfigurationRepositoryFactory.class, Customization.class, MethodConfiguration.class};
 
     Class<?>[][] allPackages = new Class<?>[][] { adapters,
                                                   configSource,
                                                   configUpdate,
-                                                  constructors
+                                                  constructors,
+                                                  elements,
+                                                  proxy
                                                 };
 
     @Test

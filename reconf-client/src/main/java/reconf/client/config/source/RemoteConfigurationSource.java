@@ -17,7 +17,7 @@ package reconf.client.config.source;
 
 import org.apache.commons.lang.*;
 import reconf.client.adapters.*;
-import reconf.client.http.*;
+import reconf.infra.http.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 

@@ -16,7 +16,9 @@
 package reconf.infra.i18n;
 
 import java.util.*;
+
 import org.apache.commons.lang.*;
+
 import reconf.infra.log.*;
 
 
@@ -24,20 +26,32 @@ public class MessagesBundle {
 
     private ResourceBundle bundle;
     private String className;
+    private String headPackageName;
+    private String tailPackageName = StringUtils.EMPTY;
 
     private MessagesBundle(Class<?> cls, String arg) {
         Locale locale = LocaleHolder.value();
         LoggerHolder.getLog().debug("MessagesBundle locale [{}]", locale);
-        bundle = ResourceBundle.getBundle(arg, locale);
         className = cls.getSimpleName();
+
+        String[] packages = StringUtils.split(cls.getPackage().getName(), '.');
+        if (packages.length == 0 || packages.length == 1) {
+            throw new IllegalArgumentException("only meant to be used inside reconf");
+        }
+
+        headPackageName = packages[1];
+        if (packages.length >= 2) {
+            tailPackageName = StringUtils.substringAfter(cls.getPackage().getName(), "reconf." + headPackageName + ".");
+        }
+        bundle = ResourceBundle.getBundle(arg + headPackageName, locale);
     }
 
     public static MessagesBundle getBundle(Class<?> cls) {
-        return new MessagesBundle(cls, StringUtils.replaceChars(cls.getPackage().getName(), '.', '_'));
+        return new MessagesBundle(cls, "messages_");
     }
 
     public String get(String key) {
-        return bundle.getString(className + "." + key);
+        return bundle.getString(tailPackageName + "." + className + "." + key);
     }
 
     public String format(String key, Object...args) {
