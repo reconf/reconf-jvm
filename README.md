@@ -14,7 +14,7 @@ Just enough XML
 ReConf Client relies on a simple and straightforward XML configuration file, just enough to know a little bit about the execution environment.
 
 
-Get rid of the boilerplate code
+Get rid of boilerplate code
 -------------------------------
 
 Just create a plain old Java interface, decorate it with a few custom annotations, call a factory method and that's it! Your application is good to go.
