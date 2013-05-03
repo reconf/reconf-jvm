@@ -27,9 +27,9 @@ public class RemoteConfigurationSource implements ConfigurationSource {
     private static final MessagesBundle msg = MessagesBundle.getBundle(RemoteConfigurationSource.class);
     private final String key;
     private final ServerStub stub;
-    private final ClientAdaptersLocator adapter;
+    private final ConfigurationAdapter adapter;
 
-    public RemoteConfigurationSource(String key, ServerStub stub, ClientAdaptersLocator adapter) {
+    public RemoteConfigurationSource(String key, ServerStub stub, ConfigurationAdapter adapter) {
         if (null == stub) {
             throw new NullPointerException(msg.get("error.stub"));
         }
@@ -37,7 +37,7 @@ public class RemoteConfigurationSource implements ConfigurationSource {
             throw new NullPointerException(msg.get("error.key"));
         }
         if (null == adapter) {
-            adapter = ClientAdaptersLocator.noConfigurationAdapter;
+            adapter = ConfigurationAdapter.noConfigurationAdapter;
         }
 
         this.key = key;
@@ -54,7 +54,7 @@ public class RemoteConfigurationSource implements ConfigurationSource {
         return null;
     }
 
-    public ClientAdaptersLocator getAdapter() {
+    public ConfigurationAdapter getAdapter() {
         return adapter;
     }
 

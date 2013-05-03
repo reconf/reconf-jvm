@@ -47,9 +47,9 @@ public class MethodConfiguration {
 
     public ConfigurationSourceHolder getConfigurationSourceHolder() {
         try {
-        	ClientAdaptersLocator adapter = getRemoteAdapter();
+            ConfigurationAdapter adapter = getRemoteAdapter();
             ConfigurationSourceHolder holder = new ConfigurationSourceHolder(new RemoteConfigurationSource(remoteItem.getKey(), stub, adapter),
-                            new DatabaseConfigurationSource(stub.getProduct(), stub.getComponent(), getMethod(), remoteItem.getKey(), adapter));
+                    new DatabaseConfigurationSource(stub.getProduct(), stub.getComponent(), getMethod(), remoteItem.getKey(), adapter));
             return holder;
 
         } catch (Throwable t) {
@@ -57,12 +57,12 @@ public class MethodConfiguration {
         }
     }
 
-    private ClientAdaptersLocator getRemoteAdapter() {
+    private ConfigurationAdapter getRemoteAdapter() {
         if (null == remoteItem || remoteItem.getAdapter() == null) {
             return null;
         }
         try {
-            Constructor<? extends ClientAdaptersLocator> constructor = remoteItem.getAdapter().getConstructor(ArrayUtils.EMPTY_CLASS_ARRAY);
+            Constructor<? extends ConfigurationAdapter> constructor = remoteItem.getAdapter().getConstructor(ArrayUtils.EMPTY_CLASS_ARRAY);
             return constructor.newInstance(ArrayUtils.EMPTY_OBJECT_ARRAY);
         } catch (Throwable t) {
             throw new IllegalArgumentException(msg.get("error.adapter"), t);
@@ -71,7 +71,7 @@ public class MethodConfiguration {
 
     private ServerStub createStub() {
         ConnectionSettings settings = cfgRepository.getConnectionSettings();
-    	ServerStub stub = new ServerStub(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit(), settings.getMaxRetry());
+        ServerStub stub = new ServerStub(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit(), settings.getMaxRetry());
         stub.setComponent(StringUtils.isNotBlank(remoteItem.getComponent()) ? remoteItem.getComponent() : cfgRepository.getComponent());
         stub.setProduct(StringUtils.isNotBlank(remoteItem.getProduct()) ? remoteItem.getProduct() : cfgRepository.getProduct());
         return stub;
@@ -79,19 +79,19 @@ public class MethodConfiguration {
 
     public int getReloadInterval() {
         switch (getReloadStrategy()) {
-            case ATOMIC : return cfgRepository.getConfigurationReloadPolicy().getInterval();
-            case INDEPENDENT : return remoteItem.getConfigurationReloadPolicy().getInterval();
-            case NONE : return 0;
-            default : throw new IllegalStateException(msg.get("error.internal"));
+        case ATOMIC : return cfgRepository.getConfigurationReloadPolicy().getInterval();
+        case INDEPENDENT : return remoteItem.getConfigurationReloadPolicy().getInterval();
+        case NONE : return 0;
+        default : throw new IllegalStateException(msg.get("error.internal"));
         }
     }
 
     public TimeUnit getReloadTimeUnit() {
         switch (getReloadStrategy()) {
-            case ATOMIC : return cfgRepository.getConfigurationReloadPolicy().getTimeUnit();
-            case INDEPENDENT : return remoteItem.getConfigurationReloadPolicy().getTimeUnit();
-            case NONE : return TimeUnit.DAYS;
-            default : throw new IllegalStateException(msg.get("error.internal"));
+        case ATOMIC : return cfgRepository.getConfigurationReloadPolicy().getTimeUnit();
+        case INDEPENDENT : return remoteItem.getConfigurationReloadPolicy().getTimeUnit();
+        case NONE : return TimeUnit.DAYS;
+        default : throw new IllegalStateException(msg.get("error.internal"));
         }
     }
 

@@ -13,47 +13,47 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.simple;
+package reconf.client.constructors.simple;
 
 import java.lang.reflect.*;
 import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class SimpleConstructorStringTest {
+public class SimpleConstructorCharTest {
 
     private MethodData data;
     private Method method;
 
     @Before
     public void prepare() throws Exception {
-        method = SimpleConstructorStringTestTarget.class.getMethod("getString", new Class<?>[]{});
+        method = SimpleConstructorCharTestTarget.class.getMethod("getChar", new Class<?>[]{});
     }
 
     @Test
     public void test_class() throws Throwable {
         data = new MethodData(method, method.getReturnType(), "'t'");
         Object o = new SimpleConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(String.class));
+        Assert.assertTrue(o.getClass().equals(Character.class));
     }
 
     @Test
-    public void test_normal_string() throws Throwable {
-        data = new MethodData(method, method.getReturnType(), "'String'");
+    public void test_normal_char() throws Throwable {
+        data = new MethodData(method, method.getReturnType(), "'t'");
         Object o = new SimpleConstructor().construct(data);
-        Assert.assertEquals(new String("String"), o);
-        Assert.assertEquals("String", o);
+        Assert.assertEquals(new Character('t'), o);
+        Assert.assertEquals('t', o);
     }
 
     @Test
-    public void test_untrimmed_string() throws Throwable {
-        data = new MethodData(method, method.getReturnType(), "' String '");
+    public void test_untrimmed_char() throws Throwable {
+        data = new MethodData(method, method.getReturnType(), "' t '");
         Object o = new SimpleConstructor().construct(data);
-        Assert.assertEquals(new String(" String "), o);
-        Assert.assertEquals(" String ", o);
+        Assert.assertEquals(new Character('t'), o);
+        Assert.assertEquals('t', o);
     }
 }
 
-interface SimpleConstructorStringTestTarget {
-    String getString();
+interface SimpleConstructorCharTestTarget {
+    char getChar();
 }

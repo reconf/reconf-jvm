@@ -13,9 +13,10 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.proxy;
+package reconf.debug;
 
 import reconf.client.examples.*;
+import reconf.client.proxy.*;
 
 
 public class ProxyFactoryTest {

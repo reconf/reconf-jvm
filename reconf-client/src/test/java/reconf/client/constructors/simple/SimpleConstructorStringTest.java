@@ -13,39 +13,47 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.simple;
+package reconf.client.constructors.simple;
 
 import java.lang.reflect.*;
-import java.util.concurrent.*;
 import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class SimpleConstructorTimeUnitTest {
+public class SimpleConstructorStringTest {
 
     private MethodData data;
     private Method method;
 
     @Before
     public void prepare() throws Exception {
-        method = SimpleConstructorTimeUnitTestTarget.class.getMethod("getTimeUnit", new Class<?>[]{});
+        method = SimpleConstructorStringTestTarget.class.getMethod("getString", new Class<?>[]{});
     }
 
     @Test
     public void test_class() throws Throwable {
-        data = new MethodData(method, method.getReturnType(), "'SECONDS'");
+        data = new MethodData(method, method.getReturnType(), "'t'");
         Object o = new SimpleConstructor().construct(data);
-        Assert.assertTrue(TimeUnit.class.isAssignableFrom(o.getClass()));
+        Assert.assertTrue(o.getClass().equals(String.class));
     }
 
     @Test
     public void test_normal_string() throws Throwable {
-        data = new MethodData(method, method.getReturnType(), "'SECONDS'");
+        data = new MethodData(method, method.getReturnType(), "'String'");
         Object o = new SimpleConstructor().construct(data);
-        Assert.assertEquals(TimeUnit.SECONDS, o);
+        Assert.assertEquals(new String("String"), o);
+        Assert.assertEquals("String", o);
+    }
+
+    @Test
+    public void test_untrimmed_string() throws Throwable {
+        data = new MethodData(method, method.getReturnType(), "' String '");
+        Object o = new SimpleConstructor().construct(data);
+        Assert.assertEquals(new String(" String "), o);
+        Assert.assertEquals(" String ", o);
     }
 }
 
-interface SimpleConstructorTimeUnitTestTarget {
-    TimeUnit getTimeUnit();
+interface SimpleConstructorStringTestTarget {
+    String getString();
 }

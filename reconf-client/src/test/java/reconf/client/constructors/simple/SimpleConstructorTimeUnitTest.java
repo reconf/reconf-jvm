@@ -13,47 +13,39 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructor.simple;
+package reconf.client.constructors.simple;
 
 import java.lang.reflect.*;
+import java.util.concurrent.*;
 import org.junit.*;
 import reconf.client.constructors.*;
 
 
-public class SimpleConstructorCharTest {
+public class SimpleConstructorTimeUnitTest {
 
     private MethodData data;
     private Method method;
 
     @Before
     public void prepare() throws Exception {
-        method = SimpleConstructorCharTestTarget.class.getMethod("getChar", new Class<?>[]{});
+        method = SimpleConstructorTimeUnitTestTarget.class.getMethod("getTimeUnit", new Class<?>[]{});
     }
 
     @Test
     public void test_class() throws Throwable {
-        data = new MethodData(method, method.getReturnType(), "'t'");
+        data = new MethodData(method, method.getReturnType(), "'SECONDS'");
         Object o = new SimpleConstructor().construct(data);
-        Assert.assertTrue(o.getClass().equals(Character.class));
+        Assert.assertTrue(TimeUnit.class.isAssignableFrom(o.getClass()));
     }
 
     @Test
-    public void test_normal_char() throws Throwable {
-        data = new MethodData(method, method.getReturnType(), "'t'");
+    public void test_normal_string() throws Throwable {
+        data = new MethodData(method, method.getReturnType(), "'SECONDS'");
         Object o = new SimpleConstructor().construct(data);
-        Assert.assertEquals(new Character('t'), o);
-        Assert.assertEquals('t', o);
-    }
-
-    @Test
-    public void test_untrimmed_char() throws Throwable {
-        data = new MethodData(method, method.getReturnType(), "' t '");
-        Object o = new SimpleConstructor().construct(data);
-        Assert.assertEquals(new Character('t'), o);
-        Assert.assertEquals('t', o);
+        Assert.assertEquals(TimeUnit.SECONDS, o);
     }
 }
 
-interface SimpleConstructorCharTestTarget {
-    char getChar();
+interface SimpleConstructorTimeUnitTestTarget {
+    TimeUnit getTimeUnit();
 }

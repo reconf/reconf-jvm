@@ -24,7 +24,7 @@ public class MethodData {
     private final Method method;
     private final Type returnType;
     private final String value;
-    private final ClientAdaptersLocator adapter;
+    private final ConfigurationAdapter adapter;
 
     public MethodData(Method method, Type returnType, String value) {
         this.method = method;
@@ -33,7 +33,7 @@ public class MethodData {
         this.adapter = null;
     }
 
-    public MethodData(Method method, Type returnType, String value, ClientAdaptersLocator adapter) {
+    public MethodData(Method method, Type returnType, String value, ConfigurationAdapter adapter) {
         this.method = method;
         this.returnType = returnType;
         this.value = value;
@@ -52,7 +52,7 @@ public class MethodData {
         return value;
     }
 
-    public ClientAdaptersLocator getAdapter() {
+    public ConfigurationAdapter getAdapter() {
         return adapter;
     }
 

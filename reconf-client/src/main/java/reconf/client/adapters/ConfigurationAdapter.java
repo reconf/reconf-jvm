@@ -13,14 +13,10 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.config.source;
+package reconf.client.adapters;
 
-import reconf.client.adapters.*;
+public interface ConfigurationAdapter {
+    final NoConfigurationAdapter noConfigurationAdapter = new NoConfigurationAdapter();
 
-
-public interface ConfigurationSource {
-    String get();
-    void update(String value);
-    void temporaryUpdate(String value);
-    ConfigurationAdapter getAdapter();
+    Object adapt(String arg);
 }
