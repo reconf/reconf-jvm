@@ -24,6 +24,8 @@ import reconf.client.constructors.*;
 import reconf.client.elements.*;
 import reconf.client.proxy.*;
 import reconf.client.setup.*;
+import reconf.client.update.*;
+import reconf.infra.http.*;
 import reconf.infra.i18n.*;
 
 public class MessagedBundleTest {
@@ -35,6 +37,8 @@ public class MessagedBundleTest {
     Class<?>[] elements = new Class<?>[] {ConfigurationItemElement.class, ConfigurationRepositoryElement.class, ConfigurationRepositoryElementFactory.class, DatabaseConfigurationElement.class, DoNotReloadPolicyElement.class, ReloadPolicyElement.class};
     Class<?>[] proxy = new Class<?>[] {ConfigurationRepositoryFactory.class, Customization.class, MethodConfiguration.class};
     Class<?>[] setup = new Class<?>[] {ConnectionSettings.class, DatabaseManager.class, Environment.class, LocalCacheSettings.class, XmlConfiguration.class};
+    Class<?>[] update = new Class<?>[] {ConfigurationRepositoryData.class, ConfigurationRepositoryUpdater.class};
+    Class<?>[] infraHttp = new Class<?>[] {LocalHostname.class, ServerStub.class, SimpleHttpClient.class, SimpleHttpRequest.class, SimpleHttpResponse.class};
 
     Class<?>[][] allPackages = new Class<?>[][] { adapters,
                                                   configSource,
@@ -42,7 +46,9 @@ public class MessagedBundleTest {
                                                   constructors,
                                                   elements,
                                                   proxy,
-                                                  setup
+                                                  setup,
+                                                  update,
+                                                  infraHttp
                                                 };
 
     @Test
