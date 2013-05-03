@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.update;
+package reconf.client.config.update;
 
 import java.util.*;
 import reconf.client.elements.*;

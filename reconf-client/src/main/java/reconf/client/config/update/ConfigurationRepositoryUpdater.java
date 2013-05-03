@@ -13,14 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.update;
+package reconf.client.config.update;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 import org.apache.commons.lang.*;
-import reconf.client.config.update.*;
 import reconf.client.elements.*;
 import reconf.client.proxy.*;
 import reconf.client.proxy.MethodConfiguration.ReloadStrategy;

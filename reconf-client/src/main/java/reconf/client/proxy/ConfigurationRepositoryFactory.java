@@ -18,9 +18,9 @@ package reconf.client.proxy;
 import java.lang.reflect.*;
 import java.util.concurrent.*;
 import reconf.client.annotations.*;
+import reconf.client.config.update.*;
 import reconf.client.elements.*;
 import reconf.client.setup.*;
-import reconf.client.update.*;
 import reconf.infra.i18n.*;
 
 public class ConfigurationRepositoryFactory implements InvocationHandler {
