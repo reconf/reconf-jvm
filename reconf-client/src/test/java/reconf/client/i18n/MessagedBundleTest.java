@@ -15,7 +15,10 @@
  */
 package reconf.client.i18n;
 
+import java.io.*;
 import java.util.*;
+import org.apache.commons.io.*;
+import org.apache.commons.io.filefilter.*;
 import org.junit.*;
 import reconf.client.adapters.*;
 import reconf.client.config.source.*;
@@ -24,7 +27,6 @@ import reconf.client.constructors.*;
 import reconf.client.elements.*;
 import reconf.client.proxy.*;
 import reconf.client.setup.*;
-import reconf.client.update.*;
 import reconf.infra.http.*;
 import reconf.infra.i18n.*;
 
@@ -52,7 +54,9 @@ public class MessagedBundleTest {
                                                 };
 
     @Test
-    public void test() {
+    public void test() throws Exception {
+
+        System.out.println(FileUtils.listFilesAndDirs(new File("./classes"), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE));
 
         for (String locale : Arrays.asList("lv_LV", "pt_BR")) {
             LocaleHolder.set(locale);
