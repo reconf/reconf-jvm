@@ -29,10 +29,10 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
     private final String product;
     private final String component;
     private final String key;
-    private final ConfigurationAdapter adapter;
+    private final ClientAdaptersLocator adapter;
     private final Method method;
 
-    public DatabaseConfigurationSource(String product, String component, Method method, String key, ConfigurationAdapter adapter) {
+    public DatabaseConfigurationSource(String product, String component, Method method, String key, ClientAdaptersLocator adapter) {
 
         if (StringUtils.isBlank(key)) {
             throw new NullPointerException(msg.get("error.stub"));
@@ -47,7 +47,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
         }
 
         if (null == adapter) {
-            adapter = ConfigurationAdapter.noConfigurationAdapter;
+            adapter = ClientAdaptersLocator.noConfigurationAdapter;
         }
 
         if (null == method) {
@@ -92,7 +92,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
         }
     }
 
-    public ConfigurationAdapter getAdapter() {
+    public ClientAdaptersLocator getAdapter() {
         return adapter;
     }
 }

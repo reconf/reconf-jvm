@@ -19,7 +19,6 @@ import java.io.*;
 import java.net.*;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.*;
-import org.apache.http.entity.*;
 
 public class SimpleHttpRequest extends HttpEntityEnclosingRequestBase {
 
@@ -69,17 +68,6 @@ public class SimpleHttpRequest extends HttpEntityEnclosingRequestBase {
      */
     public SimpleHttpRequest addHeaderField(String name, String value) {
         super.addHeader(name, value);
-        return this;
-    }
-
-    /**
-     * Sets this request entity with a given JSON String entity.<br>
-     * The <i>Content-Type header</i> will be set to <i>application/json</i>.
-     * @param entityJsonString The entity to be set as a JSON String
-     * @return this request updated
-     */
-    public SimpleHttpRequest setEntityAsJson(String entityJsonString) {
-        this.setEntity(new StringEntity(entityJsonString, ContentType.APPLICATION_JSON));
         return this;
     }
 

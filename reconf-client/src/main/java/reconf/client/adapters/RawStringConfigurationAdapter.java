@@ -16,7 +16,7 @@
 package reconf.client.adapters;
 
 
-public class RawStringConfigurationAdapter implements ConfigurationAdapter {
+public class RawStringConfigurationAdapter implements ClientAdaptersLocator {
 
     public Object adapt(String arg) {
         return arg;

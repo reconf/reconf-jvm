@@ -38,7 +38,7 @@ public class ConfigurationItemElement {
     private String product;
     private DoNotReloadPolicyElement doNotReloadPolicy;
     private ReloadPolicyElement configurationReloadPolicy;
-    private Class<? extends ConfigurationAdapter> adapter;
+    private Class<? extends ClientAdaptersLocator> adapter;
 
     public static List<ConfigurationItemElement> from(ConfigurationRepositoryElement repository) {
         List<ConfigurationItemElement> result = new ArrayList<ConfigurationItemElement>();
@@ -122,10 +122,10 @@ public class ConfigurationItemElement {
     }
 
     @NotNull(message="adapter.null")
-    public Class<? extends ConfigurationAdapter> getAdapter() {
+    public Class<? extends ClientAdaptersLocator> getAdapter() {
         return adapter;
     }
-    public void setAdapter(Class<? extends ConfigurationAdapter> adapter) {
+    public void setAdapter(Class<? extends ClientAdaptersLocator> adapter) {
         this.adapter = adapter;
     }
 

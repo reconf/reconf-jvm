@@ -13,10 +13,23 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.adapters;
+package reconf.infra.http;
 
-public interface ConfigurationAdapter {
-    final NoConfigurationAdapter noConfigurationAdapter = new NoConfigurationAdapter();
+import java.util.concurrent.*;
+import org.apache.http.client.*;
+import org.apache.http.client.methods.*;
 
-    Object adapt(String arg);
+public class RequestTask implements Callable<SimpleHttpResponse> {
+
+    private final HttpClient httpClient;
+    private final HttpUriRequest request;
+
+    public RequestTask(HttpClient httpClient, HttpUriRequest request) {
+        this.httpClient = httpClient;
+        this.request = request;
+    }
+
+    public SimpleHttpResponse call() throws Exception {
+        return new SimpleHttpResponse(httpClient, request);
+    }
 }

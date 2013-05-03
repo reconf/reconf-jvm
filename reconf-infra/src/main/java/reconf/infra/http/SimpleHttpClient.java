@@ -15,7 +15,6 @@
  */
 package reconf.infra.http;
 
-import java.io.*;
 import java.net.*;
 import java.security.*;
 import java.security.cert.*;
@@ -23,13 +22,11 @@ import java.util.concurrent.*;
 import javax.net.ssl.*;
 import org.apache.http.*;
 import org.apache.http.client.*;
-import org.apache.http.client.methods.*;
 import org.apache.http.conn.*;
 import org.apache.http.conn.scheme.*;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.*;
 import org.apache.http.params.*;
-import org.apache.http.protocol.*;
 import reconf.infra.i18n.*;
 
 public class SimpleHttpClient {
@@ -59,8 +56,8 @@ public class SimpleHttpClient {
      * @throws InterruptedException if the exection thread is interrupted
      * @throws GeneralSecurityException if the SSL avoiding fails
      */
-    public static SimpleHttpResponse executeAvoidingSSL(SimpleHttpRequest request, long timeout, TimeUnit timeunit) throws Exception {
-        return execute(newHttpClientAvoidSSL(timeout, timeunit), request, timeout, timeunit);
+    public static SimpleHttpResponse executeAvoidingSSL(SimpleHttpRequest request, long timeout, TimeUnit timeunit, int retries) throws Exception {
+        return execute(newHttpClientAvoidSSL(timeout, timeunit, retries), request, timeout, timeunit);
     }
 
     private static SimpleHttpResponse execute(HttpClient httpClient, SimpleHttpRequest request, long timeout, TimeUnit timeunit) throws Exception {
@@ -97,7 +94,7 @@ public class SimpleHttpClient {
         }
     }
 
-    private static DefaultHttpClient newHttpClientAvoidSSL(long timeout, TimeUnit timeunit) throws GeneralSecurityException {
+    private static DefaultHttpClient newHttpClientAvoidSSL(long timeout, TimeUnit timeUnit, int retries) throws GeneralSecurityException {
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, new TrustManager[]{
             new X509TrustManager() {
@@ -114,8 +111,8 @@ public class SimpleHttpClient {
         ClientConnectionManager connectionManager = new DefaultHttpClient().getConnectionManager();
         connectionManager.getSchemeRegistry().register(new Scheme("https", 443, ssf));
 
-        DefaultHttpClient httpClient = new DefaultHttpClient(connectionManager, createBasicHttpParams(timeout, timeunit));
-        httpClient.setHttpRequestRetryHandler(new RetryHandler());
+        DefaultHttpClient httpClient = new DefaultHttpClient(connectionManager, createBasicHttpParams(timeout, timeUnit));
+        httpClient.setHttpRequestRetryHandler(new RetryHandler(retries));
 
         return httpClient;
     }
@@ -129,50 +126,5 @@ public class SimpleHttpClient {
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
 
         return params;
-    }
-}
-
-class RequestTask implements Callable<SimpleHttpResponse> {
-
-    private final HttpClient httpClient;
-    private final HttpUriRequest request;
-
-    public RequestTask(HttpClient httpClient, HttpUriRequest request) {
-        this.httpClient = httpClient;
-        this.request = request;
-    }
-
-    public SimpleHttpResponse call() throws Exception {
-        return new SimpleHttpResponse(httpClient, request);
-    }
-}
-
-class RetryHandler implements HttpRequestRetryHandler {
-
-    public final int MAX_RETRY = 3;
-    public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
-
-        if (exception instanceof SocketException && executionCount <= 1) {
-            return true;
-        }
-        if (executionCount >= MAX_RETRY) {
-            // Do not retry if over max retry count
-            return false;
-        }
-        if (exception instanceof NoHttpResponseException) {
-            // Retry if the server dropped connection on us
-            return true;
-        }
-        if (exception instanceof SSLHandshakeException) {
-            // Do not retry on SSL handshake exception
-            return false;
-        }
-        HttpRequest request = (HttpRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
-        boolean idempotent = !(request instanceof HttpEntityEnclosingRequest);
-        if (idempotent) {
-            // Retry if the request is considered idempotent
-            return true;
-        }
-        return false;
     }
 }

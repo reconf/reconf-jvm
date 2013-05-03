@@ -46,32 +46,6 @@ public class SimpleHttpResponse {
     }
 
     /**
-     * @param headerName The name of the headers to get
-     * @return the first HTTP readers of a given name
-     */
-    public Header getHeader(String headerName) {
-        return response.getFirstHeader(headerName);
-    }
-
-    /**
-     * @param headerName The name of the headers to get
-     * @return all HTTP readers of a given name
-     */
-    public Header[] getHeaders(String headerName) {
-        return response.getHeaders(headerName);
-    }
-
-    /**
-     * Returns all the headers of this message.<br>
-     * Headers are orderd in the sequence
-     * they will be sent over a connection.
-     * @return all the headers of this message
-     */
-    public Header[] getHeaders() {
-        return response.getAllHeaders();
-    }
-
-    /**
      * @return this HTTP entity content as String.
      * @throws IOException if an error occurs while reading the input stream
      */

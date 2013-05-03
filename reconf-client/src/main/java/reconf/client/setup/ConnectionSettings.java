@@ -17,20 +17,25 @@ package reconf.client.setup;
 
 import java.util.concurrent.*;
 import javax.validation.constraints.*;
+import javax.xml.bind.annotation.*;
 import org.apache.commons.lang.builder.*;
 import org.hibernate.validator.constraints.*;
 
-
+/**
+ * The necessary parameters to connect ReConf Server
+ */
 public class ConnectionSettings {
 
     private String url;
-    private Integer timeout = 20;
+    private int timeout = 20;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
+    private int maxRetry = 3;
 
     @URL(message="{setup.ConnectionSettings.url.error}")
     @NotNull(message="{setup.ConnectionSettings.url.error}")
     @NotBlank(message="{setup.ConnectionSettings.url.error}")
     @Size(min=1,message="{setup.ConnectionSettings.url.error}")
+    @XmlElement(name="url")
     public String getUrl() {
         return url;
     }
@@ -38,16 +43,17 @@ public class ConnectionSettings {
         this.url = url;
     }
 
-    @NotNull(message="{setup.ConnectionSettings.timeout.error}")
     @Min(value=1,message="{setup.ConnectionSettings.timeout.error}")
+    @XmlElement(name="timeout")
     public int getTimeout() {
         return timeout;
     }
-    public void setTimeout(Integer timeout) {
+    public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
 
     @NotNull(message="{setup.ConnectionSettings.timeUnit.null}")
+    @XmlElement(name="time-unit")
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }
@@ -55,12 +61,22 @@ public class ConnectionSettings {
         this.timeUnit = timeUnit;
     }
 
+    @Min(value=1,message="{setup.ConnectionSettings.retry.error}")
+    @XmlElement(name="max-retry")
+    public int getMaxRetry() {
+        return maxRetry;
+    }
+    public void setMaxRetry(int maxRetry) {
+        this.maxRetry = maxRetry;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.DEFAULT_STYLE)
         .append("url", getUrl())
         .append("timeout", getTimeout())
-        .append("timeUnit", getTimeUnit())
+        .append("time-unit", getTimeUnit())
+        .append("max-retry", getMaxRetry())
         .toString();
     }
 }

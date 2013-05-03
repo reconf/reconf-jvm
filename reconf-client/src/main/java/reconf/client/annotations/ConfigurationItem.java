@@ -30,5 +30,5 @@ public @interface ConfigurationItem {
 
     String component() default StringUtils.EMPTY;
     String product() default StringUtils.EMPTY;
-    Class<? extends ConfigurationAdapter> adapter() default NoConfigurationAdapter.class;
+    Class<? extends ClientAdaptersLocator> adapter() default NoConfigurationAdapter.class;
 }

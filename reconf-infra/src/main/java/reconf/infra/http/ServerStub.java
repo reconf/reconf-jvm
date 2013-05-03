@@ -16,7 +16,6 @@
 package reconf.infra.http;
 
 import java.util.concurrent.*;
-
 import reconf.infra.i18n.*;
 
 public class ServerStub {
@@ -26,15 +25,17 @@ public class ServerStub {
     private final String serviceUri;
     private final long timeout;
     private final TimeUnit timeunit;
+    private final int maxRetry;
     private String product;
     private String component;
     private String instance;
 
-    public ServerStub(String serviceUri, long timeout, TimeUnit timeUnit) {
+    public ServerStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry) {
         this.serviceUri = serviceUri;
         this.timeout = timeout;
         this.timeunit = timeUnit;
         this.instance = LocalHostname.getName();
+        this.maxRetry = maxRetry;
     }
 
     public String get(String property) throws Exception {
@@ -45,7 +46,7 @@ public class ServerStub {
 
         int status = 0;
         try {
-            SimpleHttpResponse result = SimpleHttpClient.executeAvoidingSSL(httpGet, timeout, timeunit);
+            SimpleHttpResponse result = SimpleHttpClient.executeAvoidingSSL(httpGet, timeout, timeunit, maxRetry);
             status = result.getStatusCode();
             if (status == 200) {
                 return result.getBodyAsString();

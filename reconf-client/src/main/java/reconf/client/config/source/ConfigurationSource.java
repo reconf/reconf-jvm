@@ -22,5 +22,5 @@ public interface ConfigurationSource {
     String get();
     void update(String value);
     void temporaryUpdate(String value);
-    ConfigurationAdapter getAdapter();
+    ClientAdaptersLocator getAdapter();
 }

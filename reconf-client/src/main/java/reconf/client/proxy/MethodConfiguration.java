@@ -47,7 +47,7 @@ public class MethodConfiguration {
 
     public ConfigurationSourceHolder getConfigurationSourceHolder() {
         try {
-        	ConfigurationAdapter adapter = getRemoteAdapter();
+        	ClientAdaptersLocator adapter = getRemoteAdapter();
             ConfigurationSourceHolder holder = new ConfigurationSourceHolder(new RemoteConfigurationSource(remoteItem.getKey(), stub, adapter),
                             new DatabaseConfigurationSource(stub.getProduct(), stub.getComponent(), getMethod(), remoteItem.getKey(), adapter));
             return holder;
@@ -57,12 +57,12 @@ public class MethodConfiguration {
         }
     }
 
-    private ConfigurationAdapter getRemoteAdapter() {
+    private ClientAdaptersLocator getRemoteAdapter() {
         if (null == remoteItem || remoteItem.getAdapter() == null) {
             return null;
         }
         try {
-            Constructor<? extends ConfigurationAdapter> constructor = remoteItem.getAdapter().getConstructor(ArrayUtils.EMPTY_CLASS_ARRAY);
+            Constructor<? extends ClientAdaptersLocator> constructor = remoteItem.getAdapter().getConstructor(ArrayUtils.EMPTY_CLASS_ARRAY);
             return constructor.newInstance(ArrayUtils.EMPTY_OBJECT_ARRAY);
         } catch (Throwable t) {
             throw new IllegalArgumentException(msg.get("error.adapter"), t);
@@ -71,7 +71,7 @@ public class MethodConfiguration {
 
     private ServerStub createStub() {
         ConnectionSettings settings = cfgRepository.getConnectionSettings();
-    	ServerStub stub = new ServerStub(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit());
+    	ServerStub stub = new ServerStub(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit(), settings.getMaxRetry());
         stub.setComponent(StringUtils.isNotBlank(remoteItem.getComponent()) ? remoteItem.getComponent() : cfgRepository.getComponent());
         stub.setProduct(StringUtils.isNotBlank(remoteItem.getProduct()) ? remoteItem.getProduct() : cfgRepository.getProduct());
         return stub;

@@ -16,7 +16,7 @@
 package reconf.client.adapters;
 
 
-public class NoConfigurationAdapter implements ConfigurationAdapter {
+public class NoConfigurationAdapter implements ClientAdaptersLocator {
 
     public Object adapt(String arg) {
         return null;
