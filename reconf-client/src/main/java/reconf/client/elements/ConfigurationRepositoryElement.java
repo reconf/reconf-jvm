@@ -28,8 +28,8 @@ public class ConfigurationRepositoryElement {
     private ConnectionSettings connectionSettings;
     private String product;
     private String component;
-    private DoNotReloadPolicyElement doNotReloadPolicy;
-    private ReloadPolicyElement configurationReloadPolicy;
+    private DoNotUpdatePolicyElement doNotReloadPolicy;
+    private UpdatePolicyElement configurationReloadPolicy;
     private Class<?> interfaceClass;
     private List<ConfigurationItemElement> configurationItems = new ArrayList<ConfigurationItemElement>();
 
@@ -57,19 +57,19 @@ public class ConfigurationRepositoryElement {
         this.product = product;
     }
 
-    public DoNotReloadPolicyElement getDoNotReloadPolicy() {
+    public DoNotUpdatePolicyElement getDoNotReloadPolicy() {
         return doNotReloadPolicy;
     }
 
-    public void setDoNotReloadPolicy(DoNotReloadPolicyElement doNotReloadPolicy) {
+    public void setDoNotReloadPolicy(DoNotUpdatePolicyElement doNotReloadPolicy) {
         this.doNotReloadPolicy = doNotReloadPolicy;
     }
 
     @Valid
-    public ReloadPolicyElement getConfigurationReloadPolicy() {
+    public UpdatePolicyElement getConfigurationReloadPolicy() {
         return configurationReloadPolicy;
     }
-    public void setConfigurationReloadPolicy(ReloadPolicyElement configurationReloadPolicy) {
+    public void setConfigurationReloadPolicy(UpdatePolicyElement configurationReloadPolicy) {
         this.configurationReloadPolicy = configurationReloadPolicy;
     }
 

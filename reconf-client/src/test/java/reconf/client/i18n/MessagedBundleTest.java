@@ -15,10 +15,7 @@
  */
 package reconf.client.i18n;
 
-import java.io.*;
 import java.util.*;
-import org.apache.commons.io.*;
-import org.apache.commons.io.filefilter.*;
 import org.junit.*;
 import reconf.client.adapters.*;
 import reconf.client.config.source.*;
@@ -36,7 +33,7 @@ public class MessagedBundleTest {
     Class<?>[] configSource = new Class<?>[] {ConfigurationSourceHolder.class, DatabaseConfigurationSource.class, RemoteConfigurationSource.class};
     Class<?>[] configUpdate = new Class<?>[] {ConfigurationUpdater.class, LocalConfigurationUpdater.class, RemoteConfigurationUpdater.class};
     Class<?>[] constructors = new Class<?>[] {ArrayConstructor.class, CollectionConstructor.class, MapConstructor.class, MethodData.class, ObjectConstructors.class, SimpleConstructor.class, StringParser.class};
-    Class<?>[] elements = new Class<?>[] {ConfigurationItemElement.class, ConfigurationRepositoryElement.class, ConfigurationRepositoryElementFactory.class, DatabaseConfigurationElement.class, DoNotReloadPolicyElement.class, ReloadPolicyElement.class};
+    Class<?>[] elements = new Class<?>[] {ConfigurationItemElement.class, ConfigurationRepositoryElement.class, ConfigurationRepositoryElementFactory.class, DatabaseConfigurationElement.class, DoNotUpdatePolicyElement.class, UpdatePolicyElement.class};
     Class<?>[] proxy = new Class<?>[] {ConfigurationRepositoryFactory.class, Customization.class, MethodConfiguration.class};
     Class<?>[] setup = new Class<?>[] {ConnectionSettings.class, DatabaseManager.class, Environment.class, LocalCacheSettings.class, XmlConfiguration.class};
     Class<?>[] update = new Class<?>[] {ConfigurationRepositoryData.class, ConfigurationRepositoryUpdater.class};
@@ -55,8 +52,6 @@ public class MessagedBundleTest {
 
     @Test
     public void test() throws Exception {
-
-        System.out.println(FileUtils.listFilesAndDirs(new File("./classes"), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE));
 
         for (String locale : Arrays.asList("lv_LV", "pt_BR")) {
             LocaleHolder.set(locale);

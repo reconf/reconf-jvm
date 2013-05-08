@@ -21,13 +21,13 @@ import javax.xml.bind.annotation.*;
 import org.apache.commons.lang.builder.*;
 
 
-public class ReloadPolicyElement {
+public class UpdatePolicyElement {
 
     private Integer interval;
     private TimeUnit timeUnit;
 
-    @NotNull(message="{elements.ReloadPolicyElement.interval.error}")
-    @Min(value=1,message="{elements.ReloadPolicyElement.interval.error}")
+    @NotNull(message="{elements.UpdatePolicyElement.interval.error}")
+    @Min(value=1,message="{elements.UpdatePolicyElement.interval.error}")
     @XmlElement(name="interval")
     public Integer getInterval() {
         return interval;
@@ -36,7 +36,7 @@ public class ReloadPolicyElement {
         this.interval = interval;
     }
 
-    @NotNull(message="{elements.ReloadPolicyElement.timeUnit.null}")
+    @NotNull(message="{elements.UpdatePolicyElement.timeUnit.null}")
     @XmlElement(name="time-unit")
     public TimeUnit getTimeUnit() {
         return timeUnit;

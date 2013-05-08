@@ -26,7 +26,7 @@ public class XmlConfiguration {
 
     private LocalCacheSettings localCacheSettings;
     private ConnectionSettings connectionSettings;
-    private ReloadPolicyElement annotationOverride;
+    private UpdatePolicyElement annotationOverride;
 
     @XmlElement(name="local-cache") @Valid @NotNull
     public LocalCacheSettings getLocalCacheSettings() {
@@ -44,11 +44,11 @@ public class XmlConfiguration {
         this.connectionSettings = connectionSettings;
     }
 
-    @XmlElement(name="override-reload-policy") @Valid
-    public ReloadPolicyElement getAnnotationOverride() {
+    @XmlElement(name="override-update-policy") @Valid
+    public UpdatePolicyElement getAnnotationOverride() {
         return annotationOverride;
     }
-    public void setAnnotationOverride(ReloadPolicyElement annotationOverride) {
+    public void setAnnotationOverride(UpdatePolicyElement annotationOverride) {
         this.annotationOverride = annotationOverride;
     }
 
@@ -58,7 +58,7 @@ public class XmlConfiguration {
         .append("local-cache", getLocalCacheSettings())
         .append("server", getConnectionSettings());
         if (getAnnotationOverride() != null) {
-            result.append("override-reload-policy", getAnnotationOverride());
+            result.append("override-update-policy", getAnnotationOverride());
         }
         return result.toString();
     }

@@ -16,11 +16,16 @@
 package reconf.client.annotations;
 
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.*;
+import java.util.concurrent.*;
 
 
-@Target(METHOD)
+@Target({TYPE, METHOD})
 @Retention(RUNTIME)
-public @interface DoNotReloadPolicy {
+public @interface UpdatePolicy {
+
+    int interval();
+    TimeUnit timeUnit();
 }

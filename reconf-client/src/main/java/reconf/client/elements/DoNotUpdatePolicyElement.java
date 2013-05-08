@@ -16,5 +16,5 @@
 package reconf.client.elements;
 
 
-public class DoNotReloadPolicyElement {
+public class DoNotUpdatePolicyElement {
 }

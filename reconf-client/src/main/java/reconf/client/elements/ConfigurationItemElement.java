@@ -36,8 +36,8 @@ public class ConfigurationItemElement {
     private String key;
     private String component;
     private String product;
-    private DoNotReloadPolicyElement doNotReloadPolicy;
-    private ReloadPolicyElement configurationReloadPolicy;
+    private DoNotUpdatePolicyElement doNotUpdatePolicy;
+    private UpdatePolicyElement updatePolicy;
     private Class<? extends ConfigurationAdapter> adapter;
 
     public static List<ConfigurationItemElement> from(ConfigurationRepositoryElement repository) {
@@ -63,33 +63,33 @@ public class ConfigurationItemElement {
                 resultItem.setAdapter(ann.adapter());
             }
             resultItem.setMethod(method);
-            defineReloadStrategy(repository, resultItem, ann);
+            defineUpdateStrategy(repository, resultItem, ann);
             defineItemProductComponenetOverride(resultItem, ann);
             result.add(resultItem);
         }
         return result;
     }
 
-    private static void defineReloadStrategy(ConfigurationRepositoryElement repository, ConfigurationItemElement resultItem, ConfigurationItem annItem) {
+    private static void defineUpdateStrategy(ConfigurationRepositoryElement repository, ConfigurationItemElement resultItem, ConfigurationItem annItem) {
         if (StringUtils.isBlank(resultItem.getKey())) {
             resultItem.setKey(annItem.name());
         }
 
-        if (resultItem.getMethod().isAnnotationPresent(ConfigurationReloadPolicy.class)) {
-            ConfigurationReloadPolicy reloadAnn = resultItem.getMethod().getAnnotation(ConfigurationReloadPolicy.class);
-            ReloadPolicyElement reloadPolicy = new ReloadPolicyElement();
-            reloadPolicy.setInterval(reloadAnn.interval());
-            reloadPolicy.setTimeUnit(reloadAnn.timeUnit());
-            resultItem.setConfigurationReloadPolicy(reloadPolicy);
+        if (resultItem.getMethod().isAnnotationPresent(UpdatePolicy.class)) {
+            UpdatePolicy reloadAnn = resultItem.getMethod().getAnnotation(UpdatePolicy.class);
+            UpdatePolicyElement policy = new UpdatePolicyElement();
+            policy.setInterval(reloadAnn.interval());
+            policy.setTimeUnit(reloadAnn.timeUnit());
+            resultItem.setUpdatePolicy(policy);
         }
 
-        if (resultItem.getMethod().isAnnotationPresent(DoNotReloadPolicy.class) && resultItem.getMethod().isAnnotationPresent(ConfigurationReloadPolicy.class)) {
+        if (resultItem.getMethod().isAnnotationPresent(DoNotUpdatePolicy.class) && resultItem.getMethod().isAnnotationPresent(UpdatePolicy.class)) {
             LoggerHolder.getLog().warn(msg.format("error.conflict.reload.policy" , resultItem.getMethod(), repository.getClass()));
             return;
         }
 
-        if (resultItem.getMethod().isAnnotationPresent(DoNotReloadPolicy.class)) {
-            resultItem.setDoNotReloadPolicy(new DoNotReloadPolicyElement());
+        if (resultItem.getMethod().isAnnotationPresent(DoNotUpdatePolicy.class)) {
+            resultItem.setDoNotUpdatePolicy(new DoNotUpdatePolicyElement());
         }
     }
 
@@ -151,19 +151,19 @@ public class ConfigurationItemElement {
         this.product = product;
     }
 
-    public DoNotReloadPolicyElement getDoNotReloadPolicy() {
-        return doNotReloadPolicy;
+    public DoNotUpdatePolicyElement getDoNotUpdatePolicy() {
+        return doNotUpdatePolicy;
     }
-    public void setDoNotReloadPolicy(DoNotReloadPolicyElement doNotReloadPolicy) {
-        this.doNotReloadPolicy = doNotReloadPolicy;
+    public void setDoNotUpdatePolicy(DoNotUpdatePolicyElement doNotUpdatePolicy) {
+        this.doNotUpdatePolicy = doNotUpdatePolicy;
     }
 
     @Valid
-    public ReloadPolicyElement getConfigurationReloadPolicy() {
-        return configurationReloadPolicy;
+    public UpdatePolicyElement getUpdatePolicy() {
+        return updatePolicy;
     }
-    public void setConfigurationReloadPolicy(ReloadPolicyElement configurationReloadPolicy) {
-        this.configurationReloadPolicy = configurationReloadPolicy;
+    public void setUpdatePolicy(UpdatePolicyElement updatePolicy) {
+        this.updatePolicy = updatePolicy;
     }
 
     @Override
@@ -172,11 +172,11 @@ public class ConfigurationItemElement {
         addToString(result, "product", getProduct());
         addToString(result, "component", getComponent());
         result.append("key", getKey());
-        result.append("do-not-reload-policy", null == doNotReloadPolicy ? "false" : "true");
-        if (null == getConfigurationReloadPolicy()) {
-            result.append("configuration-reload-policy", "n/a");
+        result.append("do-not-update-policy", null == doNotUpdatePolicy ? "false" : "true");
+        if (null == getUpdatePolicy()) {
+            result.append("update-reload-policy", "n/a");
         } else {
-            result.append("configuration-reload-policy", getConfigurationReloadPolicy());
+            result.append("update-reload-policy", getUpdatePolicy());
         }
         return result.toString();
     }

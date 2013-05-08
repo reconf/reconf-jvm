@@ -61,32 +61,32 @@ public class ConfigurationRepositoryElementFactory {
     }
 
     private void defineReloadStrategy(Class<?> arg, ConfigurationRepositoryElement result) {
-        if (!arg.isAnnotationPresent(ConfigurationReloadPolicy.class) && !arg.isAnnotationPresent(DoNotReloadPolicy.class)) {
+        if (!arg.isAnnotationPresent(UpdatePolicy.class) && !arg.isAnnotationPresent(DoNotUpdatePolicy.class)) {
             LoggerHolder.getLog().warn(msg.format("reload.policy.missing", arg));
             return;
         }
 
-        if (arg.isAnnotationPresent(ConfigurationReloadPolicy.class) && arg.isAnnotationPresent(DoNotReloadPolicy.class)) {
+        if (arg.isAnnotationPresent(UpdatePolicy.class) && arg.isAnnotationPresent(DoNotUpdatePolicy.class)) {
             LoggerHolder.getLog().warn(msg.format("error.conflict.reload.policy", arg));
         }
 
-        if (arg.isAnnotationPresent(ConfigurationReloadPolicy.class)) {
+        if (arg.isAnnotationPresent(UpdatePolicy.class)) {
             if (configuration.getAnnotationOverride() != null) {
                 result.setConfigurationReloadPolicy(configuration.getAnnotationOverride());
                 LoggerHolder.getLog().info(msg.format("global.reload.policy.override", arg));
                 return;
             }
 
-            ConfigurationReloadPolicy reloadAnn = arg.getAnnotation(ConfigurationReloadPolicy.class);
-            ReloadPolicyElement reloadPolicy = new ReloadPolicyElement();
+            UpdatePolicy reloadAnn = arg.getAnnotation(UpdatePolicy.class);
+            UpdatePolicyElement reloadPolicy = new UpdatePolicyElement();
             reloadPolicy.setInterval(reloadAnn.interval());
             reloadPolicy.setTimeUnit(reloadAnn.timeUnit());
             result.setConfigurationReloadPolicy(reloadPolicy);
             return;
         }
 
-        if (arg.isAnnotationPresent(DoNotReloadPolicy.class)) {
-            result.setDoNotReloadPolicy(new DoNotReloadPolicyElement());
+        if (arg.isAnnotationPresent(DoNotUpdatePolicy.class)) {
+            result.setDoNotReloadPolicy(new DoNotUpdatePolicyElement());
             LoggerHolder.getLog().warn(msg.format("do.not.reload", arg));
             return;
         }

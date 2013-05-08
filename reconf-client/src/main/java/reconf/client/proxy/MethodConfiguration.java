@@ -80,7 +80,7 @@ public class MethodConfiguration {
     public int getReloadInterval() {
         switch (getReloadStrategy()) {
         case ATOMIC : return cfgRepository.getConfigurationReloadPolicy().getInterval();
-        case INDEPENDENT : return remoteItem.getConfigurationReloadPolicy().getInterval();
+        case INDEPENDENT : return remoteItem.getUpdatePolicy().getInterval();
         case NONE : return 0;
         default : throw new IllegalStateException(msg.get("error.internal"));
         }
@@ -89,17 +89,17 @@ public class MethodConfiguration {
     public TimeUnit getReloadTimeUnit() {
         switch (getReloadStrategy()) {
         case ATOMIC : return cfgRepository.getConfigurationReloadPolicy().getTimeUnit();
-        case INDEPENDENT : return remoteItem.getConfigurationReloadPolicy().getTimeUnit();
+        case INDEPENDENT : return remoteItem.getUpdatePolicy().getTimeUnit();
         case NONE : return TimeUnit.DAYS;
         default : throw new IllegalStateException(msg.get("error.internal"));
         }
     }
 
     public ReloadStrategy getReloadStrategy() {
-        if (remoteItem.getDoNotReloadPolicy() != null) {
+        if (remoteItem.getDoNotUpdatePolicy() != null) {
             return ReloadStrategy.NONE;
         }
-        if (remoteItem.getConfigurationReloadPolicy() != null) {
+        if (remoteItem.getUpdatePolicy() != null) {
             return ReloadStrategy.INDEPENDENT;
         }
 

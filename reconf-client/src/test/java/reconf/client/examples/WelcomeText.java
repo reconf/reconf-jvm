@@ -22,7 +22,7 @@ import reconf.client.annotations.*;
 
 
 @ConfigurationRepository(component="test", product="test")
-@ConfigurationReloadPolicy(interval=10, timeUnit=TimeUnit.SECONDS)
+@UpdatePolicy(interval=10, timeUnit=TimeUnit.SECONDS)
 public interface WelcomeText {
 
     @ConfigurationItem(name="texto.de.boas.vindas")
@@ -32,8 +32,8 @@ public interface WelcomeText {
     Map<Long, String> getMap();
 
     @ConfigurationItem(name="hugemap.param", adapter=RawStringConfigurationAdapter.class)
-    @ConfigurationReloadPolicy(interval=10, timeUnit=TimeUnit.SECONDS)
-    @DoNotReloadPolicy
+    @UpdatePolicy(interval=10, timeUnit=TimeUnit.SECONDS)
+    @DoNotUpdatePolicy
     String getRawMap();
 
     @SynchronizeConfigurationRepository
