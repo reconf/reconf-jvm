@@ -32,7 +32,7 @@ public interface WelcomeText {
     Map<Long, String> getMap();
 
     @ConfigurationItem(name="hugemap.param", adapter=RawStringConfigurationAdapter.class)
-    @UpdateFrequency(interval=1000, timeUnit=TimeUnit.SECONDS)
+    @UpdateFrequency(interval=1000, timeUnit=TimeUnit.MINUTES)
     @DoNotUpdate
     String getRawMap();
 

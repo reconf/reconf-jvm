@@ -43,7 +43,7 @@ public class XmlConfiguration {
         this.connectionSettings = connectionSettings;
     }
 
-    @XmlElement(name="override-repository-update-frequency") @Valid
+    @XmlElement(name="configuration-repository-update-frequency") @Valid
     public GlobalUpdateFrequencySettings getAnnotationOverride() {
         return annotationOverride;
     }
@@ -57,7 +57,7 @@ public class XmlConfiguration {
         .append("local-cache", getLocalCacheSettings())
         .append("server", getConnectionSettings());
         if (getAnnotationOverride() != null) {
-            result.append("override-repository-update-frequency", getAnnotationOverride());
+            result.append("configuration-repository-update-frequency", getAnnotationOverride());
         }
         return result.toString();
     }
