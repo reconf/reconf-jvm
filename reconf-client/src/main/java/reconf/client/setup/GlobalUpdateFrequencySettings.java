@@ -21,10 +21,10 @@ import javax.xml.bind.annotation.*;
 import org.apache.commons.lang.builder.*;
 import reconf.client.elements.*;
 
-public class GlobalUpdatePolicySettings extends UpdatePolicyElement {
+public class GlobalUpdateFrequencySettings extends UpdateFrequencyElement {
 
-    @NotNull(message="{setup.GlobalUpdatePolicySettings.interval.error}")
-    @Min(value=1,message="{setup.GlobalUpdatePolicySettings.interval.error}")
+    @NotNull(message="{setup.GlobalUpdateFrequencySettings.interval.error}")
+    @Min(value=1,message="{setup.GlobalUpdateFrequencySettings.interval.error}")
     @XmlElement(name="interval")
     public Integer getInterval() {
         return super.getInterval();
@@ -33,7 +33,7 @@ public class GlobalUpdatePolicySettings extends UpdatePolicyElement {
         super.setInterval(interval);
     }
 
-    @NotNull(message="{setup.GlobalUpdatePolicySettings.timeUnit.null}")
+    @NotNull(message="{setup.GlobalUpdateFrequencySettings.timeUnit.null}")
     @XmlElement(name="time-unit")
     public TimeUnit getTimeUnit() {
         return super.getTimeUnit();

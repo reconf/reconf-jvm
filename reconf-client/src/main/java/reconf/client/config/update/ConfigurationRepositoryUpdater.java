@@ -230,14 +230,14 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         if (!shouldReload()) {
             return 0;
         }
-        return cfgRepository.getConfigurationReloadPolicy().getInterval();
+        return cfgRepository.getUpdateFrequency().getInterval();
     }
 
     public TimeUnit getReloadTimeUnit() {
         if (!shouldReload()) {
             return TimeUnit.DAYS;
         }
-        return cfgRepository.getConfigurationReloadPolicy().getTimeUnit();
+        return cfgRepository.getUpdateFrequency().getTimeUnit();
     }
 
     public Object getValueOf(Method m) {

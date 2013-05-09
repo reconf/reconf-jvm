@@ -21,6 +21,7 @@ import javax.validation.constraints.*;
 import org.apache.commons.lang.builder.*;
 import org.hibernate.validator.constraints.*;
 import reconf.client.setup.*;
+import reconf.infra.system.*;
 
 
 public class ConfigurationRepositoryElement {
@@ -28,8 +29,8 @@ public class ConfigurationRepositoryElement {
     private ConnectionSettings connectionSettings;
     private String product;
     private String component;
-    private DoNotUpdatePolicyElement doNotReloadPolicy;
-    private UpdatePolicyElement configurationReloadPolicy;
+    private DoNotUpdateElement doNotUpdate;
+    private UpdateFrequencyElement updateFrequency;
     private Class<?> interfaceClass;
     private List<ConfigurationItemElement> configurationItems = new ArrayList<ConfigurationItemElement>();
 
@@ -57,20 +58,20 @@ public class ConfigurationRepositoryElement {
         this.product = product;
     }
 
-    public DoNotUpdatePolicyElement getDoNotReloadPolicy() {
-        return doNotReloadPolicy;
+    public DoNotUpdateElement getDoNotUpdate() {
+        return doNotUpdate;
     }
 
-    public void setDoNotReloadPolicy(DoNotUpdatePolicyElement doNotReloadPolicy) {
-        this.doNotReloadPolicy = doNotReloadPolicy;
+    public void setDoNotUpdate(DoNotUpdateElement doNotUpdate) {
+        this.doNotUpdate = doNotUpdate;
     }
 
     @Valid
-    public UpdatePolicyElement getConfigurationReloadPolicy() {
-        return configurationReloadPolicy;
+    public UpdateFrequencyElement getUpdateFrequency() {
+        return updateFrequency;
     }
-    public void setConfigurationReloadPolicy(UpdatePolicyElement configurationReloadPolicy) {
-        this.configurationReloadPolicy = configurationReloadPolicy;
+    public void setUpdateFrequency(UpdateFrequencyElement updateFrequency) {
+        this.updateFrequency = updateFrequency;
     }
 
     @NotNull
@@ -95,13 +96,13 @@ public class ConfigurationRepositoryElement {
         .append("class", getInterfaceClass())
         .append("product", getProduct())
         .append("component", getComponent())
-        .append("do-not-update-policy", null == doNotReloadPolicy ? "false" : "true");
-        if (null == getConfigurationReloadPolicy()) {
-            result.append("update-policy", "n/a");
+        .append("@DoNotUpdate", null == doNotUpdate ? "not found" : "found");
+        if (getUpdateFrequency() == null) {
+            result.append("@UpdateFrequency", "not found");
         } else {
-            result.append("update-policy", getConfigurationReloadPolicy());
+            result.append("@UpdateFrequency", getUpdateFrequency());
         }
-        result.append("configuration-items", getConfigurationItems());
+        result.append("@ConfigurationItems", LineSeparator.value() + getConfigurationItems());
         return result.toString();
     }
 }

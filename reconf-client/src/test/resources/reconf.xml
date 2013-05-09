@@ -11,8 +11,8 @@
         <timeout>20</timeout>
         <time-unit>SECONDS</time-unit>
     </server>
-    <override-update-policy>
+    <override-repository-update-frequency>
         <interval>100</interval>
         <time-unit>SECONDS</time-unit>
-    </override-update-policy>
+    </override-repository-update-frequency>
 </configuration>

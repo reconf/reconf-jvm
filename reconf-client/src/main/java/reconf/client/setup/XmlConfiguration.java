@@ -25,7 +25,7 @@ public class XmlConfiguration {
 
     private LocalCacheSettings localCacheSettings;
     private ConnectionSettings connectionSettings;
-    private GlobalUpdatePolicySettings annotationOverride;
+    private GlobalUpdateFrequencySettings annotationOverride;
 
     @XmlElement(name="local-cache") @Valid @NotNull
     public LocalCacheSettings getLocalCacheSettings() {
@@ -43,11 +43,11 @@ public class XmlConfiguration {
         this.connectionSettings = connectionSettings;
     }
 
-    @XmlElement(name="override-update-policy") @Valid
-    public GlobalUpdatePolicySettings getAnnotationOverride() {
+    @XmlElement(name="override-repository-update-frequency") @Valid
+    public GlobalUpdateFrequencySettings getAnnotationOverride() {
         return annotationOverride;
     }
-    public void setAnnotationOverride(GlobalUpdatePolicySettings annotationOverride) {
+    public void setAnnotationOverride(GlobalUpdateFrequencySettings annotationOverride) {
         this.annotationOverride = annotationOverride;
     }
 
@@ -57,7 +57,7 @@ public class XmlConfiguration {
         .append("local-cache", getLocalCacheSettings())
         .append("server", getConnectionSettings());
         if (getAnnotationOverride() != null) {
-            result.append("override-update-policy", getAnnotationOverride());
+            result.append("override-repository-update-frequency", getAnnotationOverride());
         }
         return result.toString();
     }

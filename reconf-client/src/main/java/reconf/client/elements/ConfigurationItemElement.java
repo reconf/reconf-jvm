@@ -36,8 +36,8 @@ public class ConfigurationItemElement {
     private String key;
     private String component;
     private String product;
-    private DoNotUpdatePolicyElement doNotUpdatePolicy;
-    private UpdatePolicyElement updatePolicy;
+    private DoNotUpdateElement doNotUpdate;
+    private UpdateFrequencyElement updateFrequency;
     private Class<? extends ConfigurationAdapter> adapter;
 
     public static List<ConfigurationItemElement> from(ConfigurationRepositoryElement repository) {
@@ -75,21 +75,21 @@ public class ConfigurationItemElement {
             resultItem.setKey(annItem.name());
         }
 
-        if (resultItem.getMethod().isAnnotationPresent(UpdatePolicy.class)) {
-            UpdatePolicy reloadAnn = resultItem.getMethod().getAnnotation(UpdatePolicy.class);
-            UpdatePolicyElement policy = new UpdatePolicyElement();
-            policy.setInterval(reloadAnn.interval());
-            policy.setTimeUnit(reloadAnn.timeUnit());
-            resultItem.setUpdatePolicy(policy);
+        if (resultItem.getMethod().isAnnotationPresent(UpdateFrequency.class)) {
+            UpdateFrequency frequencyAnn = resultItem.getMethod().getAnnotation(UpdateFrequency.class);
+            UpdateFrequencyElement frequencyElement = new UpdateFrequencyElement();
+            frequencyElement.setInterval(frequencyAnn.interval());
+            frequencyElement.setTimeUnit(frequencyAnn.timeUnit());
+            resultItem.setUpdateFrequency(frequencyElement);
         }
 
-        if (resultItem.getMethod().isAnnotationPresent(DoNotUpdatePolicy.class) && resultItem.getMethod().isAnnotationPresent(UpdatePolicy.class)) {
+        if (resultItem.getMethod().isAnnotationPresent(DoNotUpdate.class) && resultItem.getMethod().isAnnotationPresent(UpdateFrequency.class)) {
             LoggerHolder.getLog().warn(msg.format("error.conflict.reload.policy" , resultItem.getMethod(), repository.getClass()));
             return;
         }
 
-        if (resultItem.getMethod().isAnnotationPresent(DoNotUpdatePolicy.class)) {
-            resultItem.setDoNotUpdatePolicy(new DoNotUpdatePolicyElement());
+        if (resultItem.getMethod().isAnnotationPresent(DoNotUpdate.class)) {
+            resultItem.setDoNotUpdate(new DoNotUpdateElement());
         }
     }
 
@@ -151,19 +151,19 @@ public class ConfigurationItemElement {
         this.product = product;
     }
 
-    public DoNotUpdatePolicyElement getDoNotUpdatePolicy() {
-        return doNotUpdatePolicy;
+    public DoNotUpdateElement getDoNotUpdate() {
+        return doNotUpdate;
     }
-    public void setDoNotUpdatePolicy(DoNotUpdatePolicyElement doNotUpdatePolicy) {
-        this.doNotUpdatePolicy = doNotUpdatePolicy;
+    public void setDoNotUpdate(DoNotUpdateElement doNotUpdate) {
+        this.doNotUpdate = doNotUpdate;
     }
 
     @Valid
-    public UpdatePolicyElement getUpdatePolicy() {
-        return updatePolicy;
+    public UpdateFrequencyElement getUpdateFrequency() {
+        return updateFrequency;
     }
-    public void setUpdatePolicy(UpdatePolicyElement updatePolicy) {
-        this.updatePolicy = updatePolicy;
+    public void setUpdateFrequency(UpdateFrequencyElement updateFrequency) {
+        this.updateFrequency = updateFrequency;
     }
 
     @Override
@@ -172,11 +172,11 @@ public class ConfigurationItemElement {
         addToString(result, "product", getProduct());
         addToString(result, "component", getComponent());
         result.append("name", getKey());
-        result.append("do-not-update-policy", null == doNotUpdatePolicy ? "false" : "true");
-        if (null == getUpdatePolicy()) {
-            result.append("update-policy", "n/a");
+        result.append("@DoNotUpdate", null == doNotUpdate ? "not found" : "found");
+        if (getUpdateFrequency() == null) {
+            result.append("specific @UpdateFrequency", "not found");
         } else {
-            result.append("update-policy", getUpdatePolicy());
+            result.append("specific @UpdateFrequency", getUpdateFrequency());
         }
         return result.toString();
     }

@@ -20,13 +20,13 @@ import javax.validation.constraints.*;
 import org.apache.commons.lang.builder.*;
 
 
-public class UpdatePolicyElement {
+public class UpdateFrequencyElement {
 
     private Integer interval;
     private TimeUnit timeUnit;
 
-    @NotNull(message="{elements.UpdatePolicyElement.interval.error}")
-    @Min(value=1,message="{elements.UpdatePolicyElement.interval.error}")
+    @NotNull(message="{elements.UpdateFrequencyElement.interval.error}")
+    @Min(value=1,message="{elements.UpdateFrequencyElement.interval.error}")
     public Integer getInterval() {
         return interval;
     }
@@ -34,7 +34,7 @@ public class UpdatePolicyElement {
         this.interval = interval;
     }
 
-    @NotNull(message="{elements.UpdatePolicyElement.timeUnit.null}")
+    @NotNull(message="{elements.UpdateFrequencyElement.timeUnit.null}")
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }
