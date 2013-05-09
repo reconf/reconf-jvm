@@ -22,15 +22,15 @@ import reconf.client.proxy.*;
 public class ProxyFactoryTest {
 
     public static void main(String[] args) throws Exception {
-        System.out.println(System.getProperties());
-
-        WelcomeText welcome = ConfigurationRepositoryFactory.create(WelcomeText.class);
+        WelcomeConfiguration welcome = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class);
         System.out.println(welcome.getText());
         System.out.println(welcome.getMap());
         System.out.println(welcome.getRawMap());
 
         System.out.println("going to sleep...");
-        Thread.sleep(1);
+        Thread.sleep(30000);
+
+        welcome.updateIt();
 
         System.out.println(welcome.getText());
         System.out.println(welcome.getMap());

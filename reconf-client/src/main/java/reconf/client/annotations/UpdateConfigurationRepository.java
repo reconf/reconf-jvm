@@ -15,12 +15,15 @@
  */
 package reconf.client.annotations;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.*;
 import java.lang.annotation.*;
+import reconf.infra.throwables.*;
 
 
 @Target(METHOD)
 @Retention(RUNTIME)
 public @interface UpdateConfigurationRepository {
+
+    Class<? extends RuntimeException> onErrorThrow() default UpdateConfigurationRepositoryException.class;
 }

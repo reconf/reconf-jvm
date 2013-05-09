@@ -23,7 +23,7 @@ import reconf.client.annotations.*;
 
 @ConfigurationRepository(component="test", product="test")
 @UpdateFrequency(interval=10, timeUnit=TimeUnit.SECONDS)
-public interface WelcomeText {
+public interface WelcomeConfiguration {
 
     @ConfigurationItem(name="texto.de.boas.vindas")
     String getText();
@@ -36,6 +36,6 @@ public interface WelcomeText {
     @DoNotUpdate
     String getRawMap();
 
-    @UpdateConfigurationRepository
-    void reload();
+    @UpdateConfigurationRepository(onErrorThrow=ArrayIndexOutOfBoundsException.class)
+    void updateIt();
 }

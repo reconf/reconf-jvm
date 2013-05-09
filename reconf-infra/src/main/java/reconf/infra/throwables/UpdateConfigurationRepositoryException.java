@@ -16,11 +16,11 @@
 package reconf.infra.throwables;
 
 
-public class SynchronizeConfigurationRepositoryException extends RuntimeException {
+public class UpdateConfigurationRepositoryException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public SynchronizeConfigurationRepositoryException(String msg) {
+    public UpdateConfigurationRepositoryException(String msg) {
         super(msg);
     }
 }

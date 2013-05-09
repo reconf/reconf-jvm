@@ -45,8 +45,8 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         scheduleIndependent();
     }
 
-    public void syncNow() {
-        sync();
+    public void syncNow(Class<? extends RuntimeException> cls) {
+        sync(cls);
     }
 
     public void run() {
@@ -177,7 +177,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         return false;
     }
 
-    private void sync() {
+    private void sync(Class<? extends RuntimeException> cls) {
         ExecutorService service = Executors.newFixedThreadPool(data.getAll().size());
         CountDownLatch latch = new CountDownLatch(data.getAll().size());
         Map<Method, Object> updateAtomic = new ConcurrentHashMap<Method, Object>();
@@ -201,7 +201,22 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         }
 
         if (updateAtomic.size() + updateIndependent.size() != data.getAll().size()) {
-            throw new SynchronizeConfigurationRepositoryException(msg.format("error.load", cfgRepository.getInterfaceClass()));
+            String error = msg.format("error.load", cfgRepository.getInterfaceClass());
+            try {
+                Constructor<?> constructor = null;
+                constructor = cls.getConstructor(String.class);
+                constructor.setAccessible(true);
+                throw cls.cast(constructor.newInstance(error));
+
+            } catch (NoSuchMethodException ignored) {
+                throw new UpdateConfigurationRepositoryException(error);
+            } catch (InvocationTargetException ignored) {
+                throw new UpdateConfigurationRepositoryException(error);
+            } catch (InstantiationException ignored) {
+                throw new UpdateConfigurationRepositoryException(error);
+            } catch (IllegalAccessException ignored) {
+                throw new UpdateConfigurationRepositoryException(error);
+            }
         }
         finishSync(updateAtomic, updateIndependent);
     }

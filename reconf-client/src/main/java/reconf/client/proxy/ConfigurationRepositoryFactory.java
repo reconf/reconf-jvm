@@ -64,7 +64,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.isAnnotationPresent(UpdateConfigurationRepository.class)) {
-            updater.syncNow();
+            updater.syncNow(method.getAnnotation(UpdateConfigurationRepository.class).onErrorThrow());
             return null;
         }
         if (!method.isAnnotationPresent(ConfigurationItem.class)) {
