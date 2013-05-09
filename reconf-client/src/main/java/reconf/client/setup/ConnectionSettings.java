@@ -17,7 +17,6 @@ package reconf.client.setup;
 
 import java.util.concurrent.*;
 import javax.validation.constraints.*;
-import javax.xml.bind.annotation.*;
 import org.apache.commons.lang.builder.*;
 import org.hibernate.validator.constraints.*;
 
@@ -35,7 +34,6 @@ public class ConnectionSettings {
     @NotNull(message="{setup.ConnectionSettings.url.error}")
     @NotBlank(message="{setup.ConnectionSettings.url.error}")
     @Size(min=1,message="{setup.ConnectionSettings.url.error}")
-    @XmlElement(name="url")
     public String getUrl() {
         return url;
     }
@@ -44,7 +42,6 @@ public class ConnectionSettings {
     }
 
     @Min(value=1,message="{setup.ConnectionSettings.timeout.error}")
-    @XmlElement(name="timeout")
     public int getTimeout() {
         return timeout;
     }
@@ -53,7 +50,6 @@ public class ConnectionSettings {
     }
 
     @NotNull(message="{setup.ConnectionSettings.timeUnit.null}")
-    @XmlElement(name="time-unit")
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }
@@ -62,7 +58,6 @@ public class ConnectionSettings {
     }
 
     @Min(value=1,message="{setup.ConnectionSettings.retry.error}")
-    @XmlElement(name="max-retry")
     public int getMaxRetry() {
         return maxRetry;
     }

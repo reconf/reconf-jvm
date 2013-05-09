@@ -27,7 +27,6 @@ import reconf.infra.io.InputStreamReader;
 import reconf.infra.log.*;
 import reconf.infra.system.*;
 import reconf.infra.throwables.*;
-import reconf.infra.xml.*;
 
 
 public class Environment {
@@ -56,12 +55,17 @@ public class Environment {
                 throw new ReConfInitializationError("configuration file is either empty or could not be found");
             }
 
-            LocaleHolder.set(LocaleFinder.find(raw));
+            XmlConfigurationParser parser = XmlConfigurationParser.from(raw);
+            LocaleHolder.set(parser.getLocale());
+
+            config = new XmlConfiguration();
+            config.setAnnotationOverride(parser.getAnnotationOverride());
+            config.setConnectionSettings(parser.getConnectionSettings());
+            config.setLocalCacheSettings(parser.getLocalCacheSettings());
 
             msg = MessagesBundle.getBundle(Environment.class);
             LoggerHolder.getLog().info(msg.get("file.load"));
 
-            config = Serializer.fromXml(raw, XmlConfiguration.class);
             validate(config);
             LoggerHolder.getLog().info(msg.format("configured", LineSeparator.value(), config.toString()));
 
@@ -96,7 +100,7 @@ public class Environment {
         for (ConstraintViolation<XmlConfiguration> violation : violations) {
             errors.add(i++ + " - " + violation.getMessage());
         }
-        throw new ReConfInitializationError(msg.format("error.xml", LineSeparator.value(), StringUtils.join(errors, ", ")));
+        throw new ReConfInitializationError(msg.format("error.xml", LineSeparator.value(), StringUtils.join(errors, LineSeparator.value())));
     }
 
     public static void setUp() {

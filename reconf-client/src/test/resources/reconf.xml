@@ -3,13 +3,14 @@
     <locale>pt_BR</locale>
     <local-cache>
         <location>/tmp/other/hsqldb2-tester/db</location>
-        <max-log-file-size-mb>10</max-log-file-size-mb>
-        <compressed>true</compressed>
+        <max-log-file-size-mb>50</max-log-file-size-mb>
+        <compressed>false</compressed>
     </local-cache>
     <server>
         <url>http://config-reader.remote-admin.intranet</url>
-        <timeout>20</timeout>
+        <timeout>200</timeout>
         <time-unit>SECONDS</time-unit>
+        <max-retry>20</max-retry>
     </server>
     <configuration-repository-update-frequency>
         <interval>100</interval>

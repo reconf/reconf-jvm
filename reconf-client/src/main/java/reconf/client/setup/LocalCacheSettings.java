@@ -17,7 +17,6 @@ package reconf.client.setup;
 
 import java.io.*;
 import javax.validation.constraints.*;
-import javax.xml.bind.annotation.*;
 import org.apache.commons.lang.builder.*;
 
 
@@ -27,7 +26,6 @@ public class LocalCacheSettings {
     private boolean compressed;
     private File backupLocation;
 
-    @XmlElement(name="max-log-file-size-mb")
     @Min(value=1,message="{setup.LocalCacheSettings.backup.max.log.error}")
     @Max(value=50,message="{setup.LocalCacheSettings.backup.max.log.error}")
     public int getMaxLogFileSize() {
@@ -37,7 +35,6 @@ public class LocalCacheSettings {
         this.maxLogFileSize = maxLogFileSize;
     }
 
-    @XmlElement(name="compressed")
     public boolean isCompressed() {
         return compressed;
     }
@@ -45,7 +42,6 @@ public class LocalCacheSettings {
         this.compressed = compressed;
     }
 
-    @XmlElement(name="location")
     @NotNull(message="{setup.LocalCacheSettings.backup.location.error.null}")
     public File getBackupLocation() {
         return backupLocation;

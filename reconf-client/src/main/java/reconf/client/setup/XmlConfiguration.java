@@ -17,17 +17,15 @@ package reconf.client.setup;
 
 import javax.validation.*;
 import javax.validation.constraints.*;
-import javax.xml.bind.annotation.*;
 import org.apache.commons.lang.builder.*;
 
-@XmlRootElement(name="configuration")
 public class XmlConfiguration {
 
     private LocalCacheSettings localCacheSettings;
     private ConnectionSettings connectionSettings;
     private GlobalUpdateFrequencySettings annotationOverride;
 
-    @XmlElement(name="local-cache") @Valid @NotNull
+    @Valid @NotNull
     public LocalCacheSettings getLocalCacheSettings() {
         return localCacheSettings;
     }
@@ -35,7 +33,7 @@ public class XmlConfiguration {
         this.localCacheSettings = localCacheSettings;
     }
 
-    @XmlElement(name="server") @Valid @NotNull
+    @Valid @NotNull
     public ConnectionSettings getConnectionSettings() {
         return connectionSettings;
     }
@@ -43,7 +41,7 @@ public class XmlConfiguration {
         this.connectionSettings = connectionSettings;
     }
 
-    @XmlElement(name="configuration-repository-update-frequency") @Valid
+    @Valid
     public GlobalUpdateFrequencySettings getAnnotationOverride() {
         return annotationOverride;
     }

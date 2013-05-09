@@ -24,6 +24,10 @@ public class ReConfInitializationError extends Error {
         super(msg);
     }
 
+    public ReConfInitializationError(String msg, Exception e) {
+        super(msg, e);
+    }
+
     public ReConfInitializationError(Throwable t) {
         super(t);
     }
