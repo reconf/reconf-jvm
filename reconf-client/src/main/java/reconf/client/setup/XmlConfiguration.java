@@ -19,14 +19,13 @@ import javax.validation.*;
 import javax.validation.constraints.*;
 import javax.xml.bind.annotation.*;
 import org.apache.commons.lang.builder.*;
-import reconf.client.elements.*;
 
 @XmlRootElement(name="configuration")
 public class XmlConfiguration {
 
     private LocalCacheSettings localCacheSettings;
     private ConnectionSettings connectionSettings;
-    private UpdatePolicyElement annotationOverride;
+    private GlobalUpdatePolicySettings annotationOverride;
 
     @XmlElement(name="local-cache") @Valid @NotNull
     public LocalCacheSettings getLocalCacheSettings() {
@@ -45,10 +44,10 @@ public class XmlConfiguration {
     }
 
     @XmlElement(name="override-update-policy") @Valid
-    public UpdatePolicyElement getAnnotationOverride() {
+    public GlobalUpdatePolicySettings getAnnotationOverride() {
         return annotationOverride;
     }
-    public void setAnnotationOverride(UpdatePolicyElement annotationOverride) {
+    public void setAnnotationOverride(GlobalUpdatePolicySettings annotationOverride) {
         this.annotationOverride = annotationOverride;
     }
 

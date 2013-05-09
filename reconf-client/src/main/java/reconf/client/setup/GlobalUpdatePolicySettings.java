@@ -13,40 +13,41 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.elements;
+package reconf.client.setup;
 
 import java.util.concurrent.*;
 import javax.validation.constraints.*;
+import javax.xml.bind.annotation.*;
 import org.apache.commons.lang.builder.*;
+import reconf.client.elements.*;
 
+public class GlobalUpdatePolicySettings extends UpdatePolicyElement {
 
-public class UpdatePolicyElement {
-
-    private Integer interval;
-    private TimeUnit timeUnit;
-
-    @NotNull(message="{elements.UpdatePolicyElement.interval.error}")
-    @Min(value=1,message="{elements.UpdatePolicyElement.interval.error}")
+    @NotNull(message="{setup.GlobalUpdatePolicySettings.interval.error}")
+    @Min(value=1,message="{setup.GlobalUpdatePolicySettings.interval.error}")
+    @XmlElement(name="interval")
     public Integer getInterval() {
-        return interval;
+        return super.getInterval();
     }
     public void setInterval(Integer interval) {
-        this.interval = interval;
+        super.setInterval(interval);
     }
 
-    @NotNull(message="{elements.UpdatePolicyElement.timeUnit.null}")
+    @NotNull(message="{setup.GlobalUpdatePolicySettings.timeUnit.null}")
+    @XmlElement(name="time-unit")
     public TimeUnit getTimeUnit() {
-        return timeUnit;
+        return super.getTimeUnit();
     }
     public void setTimeUnit(TimeUnit timeUnit) {
-        this.timeUnit = timeUnit;
+        super.setTimeUnit(timeUnit);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
         .append("interval", getInterval())
-        .append("timeUnit", getTimeUnit())
+        .append("time-unit", getTimeUnit())
         .toString();
     }
+
 }

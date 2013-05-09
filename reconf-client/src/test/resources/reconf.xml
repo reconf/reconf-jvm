@@ -11,8 +11,8 @@
         <timeout>20</timeout>
         <time-unit>SECONDS</time-unit>
     </server>
-    <override-reload-policy>
-        <interval>10</interval>
-        <time-unit>MINUTES</time-unit>
-    </override-reload-policy>
+    <override-update-policy>
+        <interval>100</interval>
+        <time-unit>SECONDS</time-unit>
+    </override-update-policy>
 </configuration>

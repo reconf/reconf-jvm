@@ -171,12 +171,12 @@ public class ConfigurationItemElement {
         ToStringBuilder result = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("method", getMethod());
         addToString(result, "product", getProduct());
         addToString(result, "component", getComponent());
-        result.append("key", getKey());
+        result.append("name", getKey());
         result.append("do-not-update-policy", null == doNotUpdatePolicy ? "false" : "true");
         if (null == getUpdatePolicy()) {
-            result.append("update-reload-policy", "n/a");
+            result.append("update-policy", "n/a");
         } else {
-            result.append("update-reload-policy", getUpdatePolicy());
+            result.append("update-policy", getUpdatePolicy());
         }
         return result.toString();
     }

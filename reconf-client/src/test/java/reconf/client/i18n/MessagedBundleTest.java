@@ -16,49 +16,43 @@
 package reconf.client.i18n;
 
 import java.util.*;
+import java.util.Map.Entry;
+import org.apache.commons.lang.*;
 import org.junit.*;
-import reconf.client.adapters.*;
-import reconf.client.config.source.*;
-import reconf.client.config.update.*;
-import reconf.client.constructors.*;
-import reconf.client.elements.*;
-import reconf.client.proxy.*;
-import reconf.client.setup.*;
-import reconf.infra.http.*;
-import reconf.infra.i18n.*;
 
+@SuppressWarnings("serial")
 public class MessagedBundleTest {
 
-    Class<?>[] adapters = new Class<?>[] {NoConfigurationAdapter.class, RawStringConfigurationAdapter.class};
-    Class<?>[] configSource = new Class<?>[] {ConfigurationSourceHolder.class, DatabaseConfigurationSource.class, RemoteConfigurationSource.class};
-    Class<?>[] configUpdate = new Class<?>[] {ConfigurationUpdater.class, LocalConfigurationUpdater.class, RemoteConfigurationUpdater.class};
-    Class<?>[] constructors = new Class<?>[] {ArrayConstructor.class, CollectionConstructor.class, MapConstructor.class, MethodData.class, ObjectConstructors.class, SimpleConstructor.class, StringParser.class};
-    Class<?>[] elements = new Class<?>[] {ConfigurationItemElement.class, ConfigurationRepositoryElement.class, ConfigurationRepositoryElementFactory.class, DatabaseConfigurationElement.class, DoNotUpdatePolicyElement.class, UpdatePolicyElement.class};
-    Class<?>[] proxy = new Class<?>[] {ConfigurationRepositoryFactory.class, Customization.class, MethodConfiguration.class};
-    Class<?>[] setup = new Class<?>[] {ConnectionSettings.class, DatabaseManager.class, Environment.class, LocalCacheSettings.class, XmlConfiguration.class};
-    Class<?>[] update = new Class<?>[] {ConfigurationRepositoryData.class, ConfigurationRepositoryUpdater.class};
-    Class<?>[] infraHttp = new Class<?>[] {LocalHostname.class, ServerStub.class, SimpleHttpClient.class, SimpleHttpRequest.class, SimpleHttpResponse.class};
+    Map<String, List<String>> basePackageBundles = new LinkedHashMap<String, List<String>>() {
+        {
+            put("reconf.client.", Arrays.asList("/messages_client_pt_BR.properties", "/messages_client.properties"));
+            put("reconf.infra.", Arrays.asList("/messages_infra_pt_BR.properties", "/messages_infra.properties"));
+        }
 
-    Class<?>[][] allPackages = new Class<?>[][] { adapters,
-                                                  configSource,
-                                                  configUpdate,
-                                                  constructors,
-                                                  elements,
-                                                  proxy,
-                                                  setup,
-                                                  update,
-                                                  infraHttp
-                                                };
+    };
 
     @Test
     public void test() throws Exception {
 
-        for (String locale : Arrays.asList("lv_LV", "pt_BR")) {
-            LocaleHolder.set(locale);
-            for (Class<?>[] pkg : allPackages) {
-                for (Class<?> cls : pkg) {
-                    MessagesBundle bundle = MessagesBundle.getBundle(cls);
-                    Assert.assertEquals(cls.getSimpleName(), bundle.get("probe"));
+        for (Entry<String, List<String>> each : basePackageBundles.entrySet()) {
+            for (String path : each.getValue()) {
+                Properties props = new Properties();
+                props.load(this.getClass().getResourceAsStream(path));
+
+                for (Object key : props.keySet()) {
+                    List<String> parts = Arrays.asList(StringUtils.split(each.getKey() + key.toString(), "."));
+                    boolean found = false;
+                    for (int i = 0; i < parts.size(); i++) {
+                        String className = StringUtils.join(parts.subList(0, i), ".");
+                        try {
+                            Class.forName(className);
+                            found = true;
+                            break;
+                        } catch (ClassNotFoundException e) { }
+                    }
+                    if (!found) {
+                        throw new ClassNotFoundException(each.getKey() + key.toString() + " at " + path);
+                    }
                 }
             }
         }

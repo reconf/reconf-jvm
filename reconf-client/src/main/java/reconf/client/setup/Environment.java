@@ -17,12 +17,9 @@ package reconf.client.setup;
 
 import java.io.*;
 import java.util.*;
-
 import javax.validation.*;
-
 import org.apache.commons.collections.*;
 import org.apache.commons.lang.*;
-
 import reconf.client.elements.*;
 import reconf.infra.i18n.*;
 import reconf.infra.io.*;

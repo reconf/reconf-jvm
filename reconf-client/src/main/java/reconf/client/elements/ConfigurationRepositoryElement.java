@@ -95,11 +95,11 @@ public class ConfigurationRepositoryElement {
         .append("class", getInterfaceClass())
         .append("product", getProduct())
         .append("component", getComponent())
-        .append("do-not-reload-policy", null == doNotReloadPolicy ? "false" : "true");
+        .append("do-not-update-policy", null == doNotReloadPolicy ? "false" : "true");
         if (null == getConfigurationReloadPolicy()) {
-            result.append("configuration-reload-policy", "n/a");
+            result.append("update-policy", "n/a");
         } else {
-            result.append("configuration-reload-policy", getConfigurationReloadPolicy());
+            result.append("update-policy", getConfigurationReloadPolicy());
         }
         result.append("configuration-items", getConfigurationItems());
         return result.toString();
