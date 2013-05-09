@@ -36,6 +36,6 @@ public interface WelcomeConfiguration {
     @DoNotUpdate
     String getRawMap();
 
-    @UpdateConfigurationRepository(onErrorThrow=ArrayIndexOutOfBoundsException.class)
+    @UpdateConfigurationRepository
     void updateIt();
 }

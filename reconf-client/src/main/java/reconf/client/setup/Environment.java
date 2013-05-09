@@ -36,7 +36,7 @@ public class Environment {
     private static final String SYSTEM_PROPERTY = "reconf.client.xml.location";
     private static final XmlConfiguration config;
     private static final ConfigurationRepositoryElementFactory factory;
-    private static final DatabaseManager mgr;
+    private static DatabaseManager mgr;
     private static MessagesBundle msg;
 
     static {
@@ -70,9 +70,15 @@ public class Environment {
             mgr = new DatabaseManager(config.getLocalCacheSettings());
 
         } catch (ReConfInitializationError e) {
+            if (mgr != null) {
+                mgr.shutdown();
+            }
             throw e;
 
         } catch (Throwable t) {
+            if (mgr != null) {
+                mgr.shutdown();
+            }
             throw new ReConfInitializationError(t);
         }
     }
