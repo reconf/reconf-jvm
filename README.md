@@ -1,4 +1,4 @@
-# ReConf JVM
+# ReConf JVM in 30 seconds
 
 The ReConf JVM Project is a library that provides an easy way to utilize smart configurations in a Java application.
 
@@ -14,7 +14,9 @@ ReConf Client relies on a simple and straightforward XML configuration file, jus
 
 Just create a plain old Java interface, decorate it with a few custom annotations, call a factory method and that's it! Your application is good to go.
 
-## Table of Contents
+# ReConf JVM Integration Guide
+
+#### Table of Contents 
 
 * [What are the benefits of using it?](#what-are-the-benefits-of-using-it)
 * [And the minimum requirements?](#and-the-minimum-requirements)
