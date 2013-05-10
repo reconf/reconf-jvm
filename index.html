@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Reconf-jvm : ReConf JVM Repository" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Reconf-jvm</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/reconf/reconf-jvm">View on GitHub</a>
+
+          <h1 id="project_title">Reconf-jvm</h1>
+          <h2 id="project_tagline">ReConf JVM Repository</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/reconf/reconf-jvm/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/reconf/reconf-jvm/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>ReConf JVM in 30 seconds</h1>
+
+<p>The ReConf JVM Project is a library that provides an easy way to utilize smart configurations in a Java application.</p>
+
+<h3>Smart configurations</h3>
+
+<p>A smart configuration is capable of automatically reloading itself from time to time - no need to restart the application. Each configuration item is a key-value pair written in a special - yet simple - format, which allows the library to create the appropriate Java object according to its type.</p>
+
+<h3>Just enough XML</h3>
+
+<p>ReConf Client relies on a simple and straightforward XML configuration file, just enough to know a little bit about the execution environment.</p>
+
+<h3>Get rid of boilerplate code</h3>
+
+<p>Just create a plain old Java interface, decorate it with a few custom annotations, call a factory method and that's it! Your application is good to go.</p>
+
+<h1>ReConf JVM Integration Guide</h1>
+
+<h4>Table of Contents</h4>
+
+<ul>
+<li><a href="#what-are-the-benefits-of-using-it">What are the benefits of using it?</a></li>
+<li><a href="#and-the-minimum-requirements">And the minimum requirements?</a></li>
+<li>
+<a href="#how-can-i-use-it">How can I use it?</a>
+
+<ul>
+<li><a href="#a-few-concepts-first">A few concepts first</a></li>
+<li><a href="#import-our-maven-dependency">Import our Maven dependency</a></li>
+<li><a href="#configure-your-reconfxml-file">Configure your reconf.xml file</a></li>
+<li><a href="#create-a-configuration-repository">Create a Configuration Repository</a></li>
+<li><a href="#using-a-configurationrepository">Using a ConfigurationRepository</a></li>
+<li><a href="#native-types-built-automatically">Native types built automatically</a></li>
+</ul>
+</li>
+<li>
+<a href="#advanced-features">Advanced Features</a>
+
+<ul>
+<li><a href="#setting-up-items-with-different-characteristics">Setting up items with different characteristics</a></li>
+<li><a href="#updating-a-configurationrepository-through-code">Updating a ConfigurationRepository through code</a></li>
+<li><a href="#configurationrepository-reuse-through-customizations">ConfigurationRepository reuse through Customizations</a></li>
+<li><a href="#organizing-log-messages">Organizing log messages</a></li>
+<li><a href="#localization-with-reconfxml">Localization with reconf.xml</a></li>
+<li><a href="#overriding-the-updatefrequency-annotation-with-reconfxml">Overriding the @UpdateFrequency annotation with reconf.xml</a></li>
+<li><a href="#reading-from-different-configuration-file">Reading from different configuration file</a></li>
+<li><a href="#integrating-with-spring">Integrating with Spring</a></li>
+<li><a href="#using-customizations-with-spring">Using Customizations with Spring</a></li>
+</ul>
+</li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+</ul><p><a name="what-are-the-benefits-of-using-it"></a></p>
+
+<h2>What are the benefits of using it?</h2>
+
+<p>It can provide the following capabilities to a Java application</p>
+
+<ul>
+<li>
+<strong>Automatic update of configuration items</strong> - from time to time the framework retrieves the latest configuration from the configuration server and handles the updated version to the application.</li>
+<li>
+<strong>Atomic configuration retrieval</strong> - if something fails, nothing changes. This way the application remains consistent.</li>
+<li>
+<strong>Local cache of configuration items</strong> - so it doesn't affect your application's resiliency and availability.</li>
+<li>
+<strong>Native creation of Java objects</strong> - no need to manually parse Strings and convert it to objects. The library is able to natively create Lists, Sets, Maps, primitives, Strings, arrays and every class that provides a constructor that takes a String as an argument.</li>
+</ul><p><a name="and-the-minimum-requirements"></a></p>
+
+<h2>And the minimum requirements?</h2>
+
+<ul>
+<li>Java Runtime Environment 6.</li>
+<li>An instance of ReConf Server (or an Apache Server configured to act as one).</li>
+<li>A few megabytes of local storage for caching purposes (the size of it is directly proportional to the size of your configurations - the bigger they are, the bigger the space it needs).</li>
+</ul><p><a name="how-can-i-use-it"></a></p>
+
+<h2>How can I use it?</h2>
+
+<p><a name="a-few-concepts-first"></a></p>
+
+<h3>A few concepts first</h3>
+
+<p>Two elements form the basis of ReConf: configuration items (@ConfigurationItem) and configuration repositories (@ConfigurationRepository); simply put, one or more items grouped together form a repository. Every configuration item has a <strong>name</strong>, a <strong>component</strong> and a <strong>product</strong>. The latter two attributes can be defined once, in @ConfigurationRepository. Keep with us for more details on how to integrate!</p>
+
+<p><a name="import-our-maven-dependency"></a></p>
+
+<h3>Import our Maven dependency</h3>
+
+<p>Add these lines to the <code>pom.xml</code> file</p>
+
+<div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>br.com.uol.reconf<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>reconf-client<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0.9<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+
+<p><a name="configure-your-reconfxml-file"></a></p>
+
+<h3>Configure your reconf.xml file</h3>
+
+<p>ReConf looks for a file named <strong>reconf.xml</strong> in the classpath. The bare minimum configuration must have two elements, the basic URL where the ReConf server can be found (like <a href="http://server.reconf.intranet">http://server.reconf.intranet</a>) and a directory to store the local cache (for example /export/application/local-cache). The example below provides a complete file.</p>
+
+<div class="highlight"><pre><span class="nt">&lt;configuration&gt;</span>
+    <span class="nt">&lt;local-cache&gt;</span>
+        <span class="nt">&lt;location&gt;</span>/export/application/local-cache<span class="nt">&lt;/location&gt;</span>
+    <span class="nt">&lt;/local-cache&gt;</span>
+    <span class="nt">&lt;server&gt;</span>
+        <span class="nt">&lt;url&gt;</span>http://server.reconf.intranet<span class="nt">&lt;/url&gt;</span>
+    <span class="nt">&lt;/server&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</pre></div>
+
+<p>The application must have the necessary permissions to read, write and delete the directory configured in local-cache/location.</p>
+
+<p><a name="create-a-configuration-repository"></a></p>
+
+<h3>Create a Configuration Repository</h3>
+
+<p>In order to define a configuration repository, you must create a new Java interface and decorate it with the annotations provided by the reconf-client jar.</p>
+
+<p>The example below provides a very simple configuration repository where each @ConfigurationItem will update itself every 10 seconds.</p>
+
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
+
+<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">product</span><span class="o">=</span><span class="s">"my-product"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"hello-application"</span><span class="o">)</span>
+<span class="nd">@UpdateFrequency</span><span class="o">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">10</span><span class="o">,</span> <span class="n">timeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">WelcomeConfiguration</span> <span class="o">{</span>
+
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"welcome.text"</span><span class="o">)</span>
+    <span class="n">String</span> <span class="nf">getText</span><span class="o">();</span>
+
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"promotional.price"</span><span class="o">)</span>
+    <span class="n">BigDecimal</span> <span class="nf">getPrice</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+
+<p><a name="using-a-configurationrepository"></a></p>
+
+<h3>Using a ConfigurationRepository</h3>
+
+<p>Configuration repositories are easily created via <code>create</code> method provided by the reconf.client.proxy.ConfigurationRepositoryFactory class. Creating a proxy is a costly operation and, because of that, it's a good practice to call it only once for each repository managed by ReConf.</p>
+
+<div class="highlight"><pre>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">WelcomeConfiguration</span> <span class="n">welcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">welcome</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
+    <span class="o">}</span>
+</pre></div>
+
+<p><a name="native-types-built-automatically"></a></p>
+
+<h3>Native types built automatically</h3>
+
+<p>The library is capable of recognizing and building automatically several types of Java objects, including the interfaces from the java.util package. You can find the details below. To take full advantage of this feature, it is necessary to use the ReConf format to declare the value of your configurations.</p>
+
+<p>There are two kinds of configurations: the ones that are mapped to a single object (delimited by single quotes <code>' '</code>) and sets of single objects (delimited by square brackets <code>[ ]</code>).</p>
+
+<h4>Declaring simple objects</h4>
+
+<p>Simple objects can be built by the tool as long as they are either primitives (or wrappers) or provide a public constructor that takes one java.lang.String as argument. The table below shows a few examples.</p>
+
+<table>
+<tr>
+<th>returning type</th>
+<th>configuration value</th>
+<th>resulting object</th>
+</tr>
+<tr>
+<td>java.lang.String</td>
+<td>'my simple String'</td>
+<td>"my simple String"</td>
+</tr>
+<tr>
+<td>java.lang.String</td>
+<td>'\n'</td>
+<td>"\n" (a java.lang.String containing the new line symbol)</td>
+</tr>
+<tr>
+<td>boolean</td>
+<td>'tRuE'</td>
+<td>true</td>
+</tr>
+<tr>
+<td>java.lang.Boolean</td>
+<td>'false'</td>
+<td>false</td>
+</tr>
+<tr>
+<td>char</td>
+<td>'a'</td>
+<td>'a'</td>
+</tr>
+<tr>
+<td>java.lang.Character</td>
+<td>'\t'</td>
+<td>'\t' (a java.lang.Character containing the tab symbol)</td>
+</tr>
+<tr>
+<td>java.lang.Character</td>
+<td>'ab'</td>
+<td>error!</td>
+</tr>
+<tr>
+<td>float</td>
+<td>'1.2'</td>
+<td>1.2</td>
+</tr>
+<tr>
+<td>java.math.BigDecimal</td>
+<td>'1'</td>
+<td>1</td>
+</tr>
+<tr>
+<td>int</td>
+<td>'10'</td>
+<td>10</td>
+</tr>
+</table><h4>Declaring arrays of objects</h4>
+
+<p>An array fits the "a collection of single objects" definition and so it must be declared inside square brackets. The table below shows a few examples.</p>
+
+<table>
+<tr>
+<th>returning type</th>
+<th>configuration value</th>
+<th>resulting object</th>
+</tr>
+<tr>
+<td>java.lang.String[ ]</td>
+<td>[ 'a', ' b', 'c' ]</td>
+<td>[ "a", " b", "c" ]</td>
+</tr>
+<tr>
+<td>java.lang.String[ ]</td>
+<td>[ ]</td>
+<td>zero-sized String array</td>
+</tr>
+<tr>
+<td>java.lang.String[ ]</td>
+<td>" "</td>
+<td>error! (no single quotes)</td>
+</tr>
+<tr>
+<td>boolean[ ]</td>
+<td>[ 'true','false' ]</td>
+<td>[ true, false ]</td>
+</tr>
+<tr>
+<td>int[ ]</td>
+<td>[ '1' , '2' ]</td>
+<td>[ 1, 2 ]</td>
+</tr>
+<tr>
+<td>java.math.BigDecimal[ ]</td>
+<td>[ '1', '10' ]</td>
+<td>[ 1, 10 ]</td>
+</tr>
+<tr>
+<td>char[ ]</td>
+<td>[ 'a', '\n' ]</td>
+<td>[ 'a', '\n' ]</td>
+</tr>
+<tr>
+<td>float[ ]</td>
+<td>[ '-1.01' ]</td>
+<td>[ -1.01 ]</td>
+</tr>
+</table><h4>Before we dive into Collections of objects</h4>
+
+<p>To group objects inside a Collection, there is no need to declare the returning type as a concrete implementation (like java.util.ArrayList or java.util.HashSet). The library is shipped with pre-selected implementations according to the type and, if you don't want to use the implementation we chose, simply use the class of choice as the returning type.</p>
+
+<table>
+<tr>
+<th>returning type</th>
+<th>default implementation</th>
+</tr>
+<tr>
+<td>java.util.Collection</td>
+<td>java.util.ArrayList</td>
+</tr>
+<tr>
+<td>java.util.List</td>
+<td>java.util.ArrayList</td>
+</tr>
+<tr>
+<td>java.util.Set</td>
+<td>java.util.HashSet</td>
+</tr>
+<tr>
+<td>java.util.SortedSet</td>
+<td>java.util.TreeSet</td>
+</tr>
+<tr>
+<td>java.util.NavigableSet</td>
+<td>java.util.TreeSet</td>
+</tr>
+<tr>
+<td>java.util.Queue</td>
+<td>java.util.LinkedList</td>
+</tr>
+<tr>
+<td>java.util.concurrent.BlockingQueue</td>
+<td>java.util.concurrent.ArrayBlockingQueue</td>
+</tr>
+<tr>
+<td>java.util.concurrent.BlockingDeque</td>
+<td>java.util.concurrent.LinkedBlockingDeque</td>
+</tr>
+<tr>
+<td>java.util.Map</td>
+<td>java.util.HashMap</td>
+</tr>
+<tr>
+<td>java.util.concurrent.ConcurrentMap</td>
+<td>java.util.concurrent.ConcurrentHashMap</td>
+</tr>
+<tr>
+<td>java.util.concurrent.ConcurrentNavigableMap</td>
+<td>java.util.concurrent.ConcurrentSkipListMap</td>
+</tr>
+<tr>
+<td>java.util.NavigableMap</td>
+<td>java.util.TreeMap</td>
+</tr>
+<tr>
+<td>java.util.SortedMap</td>
+<td>java.util.TreeMap</td>
+</tr>
+</table><h4>Building Collections of objects</h4>
+
+<p>Collections of objects must be delimited by square brackets. The table below shows a few examples.</p>
+
+<table>
+<tr>
+<th>returning type</th>
+<th>configuration value</th>
+<th>resulting collection</th>
+</tr>
+<tr>
+<td>java.util.Collection</td>
+<td>[ 'a', 'b', 'c' ]</td>
+<td>"a", "b", "c"</td>
+</tr>
+<tr>
+<td>java.util.Collection</td>
+<td>[ ]</td>
+<td>empty</td>
+</tr>
+<tr>
+<td>java.util.Collection&gt;</td>
+<td>[ [ ] ]</td>
+<td>an empty collection containing an empty collection</td>
+</tr>
+<tr>
+<td>java.util.Collection&gt;</td>
+<td>[ [ 'a' ], [ 'b' ] ]</td>
+<td>a collection containing two collections, one with "a" and the other with "b"</td>
+</tr>
+<tr>
+<td>java.util.Collection</td>
+<td>' '</td>
+<td>error! (no square brackets)</td>
+</tr>
+<tr>
+<td>java.util.Collection</td>
+<td>[ 'true', 'false' ]</td>
+<td>true, false</td>
+</tr>
+<tr>
+<td>java.util.Collection</td>
+<td>[ '1', '10' ]</td>
+<td>1, 10</td>
+</tr>
+<tr>
+<td>java.util.Collection</td>
+<td>[ 'a', 'b' ]</td>
+<td>'a', 'b'</td>
+</tr>
+<tr>
+<td>java.util.Collection</td>
+<td>[ '-1', '1.01' ]</td>
+<td>-1, 1.01</td>
+</tr>
+</table><h4>Building Maps</h4>
+
+<p>A Map is different from a Collection because it contains pairs of tuples of the form Key-Value, whereas a Collection is a container of objects with no relation among themselves. For this reason, the formatting part is different, but not that much, since a Map is a complex type. Just separate a key from its value by using a colon <code>:</code> and a pair of key-values from each other using a comma <code>,</code>.</p>
+
+<table>
+<tr>
+<th>returning type</th>
+<th>configuration value</th>
+<th>resulting map</th>
+</tr>
+<tr>
+<td>java.util.Map</td>
+<td>[ 'a':'b' , 'c':'d' ]</td>
+<td>{ "a" = 'b', "c" = 'd' }</td>
+</tr>
+<tr>
+<td>java.util.Map</td>
+<td>[ ]</td>
+<td>empty</td>
+</tr>
+<tr>
+<td>java.util.Map&gt;</td>
+<td>[ 'k' : [ ] ]</td>
+<td>{ "k" = [ ] } (the key "k" maps to an empty collection)</td>
+</tr>
+<tr>
+<td>java.util.Map&gt;</td>
+<td>[ 'k' : [ '1','2' ] ]</td>
+<td>{ "k" = [ 1,2 ] }</td>
+</tr>
+<tr>
+<td>java.util.Map</td>
+<td>' '</td>
+<td>error! (no square brackets)</td>
+</tr>
+<tr>
+<td>java.util.Map</td>
+<td>[ 'x' ]</td>
+<td>error! (a key must map to a value)</td>
+</tr>
+<tr>
+<td>java.util.Map</td>
+<td>[ 'x' : 1 ]</td>
+<td>error! (no single quotes enclosing 1)</td>
+</tr>
+<tr>
+<td>java.util.Map</td>
+<td>[ 'true' : 'false' ]</td>
+<td>{ "true" = false }</td>
+</tr>
+<tr>
+<td>java.util.Map</td>
+<td>[ '1' : '2' ]</td>
+<td>{ 1 = 2 }</td>
+</tr>
+</table><p><a name="advanced-features"></a></p>
+
+<h2>Advanced Features</h2>
+
+<p><a name="setting-up-items-with-different-characteristics"></a></p>
+
+<h3>Setting up items with different characteristics</h3>
+
+<p>It is possible to specialize an item, setting it up with characteristics that deviate from the ones configured in the @ConfigurationRepository annotation. The library operates using a simple rule: when inspecting an item, if nothing is found, the item will inherit the attributes defined in the interface. Otherwise, just the particular difference found will be applied.</p>
+
+<h4>Reading the configuration from another component and/or product</h4>
+
+<p>In the example below, "currency.code" belongs to another component, named "goodbye-component". The fourth item, "minimum.age" is part of the "general-configuration" component, which belongs to "all-products" product. The other two items, "promotional.price", and "welcome.text" belong to "hello-application" which is under "my-product". Finally, all items will update on a ten-second basis.</p>
+
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
+
+<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">product</span><span class="o">=</span><span class="s">"my-product"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"hello-application"</span><span class="o">)</span>
+<span class="nd">@UpdateFrequency</span><span class="o">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">10</span><span class="o">,</span> <span class="n">timeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">WelcomeConfiguration</span> <span class="o">{</span>
+
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"welcome.text"</span><span class="o">)</span>
+    <span class="n">String</span> <span class="nf">getText</span><span class="o">();</span>
+
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"promotional.price"</span><span class="o">)</span>
+    <span class="n">BigDecimal</span> <span class="nf">getPrice</span><span class="o">();</span>
+
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"currency.code"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"goodbye-application"</span><span class="o">)</span>
+    <span class="n">String</span> <span class="nf">getCurrencyCode</span><span class="o">();</span>
+
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"minimum.age"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"general-configuration"</span><span class="o">,</span> <span class="n">product</span><span class="o">=</span><span class="s">"all-products"</span><span class="o">)</span>
+    <span class="kt">int</span> <span class="nf">getMinimumAge</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+
+<h4>Setting up a specific update frequency policy.</h4>
+
+<p>This example depicts a mixed repository in which the items "welcome.text" and "promotional.price" are updated on a ten-second basis. The @DoNotUpdate annotation causes the "currency.code" item to remain with its original value, obtained as soon as the repository is created. When applied to an item, the @UpdateFrequency annotation causes the item to be updated in a specific frequency, different than the one inherited. In the example below, the value of "minimum.age" will be updated once a day.</p>
+
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
+
+<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">product</span><span class="o">=</span><span class="s">"my-product"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"hello-application"</span><span class="o">)</span>
+<span class="nd">@UpdateFrequency</span><span class="o">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">10</span><span class="o">,</span> <span class="n">timeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">WelcomeConfiguration</span> <span class="o">{</span>
+
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"welcome.text"</span><span class="o">)</span>
+    <span class="n">String</span> <span class="nf">getText</span><span class="o">();</span>
+
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"promotional.price"</span><span class="o">)</span>
+    <span class="n">BigDecimal</span> <span class="nf">getPrice</span><span class="o">();</span>
+
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"currency.code"</span><span class="o">)</span> <span class="nd">@DoNotUpdate</span>
+    <span class="n">String</span> <span class="nf">getCurrencyCode</span><span class="o">();</span>
+
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"minimum.age"</span><span class="o">)</span>
+    <span class="nd">@UpdateFrequency</span><span class="o">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="o">,</span> <span class="n">timeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">DAYS</span><span class="o">)</span>
+    <span class="kt">int</span> <span class="nf">getMinimumAge</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+
+<p><a name="updating-a-configurationrepository-through-code"></a></p>
+
+<h3>Updating a ConfigurationRepository through code</h3>
+
+<p>There's a way to force an update operation of all @ConfigurationItem of a @ConfigurationRepository, regardless of the @UpdateFrequency or @DoNotUpdate present in the interface. To enable it, add a <strong>void</strong> method to the interface and annotate it with @UpdateConfigurationRepository. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime UpdateConfigurationRepositoryException is thrown to notify the application that a problem has occurred.</p>
+
+<div class="highlight"><pre><span class="kn">package</span> <span class="n">examples</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.util.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
+
+<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">component</span><span class="o">=</span><span class="s">"test"</span><span class="o">,</span> <span class="n">product</span><span class="o">=</span><span class="s">"test"</span><span class="o">)</span>
+<span class="nd">@UpdateFrequency</span><span class="o">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="o">,</span> <span class="n">timeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">HOURS</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">WelcomeConfiguration</span> <span class="o">{</span>
+
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"welcome.text"</span><span class="o">)</span>
+    <span class="n">String</span> <span class="nf">getText</span><span class="o">();</span>
+
+    <span class="nd">@UpdateConfigurationRepository</span>
+    <span class="kt">void</span> <span class="nf">updateIt</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+
+<p><a name="configurationrepository-reuse-through-customizations"></a></p>
+
+<h3>ConfigurationRepository reuse through Customizations</h3>
+
+<p>Customizations are a feature that allows the developer to solve the following problem: "Can I create two instances of the same ConfigurationRepository containing different configuration values?". In order to do that, we introduce the concept of Customizations. This feature provides a way to slightly change a configuration repository by adding prefixes and/or suffixes for components and/or configuration item names.</p>
+
+<div class="highlight"><pre>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Customization</span> <span class="n">cust</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Customization</span><span class="o">();</span>
+        <span class="n">cust</span><span class="o">.</span><span class="na">setComponentPrefix</span><span class="o">(</span><span class="s">"cp-"</span><span class="o">);</span>
+        <span class="n">cust</span><span class="o">.</span><span class="na">setComponentSuffix</span><span class="o">(</span><span class="s">"-cs"</span><span class="o">);</span>
+        <span class="n">cust</span><span class="o">.</span><span class="na">setComponentItemPrefix</span><span class="o">(</span><span class="s">"kp-"</span><span class="o">);</span>
+        <span class="n">cust</span><span class="o">.</span><span class="na">setComponentItemSuffix</span><span class="o">(</span><span class="s">"-ks"</span><span class="o">);</span>
+
+        <span class="n">WelcomeConfiguration</span> <span class="n">welcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+        <span class="n">WelcomeConfiguration</span> <span class="n">customWelcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">cust</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">welcome</span><span class="o">.</span><span class="na">getText</span><span class="o">()</span> <span class="o">+</span> <span class="s">", "</span> <span class="o">+</span> <span class="n">customWelcome</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
+    <span class="o">}</span>
+</pre></div>
+
+<p>The example above creates two repositories, both from the same interface. The "welcome" repository will behave just as expected, retrieving the configuration from the "my-product/hello-application/welcome.text" hierarchy. The second instance though, namely "customWelcome", will retrieve the configuration from the "my-product/cp-hello-application-cs/kp-welcome.text-ks" hierarchy.</p>
+
+<p><a name="organizing-log-messages"></a></p>
+
+<h3>Organizing log messages</h3>
+
+<p>If you use slf4j (if you don't there are <a href="http://logback.qos.ch/reasonsToSwitch.html">a lot of reasons</a> to do it), you can declare a new logger and append it to the appender of your preference. The example sets the level to DEBUG but I don't recommend doing it in production environment since it's very verbose. The INFO level will do just fine.</p>
+
+<div class="highlight"><pre>    <span class="nt">&lt;logger</span> <span class="na">name=</span><span class="s">"ReConf"</span> <span class="na">additivity=</span><span class="s">"false"</span> <span class="na">level=</span><span class="s">"DEBUG"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;appender-ref</span> <span class="na">ref=</span><span class="s">"A1"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/logger&gt;</span>
+</pre></div>
+
+<p><a name="localization-with-reconfxml"></a></p>
+
+<h3>Localization with reconf.xml</h3>
+
+<p>To activate localized log messages, add the tag <code>locale</code> in the reconf.xml file. The locale must comply with the <a href="http://www.oracle.com/technetwork/java/javase/locales-137662.html">JDK 6 and JRE 6 Supported Locales</a>. Besides the default locale (en_US) the library also provides an additional one, Portuguese Brazil (pt_BR).</p>
+
+<div class="highlight"><pre><span class="nt">&lt;configuration&gt;</span>
+    <span class="nt">&lt;locale&gt;</span>pt_BR<span class="nt">&lt;/locale&gt;</span>
+    <span class="nt">&lt;local-cache&gt;</span>
+        <span class="nt">&lt;location&gt;</span>/export/application/local-cache<span class="nt">&lt;/location&gt;</span>
+    <span class="nt">&lt;/local-cache&gt;</span>
+    <span class="nt">&lt;server&gt;</span>
+        <span class="nt">&lt;url&gt;</span>http://server.reconf.intranet<span class="nt">&lt;/url&gt;</span>
+    <span class="nt">&lt;/server&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</pre></div>
+
+<p><a name="overriding-the-updatefrequency-annotation-with-reconfxml"></a></p>
+
+<h3>Overriding the @UpdateFrequency annotation with reconf.xml</h3>
+
+<p>It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a <code>configuration-repository-update-frequency</code> tag in the reconf.xml file will cause it to override the @UpdateFrequency settings of every configuration repository. It is important to notice that it won't affect items annotated with @DoNotUpdate or @UpdateFrequency.</p>
+
+<div class="highlight"><pre><span class="nt">&lt;configuration&gt;</span>
+    <span class="nt">&lt;local-cache&gt;</span>
+        <span class="nt">&lt;location&gt;</span>/export/application/local-cache<span class="nt">&lt;/location&gt;</span>
+    <span class="nt">&lt;/local-cache&gt;</span>
+    <span class="nt">&lt;server&gt;</span>
+        <span class="nt">&lt;url&gt;</span>http://server.reconf.intranet<span class="nt">&lt;/url&gt;</span>
+    <span class="nt">&lt;/server&gt;</span>
+    <span class="nt">&lt;configuration-repository-update-frequency&gt;</span>
+        <span class="nt">&lt;interval&gt;</span>1<span class="nt">&lt;/interval&gt;</span>
+        <span class="nt">&lt;time-unit&gt;</span>SECONDS<span class="nt">&lt;/time-unit&gt;</span>
+    <span class="nt">&lt;/configuration-repository-update-frequency&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</pre></div>
+
+<p><a name="reading-from-different-configuration-file"></a></p>
+
+<h3>Reading from different configuration file</h3>
+
+<p>To read a different configuration file, start the application with <code>-Dreconf.client.xml.location=/path/to/a/different/file.xml</code>. The library will try to read from this location before looking for a reconf.xml file in the classpath.</p>
+
+<p><a name="integrating-with-spring"></a></p>
+
+<h3>Integrating with Spring</h3>
+
+<p>The package <code>reconf-spring</code> provides a class for easy integration with Spring, including the use of @Autowired annotation. Add the following dependency to the <code>pom.xml</code> file.</p>
+
+<div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>br.com.uol.reconf<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>reconf-client<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0.9<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+
+<p>For every configuration repository, declare a bean of class "reconf.spring.RepositoryConfigurationBean" with a "configInterface" attribute configured with the interface containing the @ConfigurationRepository annotation.</p>
+
+<p>Assuming that we are using the interface below.</p>
+
+<div class="highlight"><pre><span class="kn">package</span> <span class="n">example</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
+
+<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">product</span><span class="o">=</span><span class="s">"my-product"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"hello-application"</span><span class="o">)</span>
+<span class="nd">@UpdateFrequency</span><span class="o">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">10</span><span class="o">,</span> <span class="n">timeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">WelcomeConfiguration</span> <span class="o">{</span>
+
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"welcome.text"</span><span class="o">)</span>
+    <span class="n">String</span> <span class="nf">getText</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>The xml should look like this.</p>
+
+<div class="highlight"><pre><span class="nt">&lt;bean</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configInterface"</span> <span class="na">value=</span><span class="s">"example.WelcomeConfiguration"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/bean&gt;</span>
+</pre></div>
+
+<p><a name="using-customizations-with-spring"></a></p>
+
+<h3>Using Customizations with Spring</h3>
+
+<p>The xml excerpt below creates two beans, a regular "welcome" and a custom "customWelcome" detailed in <a href="#configurationrepository-reuse-through-customizations">ConfigurationRepository reuse through Customizations</a>.</p>
+
+<div class="highlight"><pre><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">"customWelcome"</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configInterface"</span> <span class="na">value=</span><span class="s">"example.WelcomeConfiguration"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"componentPrefix"</span> <span class="na">value=</span><span class="s">"cp-"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"componentSuffix"</span> <span class="na">value=</span><span class="s">"-cs"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"componentItemPrefix"</span> <span class="na">value=</span><span class="s">"kp-"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"componentItemSuffix"</span> <span class="na">value=</span><span class="s">"-ks"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/bean&gt;</span>
+
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">"welcome"</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configInterface"</span> <span class="na">value=</span><span class="s">"example.WelcomeConfiguration"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/bean&gt;</span>
+</pre></div>
+
+<p><a name="troubleshooting"></a></p>
+
+<h2>Troubleshooting</h2>
+
+<ol>
+<li>Check for error and warn messages logged by the framework.</li>
+<li>Check for "strange" characters in your configuration item values, such as tabs and spaces, before and after enclosing characters (<code>''</code> and <code>[]</code>).</li>
+<li>Try to delete everything inside the local-cache directory defined in the reconf.xml file.</li>
+<li>Enable DEBUG logging and look for strange messages.</li>
+</ol><h2>License</h2>
+
+<p>Copyright 1996-2013 UOL Inc</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+
+<p><a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Reconf-jvm maintained by <a href="https://github.com/reconf">reconf</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
