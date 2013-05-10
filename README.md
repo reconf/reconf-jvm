@@ -32,7 +32,8 @@ limitations under the License.
 
 ***
 
-##### Table of Contents
+# Documentation
+
 * [What are the benefits of using it?](#what-are-the-benefits-of-using-it)
 * [And the minimum requirements?](#and-the-minimum-requirements)
 * [How can I use it?](#how-can-i-use-it)
