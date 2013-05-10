@@ -46,7 +46,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         for (ConfigurationItemElement item : repo.getConfigurationItems()) {
             item.setProduct(repo.getProduct());
             item.setComponent(customization.getCustomComponent(item.getComponent()));
-            item.setKey(customization.getCustomKey(item.getKey()));
+            item.setKey(customization.getCustomItem(item.getKey()));
         }
         return newInstance(arg, repo);
     }

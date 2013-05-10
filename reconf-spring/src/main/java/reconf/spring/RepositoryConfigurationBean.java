@@ -65,11 +65,11 @@ public class RepositoryConfigurationBean implements FactoryBean<Object> {
         this.customization.setComponentSuffix(applicationSuffix);
     }
 
-    public void setKeyPrefix(String keyPrefix) {
-        this.customization.setKeyPrefix(keyPrefix);
+    public void setComponentItemPrefix(String namePrefix) {
+        this.customization.setComponentItemPrefix(namePrefix);
     }
 
-    public void setKeySuffix(String keySuffix) {
-        this.customization.setKeySuffix(keySuffix);
+    public void setComponentItemSuffix(String nameSuffix) {
+        this.customization.setComponentItemSuffix(nameSuffix);
     }
 }

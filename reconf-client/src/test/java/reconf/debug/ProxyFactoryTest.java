@@ -27,8 +27,8 @@ public class ProxyFactoryTest {
         Customization cust = new Customization();
         cust.setComponentPrefix("cp-");
         cust.setComponentSuffix("-cs");
-        cust.setKeyPrefix("kp-");
-        cust.setKeySuffix("-ks");
+        cust.setComponentItemPrefix("kp-");
+        cust.setComponentItemSuffix("-ks");
 
         WelcomeConfiguration customWelcome = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class, cust);
 

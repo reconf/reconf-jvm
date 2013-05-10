@@ -25,8 +25,8 @@ public class Customization {
 
     private String componentPrefix;
     private String componentSuffix;
-    private String keyPrefix;
-    private String keySuffix;
+    private String namePrefix;
+    private String nameSuffix;
 
     public String getComponentPrefix() {
         return componentPrefix;
@@ -42,18 +42,18 @@ public class Customization {
         this.componentSuffix = componentSuffix;
     }
 
-    public String getKeyPrefix() {
-        return keyPrefix;
+    public String getComponentItemPrefix() {
+        return namePrefix;
     }
-    public void setKeyPrefix(String keyPrefix) {
-        this.keyPrefix = keyPrefix;
+    public void setComponentItemPrefix(String namePrefix) {
+        this.namePrefix = namePrefix;
     }
 
-    public String getKeySuffix() {
-        return keySuffix;
+    public String getComponentItemSuffix() {
+        return nameSuffix;
     }
-    public void setKeySuffix(String keySuffix) {
-        this.keySuffix = keySuffix;
+    public void setComponentItemSuffix(String nameSuffix) {
+        this.nameSuffix = nameSuffix;
     }
 
     @Override
@@ -69,16 +69,16 @@ public class Customization {
     public boolean isValid() {
         return StringUtils.isNotBlank(componentPrefix) ||
             StringUtils.isNotBlank(componentSuffix) ||
-            StringUtils.isNotBlank(keyPrefix) ||
-            StringUtils.isNotBlank(keySuffix);
+            StringUtils.isNotBlank(namePrefix) ||
+            StringUtils.isNotBlank(nameSuffix);
     }
 
     @Override
     public String toString() {
         return new StringBuilder().append("componentPrefix [").append(StringUtils.defaultString(componentPrefix)).append("] ")
             .append("componentSuffix [").append(StringUtils.defaultString(componentSuffix)).append("] ")
-            .append("keyPrefix [").append(StringUtils.defaultString(keyPrefix)).append("] ")
-            .append("keySuffix [").append(StringUtils.defaultString(keySuffix)).append("]")
+            .append("keyPrefix [").append(StringUtils.defaultString(namePrefix)).append("] ")
+            .append("keySuffix [").append(StringUtils.defaultString(nameSuffix)).append("]")
             .toString();
     }
 
@@ -99,18 +99,18 @@ public class Customization {
 
     }
 
-    public String getCustomKey(String originalKey) {
-        if (StringUtils.isBlank(originalKey) || (StringUtils.isBlank(getKeyPrefix()) && StringUtils.isBlank(getKeySuffix()))) {
+    public String getCustomItem(String originalKey) {
+        if (StringUtils.isBlank(originalKey) || (StringUtils.isBlank(getComponentItemPrefix()) && StringUtils.isBlank(getComponentItemSuffix()))) {
             return originalKey;
         }
 
         StringBuilder builder = new StringBuilder();
-        if (StringUtils.isNotBlank(getKeyPrefix())) {
-            builder.append(getKeyPrefix());
+        if (StringUtils.isNotBlank(getComponentItemPrefix())) {
+            builder.append(getComponentItemPrefix());
         }
         builder.append(originalKey);
-        if (StringUtils.isNotBlank(getKeySuffix())) {
-            builder.append(getKeySuffix());
+        if (StringUtils.isNotBlank(getComponentItemSuffix())) {
+            builder.append(getComponentItemSuffix());
         }
         return builder.toString();
     }
