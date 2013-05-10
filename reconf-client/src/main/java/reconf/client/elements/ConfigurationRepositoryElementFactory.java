@@ -72,7 +72,10 @@ public class ConfigurationRepositoryElementFactory {
 
         if (arg.isAnnotationPresent(UpdateFrequency.class)) {
             if (configuration.getAnnotationOverride() != null) {
-                result.setUpdateFrequency(configuration.getAnnotationOverride());
+                UpdateFrequencyElement overrideFrequency = new UpdateFrequencyElement();
+                overrideFrequency.setInterval(configuration.getAnnotationOverride().getInterval());
+                overrideFrequency.setTimeUnit(configuration.getAnnotationOverride().getTimeUnit());
+                result.setUpdateFrequency(overrideFrequency);
                 LoggerHolder.getLog().info(msg.format("global.reload.policy.override", arg));
                 return;
             }
@@ -104,7 +107,7 @@ public class ConfigurationRepositoryElementFactory {
         List<String> errors = new ArrayList<String>();
         int i = 1;
         for (ConstraintViolation<ConfigurationRepositoryElement> violation : violations) {
-            errors.add(i++ + " - " + violation.getMessage());
+            errors.add(i++ + " - " + violation.getMessage() + " @ " + violation.getPropertyPath());
         }
         throw new ReConfInitializationError(msg.format("error.factory", LineSeparator.value(), StringUtils.join(errors, ", ")));
     }

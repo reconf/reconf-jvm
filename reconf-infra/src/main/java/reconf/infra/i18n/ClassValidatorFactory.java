@@ -18,7 +18,7 @@ package reconf.infra.i18n;
 import java.util.*;
 import javax.validation.*;
 import org.hibernate.validator.messageinterpolation.*;
-import org.hibernate.validator.resourceloading.*;
+import org.hibernate.validator.spi.resourceloading.*;
 
 
 public class ClassValidatorFactory implements ResourceBundleLocator {

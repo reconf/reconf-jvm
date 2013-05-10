@@ -18,25 +18,27 @@ package reconf.client.setup;
 import java.util.concurrent.*;
 import javax.validation.constraints.*;
 import org.apache.commons.lang.builder.*;
-import reconf.client.elements.*;
 
-public class GlobalUpdateFrequencySettings extends UpdateFrequencyElement {
+public class GlobalUpdateFrequencySettings {
+
+    private Integer interval;
+    private TimeUnit timeUnit;
 
     @NotNull(message="{setup.GlobalUpdateFrequencySettings.interval.error}")
     @Min(value=1,message="{setup.GlobalUpdateFrequencySettings.interval.error}")
     public Integer getInterval() {
-        return super.getInterval();
+        return interval;
     }
     public void setInterval(Integer interval) {
-        super.setInterval(interval);
+        this.interval = interval;
     }
 
     @NotNull(message="{setup.GlobalUpdateFrequencySettings.timeUnit.null}")
     public TimeUnit getTimeUnit() {
-        return super.getTimeUnit();
+        return timeUnit;
     }
     public void setTimeUnit(TimeUnit timeUnit) {
-        super.setTimeUnit(timeUnit);
+        this.timeUnit = timeUnit;
     }
 
     @Override
