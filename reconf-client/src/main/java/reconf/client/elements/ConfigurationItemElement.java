@@ -72,7 +72,7 @@ public class ConfigurationItemElement {
 
     private static void defineUpdateStrategy(ConfigurationRepositoryElement repository, ConfigurationItemElement resultItem, ConfigurationItem annItem) {
         if (StringUtils.isBlank(resultItem.getKey())) {
-            resultItem.setKey(annItem.name());
+            resultItem.setKey(annItem.value());
         }
 
         if (resultItem.getMethod().isAnnotationPresent(UpdateFrequency.class)) {

@@ -109,10 +109,10 @@ import reconf.client.annotations.*;
 @UpdateFrequency(interval=10, timeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
-    @ConfigurationItem(name="welcome.text")
+    @ConfigurationItem("welcome.text")
     String getText();
 
-    @ConfigurationItem(name="promotional.price")
+    @ConfigurationItem("promotional.price")
     BigDecimal getPrice();
 }
 ```
@@ -239,16 +239,16 @@ import reconf.client.annotations.*;
 @UpdateFrequency(interval=10, timeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
-    @ConfigurationItem(name="welcome.text")
+    @ConfigurationItem("welcome.text")
     String getText();
 
-    @ConfigurationItem(name="promotional.price")
+    @ConfigurationItem("promotional.price")
     BigDecimal getPrice();
 
-    @ConfigurationItem(name="currency.code", component="goodbye-application")
+    @ConfigurationItem(value="currency.code", component="goodbye-application")
     String getCurrencyCode();
 
-    @ConfigurationItem(name="minimum.age", component="general-configuration", product="all-products")
+    @ConfigurationItem(value="minimum.age", component="general-configuration", product="all-products")
     int getMinimumAge();
 }
 ```
@@ -266,16 +266,16 @@ import reconf.client.annotations.*;
 @UpdateFrequency(interval=10, timeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
-    @ConfigurationItem(name="welcome.text")
+    @ConfigurationItem("welcome.text")
     String getText();
 
-    @ConfigurationItem(name="promotional.price")
+    @ConfigurationItem("promotional.price")
     BigDecimal getPrice();
 
-    @ConfigurationItem(name="currency.code") @DoNotUpdate
+    @ConfigurationItem("currency.code") @DoNotUpdate
     String getCurrencyCode();
 
-    @ConfigurationItem(name="minimum.age")
+    @ConfigurationItem("minimum.age")
     @UpdateFrequency(interval=1, timeUnit=TimeUnit.DAYS)
     int getMinimumAge();
 }
@@ -297,7 +297,7 @@ import reconf.client.annotations.*;
 @UpdateFrequency(interval=1, timeUnit=TimeUnit.HOURS)
 public interface WelcomeConfiguration {
 
-    @ConfigurationItem(name="welcome.text")
+    @ConfigurationItem("welcome.text")
     String getText();
 
     @UpdateConfigurationRepository
@@ -333,9 +333,9 @@ The example above creates two repositories, both from the same interface. The "w
 If you use slf4j (if you don't there are [a lot of reasons](http://logback.qos.ch/reasonsToSwitch.html) to do it), you can declare a new logger and append it to the appender of your preference. The example sets the level to DEBUG but I don't recommend doing it in production environment since it's very verbose. The INFO level will do just fine.
 
 ```xml
-    <logger name="ReConf" additivity="false" level="DEBUG">
-        <appender-ref ref="A1" />
-    </logger>
+<logger name="ReConf" additivity="false" level="DEBUG">
+    <appender-ref ref="A1" />
+</logger>
 ```
 
 <a name="localization-with-reconfxml"/>
@@ -404,7 +404,7 @@ import reconf.client.annotations.*;
 @UpdateFrequency(interval=10, timeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
-    @ConfigurationItem(name="welcome.text")
+    @ConfigurationItem("welcome.text")
     String getText();
 }
 ```

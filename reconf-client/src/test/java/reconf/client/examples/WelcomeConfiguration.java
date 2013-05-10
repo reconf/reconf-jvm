@@ -25,13 +25,13 @@ import reconf.client.annotations.*;
 @UpdateFrequency(interval=10, timeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
-    @ConfigurationItem(name="texto.de.boas.vindas")
+    @ConfigurationItem("texto.de.boas.vindas")
     String getText();
 
-    @ConfigurationItem(name="hugemap.param")
+    @ConfigurationItem("hugemap.param")
     Map<Long, String> getMap();
 
-    @ConfigurationItem(name="hugemap.param", adapter=RawStringConfigurationAdapter.class)
+    @ConfigurationItem(value="hugemap.param", adapter=RawStringConfigurationAdapter.class)
     @UpdateFrequency(interval=100, timeUnit=TimeUnit.MINUTES)
     @DoNotUpdate
     String getRawMap();

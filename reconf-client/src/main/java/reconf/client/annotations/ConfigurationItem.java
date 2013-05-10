@@ -26,7 +26,7 @@ import reconf.client.adapters.*;
 @Retention(RUNTIME)
 public @interface ConfigurationItem {
 
-    String name();
+    String value();
 
     String component() default StringUtils.EMPTY;
     String product() default StringUtils.EMPTY;
