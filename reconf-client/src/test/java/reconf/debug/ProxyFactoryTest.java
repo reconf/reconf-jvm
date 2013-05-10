@@ -23,18 +23,27 @@ public class ProxyFactoryTest {
 
     public static void main(String[] args) throws Exception {
         WelcomeConfiguration welcome = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class);
-        System.out.println(welcome.getText());
-        System.out.println(welcome.getMap());
-        System.out.println(welcome.getRawMap());
+
+        Customization cust = new Customization();
+        cust.setComponentPrefix("cp-");
+        cust.setComponentSuffix("-cs");
+        cust.setKeyPrefix("kp-");
+        cust.setKeySuffix("-ks");
+
+        WelcomeConfiguration customWelcome = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class, cust);
+
+        System.out.println(welcome.getText() + ", " + customWelcome.getText());
+        System.out.println(welcome.getMap()  + ", " + customWelcome.getMap());
+        System.out.println(welcome.getRawMap() + ", " + customWelcome.getRawMap());
 
         System.out.println("going to sleep...");
         Thread.sleep(30000);
 
         welcome.updateIt();
 
-        System.out.println(welcome.getText());
-        System.out.println(welcome.getMap());
-        System.out.println(welcome.getRawMap());
+        System.out.println(welcome.getText() + ", " + customWelcome.getText());
+        System.out.println(welcome.getMap()  + ", " + customWelcome.getMap());
+        System.out.println(welcome.getRawMap() + ", " + customWelcome.getRawMap());
 
         System.exit(0);
     }
