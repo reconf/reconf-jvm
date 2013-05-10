@@ -18,6 +18,7 @@ package reconf.client.setup;
 import java.util.concurrent.*;
 import javax.validation.constraints.*;
 import org.apache.commons.lang.builder.*;
+import reconf.infra.validation.*;
 
 public class GlobalUpdateFrequencySettings {
 
@@ -34,6 +35,7 @@ public class GlobalUpdateFrequencySettings {
     }
 
     @NotNull(message="{setup.GlobalUpdateFrequencySettings.timeUnit.null}")
+    @TimeUnitSet(allowed={TimeUnit.SECONDS,TimeUnit.MINUTES,TimeUnit.HOURS,TimeUnit.DAYS}, message="{setup.ConnectionSettings.timeUnit.null}")
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }

@@ -13,7 +13,7 @@
         <max-retry>20</max-retry>
     </server>
     <configuration-repository-update-frequency>
-        <interval>-100</interval>
+        <interval>100</interval>
         <time-unit>SECONDS</time-unit>
     </configuration-repository-update-frequency>
 </configuration>

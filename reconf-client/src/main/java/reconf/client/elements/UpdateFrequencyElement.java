@@ -18,6 +18,7 @@ package reconf.client.elements;
 import java.util.concurrent.*;
 import javax.validation.constraints.*;
 import org.apache.commons.lang.builder.*;
+import reconf.infra.validation.*;
 
 
 public class UpdateFrequencyElement {
@@ -35,6 +36,7 @@ public class UpdateFrequencyElement {
     }
 
     @NotNull(message="{elements.UpdateFrequencyElement.timeUnit.null}")
+    @TimeUnitSet(allowed={TimeUnit.SECONDS,TimeUnit.MINUTES,TimeUnit.HOURS,TimeUnit.DAYS}, message="{elements.UpdateFrequencyElement.timeUnit.null}")
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }
