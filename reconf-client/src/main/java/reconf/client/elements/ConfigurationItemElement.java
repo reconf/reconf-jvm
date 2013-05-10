@@ -171,7 +171,7 @@ public class ConfigurationItemElement {
         ToStringBuilder result = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("method", getMethod());
         addToString(result, "product", getProduct());
         addToString(result, "component", getComponent());
-        result.append("name", getKey());
+        result.append("value", getKey());
         result.append("@DoNotUpdate", null == doNotUpdate ? "not found" : "found");
         if (getUpdateFrequency() == null) {
             result.append("specific @UpdateFrequency", "not found");
