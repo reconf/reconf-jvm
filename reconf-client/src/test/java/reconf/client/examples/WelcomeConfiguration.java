@@ -31,7 +31,7 @@ public interface WelcomeConfiguration {
     @ConfigurationItem("hugemap.param")
     Map<Long, String> getMap();
 
-    @ConfigurationItem(value="hugemap.param", adapter=RawStringConfigurationAdapter.class)
+    @ConfigurationItem(value="", adapter=RawStringConfigurationAdapter.class)
     @UpdateFrequency(interval=100, timeUnit=TimeUnit.MINUTES)
     @DoNotUpdate
     String getRawMap();

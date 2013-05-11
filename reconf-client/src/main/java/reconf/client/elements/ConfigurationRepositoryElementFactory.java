@@ -107,7 +107,7 @@ public class ConfigurationRepositoryElementFactory {
         List<String> errors = new ArrayList<String>();
         int i = 1;
         for (ConstraintViolation<ConfigurationRepositoryElement> violation : violations) {
-            errors.add(i++ + " - " + violation.getMessage() + " @ " + violation.getPropertyPath());
+            errors.add(i++ + " - " + violation.getMessage() + " @ " + arg.getInterfaceClass() + "." + violation.getPropertyPath());
         }
         throw new ReConfInitializationError(msg.format("error.factory", LineSeparator.value(), StringUtils.join(errors, ", ")));
     }
