@@ -42,7 +42,8 @@ public class ConfigurationRepositoryElement {
         this.connectionSettings = connectionSettings;
     }
 
-    @NotNull @NotEmpty
+    @NotNull(message="{elements.ConfigurationRepositoryElement.error.component}")
+    @NotEmpty(message="{elements.ConfigurationRepositoryElement.error.component}")
     public String getComponent() {
         return component;
     }
@@ -50,7 +51,8 @@ public class ConfigurationRepositoryElement {
         this.component = component;
     }
 
-    @NotNull @NotEmpty
+    @NotNull(message="{elements.ConfigurationRepositoryElement.error.product}")
+    @NotEmpty(message="{elements.ConfigurationRepositoryElement.error.product}")
     public String getProduct() {
         return product;
     }

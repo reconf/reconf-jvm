@@ -33,7 +33,7 @@ public class ConfigurationItemElement {
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationItemElement.class);
     private String methodName;
     private Method method;
-    private String key;
+    private String value;
     private String component;
     private String product;
     private DoNotUpdateElement doNotUpdate;
@@ -71,9 +71,7 @@ public class ConfigurationItemElement {
     }
 
     private static void defineUpdateStrategy(ConfigurationRepositoryElement repository, ConfigurationItemElement resultItem, ConfigurationItem annItem) {
-        if (StringUtils.isBlank(resultItem.getKey())) {
-            resultItem.setKey(annItem.value());
-        }
+        resultItem.setValue(annItem.value());
 
         if (resultItem.getMethod().isAnnotationPresent(UpdateFrequency.class)) {
             UpdateFrequency frequencyAnn = resultItem.getMethod().getAnnotation(UpdateFrequency.class);
@@ -112,13 +110,13 @@ public class ConfigurationItemElement {
         this.methodName = methodName;
     }
 
-    @NotNull(message="key.null")
-    @NotEmpty(message="key.empty")
-    public String getKey() {
-        return key;
+    @NotNull(message="{elements.ConfigurationItemElement.error.value}")
+    @NotEmpty(message="{elements.ConfigurationItemElement.error.value}")
+    public String getValue() {
+        return value;
     }
-    public void setKey(String key) {
-        this.key = key;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     @NotNull(message="adapter.null")
@@ -171,7 +169,7 @@ public class ConfigurationItemElement {
         ToStringBuilder result = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("method", getMethod());
         addToString(result, "product", getProduct());
         addToString(result, "component", getComponent());
-        result.append("value", getKey());
+        result.append("value", getValue());
         result.append("@DoNotUpdate", null == doNotUpdate ? "not found" : "found");
         if (getUpdateFrequency() == null) {
             result.append("specific @UpdateFrequency", "not found");

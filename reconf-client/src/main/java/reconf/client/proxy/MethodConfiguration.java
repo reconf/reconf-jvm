@@ -48,8 +48,8 @@ public class MethodConfiguration {
     public ConfigurationSourceHolder getConfigurationSourceHolder() {
         try {
             ConfigurationAdapter adapter = getRemoteAdapter();
-            ConfigurationSourceHolder holder = new ConfigurationSourceHolder(new RemoteConfigurationSource(remoteItem.getKey(), stub, adapter),
-                    new DatabaseConfigurationSource(stub.getProduct(), stub.getComponent(), getMethod(), remoteItem.getKey(), adapter));
+            ConfigurationSourceHolder holder = new ConfigurationSourceHolder(new RemoteConfigurationSource(remoteItem.getValue(), stub, adapter),
+                    new DatabaseConfigurationSource(stub.getProduct(), stub.getComponent(), getMethod(), remoteItem.getValue(), adapter));
             return holder;
 
         } catch (Throwable t) {
