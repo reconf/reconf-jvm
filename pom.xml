@@ -113,7 +113,12 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.2.2</version>
+                <version>4.2.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.2.4</version>
             </dependency>
             <!-- Tests -->
             <dependency>
@@ -134,7 +139,7 @@
         <url>https://github.com/reconf/reconf-jvm.git</url>
         <connection>scm:git:https://github.com/reconf/reconf-jvm.git</connection>
         <developerConnection>scm:git:https://github.com/reconf/reconf-jvm.git</developerConnection>
-        <tag>reconf-parent-1.0.3</tag>
+        <tag>reconf-parent-1.0.10</tag>
     </scm>
     <issueManagement>
         <system>GitHub Issue Management</system>
