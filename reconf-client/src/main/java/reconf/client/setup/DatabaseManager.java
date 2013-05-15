@@ -160,7 +160,7 @@ public class DatabaseManager implements ShutdownBean {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return IOUtils.toString(rs.getClob(1).getCharacterStream());
+                return rs.getClob(1) == null ? null : rs.getClob(1).getCharacterStream() == null ? null : IOUtils.toString(rs.getClob(1).getCharacterStream());
             }
 
             return null;

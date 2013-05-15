@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns="http://raw.github.com/reconf/reconf-jvm/master/schema/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://raw.github.com/reconf/reconf-jvm/master/schema/">
+
+    <xs:simpleType name="timeInterval">
+        <xs:restriction base="xs:positiveInteger" />
+    </xs:simpleType>
+    <xs:simpleType name="timeUnit">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SECONDS" />
+            <xs:enumeration value="MINUTES" />
+            <xs:enumeration value="HOURS" />
+            <xs:enumeration value="DAYS" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="configuration">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="locale" type="xs:string" minOccurs="0" maxOccurs="1" />
+                <xs:element name="local-cache" minOccurs="1" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element name="location" type="xs:string" minOccurs="1" maxOccurs="1" />
+                            <xs:element name="max-log-file-size-mb">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:integer">
+                                        <xs:minInclusive value="1" />
+                                        <xs:maxInclusive value="50" />
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="compressed" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="server" minOccurs="1" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element name="url" type="xs:anyURI" minOccurs="1" maxOccurs="1" />
+                            <xs:element name="timeout" type="timeInterval" minOccurs="0" maxOccurs="1" />
+                            <xs:element name="time-unit" type="timeUnit" minOccurs="0" maxOccurs="1" />
+                            <xs:element name="maxRetry">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:integer">
+                                        <xs:minInclusive value="1" />
+                                        <xs:maxInclusive value="5" />
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="configuration-repository-update-frequency" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element name="interval" type="timeInterval" minOccurs="0" maxOccurs="1" />
+                            <xs:element name="time-unit" type="timeUnit" minOccurs="0" maxOccurs="1" />
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
