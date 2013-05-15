@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<configuration xmlns="http://raw.github.com/reconf/reconf-jvm/master/schema/configuration"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://raw.github.com/reconf/reconf-jvm/master/schema/configuration/reconf-1.0.xsd">
-
+<configuration>
+    <locale>pt_BR</locale>
+    <local-cache>
+        <location>/tmp/other/hsqldb2-tester/db</location>
+        <max-log-file-size-mb>50</max-log-file-size-mb>
+        <compressed>false</compressed>
+    </local-cache>
+    <server>
+        <url>http://config-reader.remote-admin.intranet</url>
+        <timeout>200</timeout>
+        <time-unit>SECONDS</time-unit>
+        <max-retry>20</max-retry>
+    </server>
+    <configuration-repository-update-frequency>
+        <interval>100</interval>
+        <time-unit>SECONDS</time-unit>
+    </configuration-repository-update-frequency>
 </configuration>
