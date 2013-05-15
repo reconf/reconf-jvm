@@ -33,14 +33,28 @@
     <xs:element name="configuration">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="locale" type="xs:string" minOccurs="0" maxOccurs="1" />
+                <xs:element name="locale" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:minLength value="5"/>
+                            <xs:maxLength value="5"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
                 <xs:element name="local-cache" minOccurs="1" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="location" type="xs:string" minOccurs="1" maxOccurs="1" />
+			                <xs:element name="location" minOccurs="1" maxOccurs="1">
+			                    <xs:simpleType>
+			                        <xs:restriction base="xs:string">
+			                            <xs:minLength value="4"/>
+			                        </xs:restriction>
+			                    </xs:simpleType>
+			                </xs:element>
+
                             <xs:element name="max-log-file-size-mb">
                                 <xs:simpleType>
-                                    <xs:restriction base="xs:integer">
+                                    <xs:restriction base="xs:positiveInteger">
                                         <xs:minInclusive value="1" />
                                         <xs:maxInclusive value="50" />
                                     </xs:restriction>
@@ -53,13 +67,18 @@
                 <xs:element name="server" minOccurs="1" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="url" type="xs:anyURI" minOccurs="1" maxOccurs="1" />
+                            <xs:element name="url" minOccurs="1" maxOccurs="1">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:anyURI">
+                                        <xs:minLength value="4"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
                             <xs:element name="timeout" type="timeInterval" minOccurs="0" maxOccurs="1" />
                             <xs:element name="time-unit" type="timeUnit" minOccurs="0" maxOccurs="1" />
-                            <xs:element name="maxRetry">
+                            <xs:element name="maxRetry" minOccurs="0" maxOccurs="1">
                                 <xs:simpleType>
-                                    <xs:restriction base="xs:integer">
-                                        <xs:minInclusive value="1" />
+                                    <xs:restriction base="xs:positiveInteger">
                                         <xs:maxInclusive value="5" />
                                     </xs:restriction>
                                 </xs:simpleType>
