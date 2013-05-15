@@ -76,7 +76,7 @@
                             </xs:element>
                             <xs:element name="timeout" type="timeInterval" minOccurs="0" maxOccurs="1" />
                             <xs:element name="time-unit" type="timeUnit" minOccurs="0" maxOccurs="1" />
-                            <xs:element name="maxRetry" minOccurs="0" maxOccurs="1">
+                            <xs:element name="max-retry" minOccurs="0" maxOccurs="1">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:positiveInteger">
                                         <xs:maxInclusive value="5" />
