@@ -286,7 +286,7 @@ public interface WelcomeConfiguration {
 <a name="updating-a-configurationrepository-through-code"/>
 ### Updating a ConfigurationRepository through code
 
-There's a way to force an update operation of all `@ConfigurationItem of a `@ConfigurationRepository`, regardless of the `@UpdateFrequency` or `@DoNotUpdate` present in the interface. To enable it, add a **void** method to the interface and annotate it with `@UpdateConfigurationRepository`. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime UpdateConfigurationRepositoryException is thrown to notify the application that a problem has occurred.
+There's a way to force an update operation of every `@ConfigurationItem` of a `@ConfigurationRepository`, regardless the presence of `@UpdateFrequency` or `@DoNotUpdate` annotations. To enable it, add a **void** method to the interface and annotate it with `@UpdateConfigurationRepository`. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime `UpdateConfigurationRepositoryException` is thrown to notify the application that a problem has occurred.
 
 ```java
 package examples;
