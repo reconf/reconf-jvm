@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<configuration>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd">
     <locale>pt_BR</locale>
     <local-cache>
         <location>/tmp/other/hsqldb2-tester/db</location>
@@ -10,7 +10,7 @@
         <url>http://config-reader.remote-admin.intranet</url>
         <timeout>200</timeout>
         <time-unit>SECONDS</time-unit>
-        <max-retry>20</max-retry>
+        <max-retry>2</max-retry>
     </server>
     <configuration-repository-update-frequency>
         <interval>100</interval>

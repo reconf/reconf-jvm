@@ -36,7 +36,7 @@
                 <xs:element name="locale" minOccurs="0" maxOccurs="1">
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
-                            <xs:minLength value="5"/>
+                            <xs:minLength value="2"/>
                             <xs:maxLength value="5"/>
                         </xs:restriction>
                     </xs:simpleType>
@@ -47,7 +47,7 @@
 			                <xs:element name="location" minOccurs="1" maxOccurs="1">
 			                    <xs:simpleType>
 			                        <xs:restriction base="xs:string">
-			                            <xs:minLength value="4"/>
+			                            <xs:minLength value="2"/>
 			                        </xs:restriction>
 			                    </xs:simpleType>
 			                </xs:element>
@@ -70,7 +70,7 @@
                             <xs:element name="url" minOccurs="1" maxOccurs="1">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:anyURI">
-                                        <xs:minLength value="4"/>
+                                        <xs:minLength value="2"/>
                                     </xs:restriction>
                                 </xs:simpleType>
                             </xs:element>
