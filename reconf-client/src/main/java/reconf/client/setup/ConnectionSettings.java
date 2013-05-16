@@ -58,6 +58,7 @@ public class ConnectionSettings {
     }
 
     @Min(value=1,message="{setup.ConnectionSettings.retry.error}")
+    @Max(value=5,message="{setup.ConnectionSettings.retry.error}")
     public int getMaxRetry() {
         return maxRetry;
     }
