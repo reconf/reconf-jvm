@@ -358,7 +358,7 @@ To activate localized log messages, add the tag `locale` in the reconf.xml file.
 ```
 
 <a name="overriding-the-updatefrequency-annotation-with-reconfxml"/>
-### Overriding the `@UpdateFrequency` annotation with reconf.xml
+### Overriding the @UpdateFrequency annotation with reconf.xml
 It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a `configuration-repository-update-frequency` tag in the reconf.xml file will cause it to override the `@UpdateFrequency` settings of every configuration repository. It is important to notice that it won't affect items annotated with `@DoNotUpdate` or `@UpdateFrequency`.
 
 ```xml
