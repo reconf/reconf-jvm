@@ -61,7 +61,7 @@ It can provide the following capabilities to a Java application
 <a name="a-few-concepts-first"/>
 ### A few concepts first
 
-Two elements form the basis of ReConf: configuration items (@ConfigurationItem) and configuration repositories (@ConfigurationRepository); simply put, one or more items grouped together form a repository. Every configuration item has a **name**, a **component** and a **product**. The latter two attributes can be defined once, in @ConfigurationRepository. Keep with us for more details on how to integrate!
+Two elements form the basis of ReConf: configuration items (`@ConfigurationItem`) and configuration repositories (`@ConfigurationRepository`); simply put, one or more items grouped together form a repository. Every configuration item has a **name**, a **component** and a **product**. The latter two attributes can be defined once, in `@ConfigurationRepository`. Keep with us for more details on how to integrate!
 
 <a name="import-our-maven-dependency"/>
 ### Import our Maven dependency
@@ -71,17 +71,19 @@ Add these lines to the `pom.xml` file
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-client</artifactId>
-    <version>1.0.11</version>
+    <version>1.0.12</version>
 </dependency>
 ```
 
 <a name="configure-your-reconfxml-file"/>
 ### Configure your reconf.xml file
 
-ReConf looks for a file named **reconf.xml** in the classpath. The bare minimum configuration must have two elements, the basic URL where the ReConf server can be found (like http://server.reconf.intranet) and a directory to store the local cache (for example /export/application/local-cache). The example below provides a complete file.
+ReConf looks for a file named **reconf.xml** in the classpath. The bare minimum configuration must have two elements, the basic URL where the ReConf server can be found (like http://server.reconf.intranet) and a directory to store the local cache (for example /export/application/local-cache).
+
+The file below is an example of a very simple configuration file. There is an XSD file available at https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd. 
 
 ```xml
-<configuration>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd">
     <local-cache>
         <location>/export/application/local-cache</location>
     </local-cache>
@@ -98,7 +100,7 @@ The application must have the necessary permissions to read, write and delete th
 
 In order to define a configuration repository, you must create a new Java interface and decorate it with the annotations provided by the reconf-client jar.
 
-The example below provides a very simple configuration repository where each @ConfigurationItem will update itself every 10 seconds.
+The example below provides a very simple configuration repository where each `@ConfigurationItem` will update itself every 10 seconds.
 
 ```java
 import java.math.*;
@@ -224,7 +226,7 @@ A Map is different from a Collection because it contains pairs of tuples of the 
 <a name="setting-up-items-with-different-characteristics"/>
 ### Setting up items with different characteristics
 
-It is possible to specialize an item, setting it up with characteristics that deviate from the ones configured in the @ConfigurationRepository annotation. The library operates using a simple rule: when inspecting an item, if nothing is found, the item will inherit the attributes defined in the interface. Otherwise, just the particular difference found will be applied.
+It is possible to specialize an item, setting it up with characteristics that deviate from the ones configured in the `@ConfigurationRepository` annotation. The library operates using a simple rule: when inspecting an item, if nothing is found, the item will inherit the attributes defined in the interface. Otherwise, just the particular difference found will be applied.
 
 #### Reading the configuration from another component and/or product
 
@@ -255,7 +257,7 @@ public interface WelcomeConfiguration {
 
 #### Setting up a specific update frequency policy.
 
-This example depicts a mixed repository in which the items "welcome.text" and "promotional.price" are updated on a ten-second basis. The @DoNotUpdate annotation causes the "currency.code" item to remain with its original value, obtained as soon as the repository is created. When applied to an item, the @UpdateFrequency annotation causes the item to be updated in a specific frequency, different than the one inherited. In the example below, the value of "minimum.age" will be updated once a day.
+This example depicts a mixed repository in which the items "welcome.text" and "promotional.price" are updated on a ten-second basis. The `@DoNotUpdate` annotation causes the "currency.code" item to remain with its original value, obtained as soon as the repository is created. When applied to an item, the `@UpdateFrequency` annotation causes the item to be updated in a specific frequency, different than the one inherited. In the example below, the value of "minimum.age" will be updated once a day.
 
 ```java
 import java.math.*;
@@ -284,7 +286,7 @@ public interface WelcomeConfiguration {
 <a name="updating-a-configurationrepository-through-code"/>
 ### Updating a ConfigurationRepository through code
 
-There's a way to force an update operation of all @ConfigurationItem of a @ConfigurationRepository, regardless of the @UpdateFrequency or @DoNotUpdate present in the interface. To enable it, add a **void** method to the interface and annotate it with @UpdateConfigurationRepository. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime UpdateConfigurationRepositoryException is thrown to notify the application that a problem has occurred.
+There's a way to force an update operation of all `@ConfigurationItem of a `@ConfigurationRepository`, regardless of the `@UpdateFrequency` or `@DoNotUpdate` present in the interface. To enable it, add a **void** method to the interface and annotate it with `@UpdateConfigurationRepository`. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime UpdateConfigurationRepositoryException is thrown to notify the application that a problem has occurred.
 
 ```java
 package examples;
@@ -344,7 +346,7 @@ If you use slf4j (if you don't there are [a lot of reasons](http://logback.qos.c
 To activate localized log messages, add the tag `locale` in the reconf.xml file. The locale must comply with the [JDK 6 and JRE 6 Supported Locales](http://www.oracle.com/technetwork/java/javase/locales-137662.html). Besides the default locale (en_US) the library also provides an additional one, Portuguese Brazil (pt_BR).
 
 ```xml
-<configuration>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd">
     <locale>pt_BR</locale>
     <local-cache>
         <location>/export/application/local-cache</location>
@@ -356,11 +358,11 @@ To activate localized log messages, add the tag `locale` in the reconf.xml file.
 ```
 
 <a name="overriding-the-updatefrequency-annotation-with-reconfxml"/>
-### Overriding the @UpdateFrequency annotation with reconf.xml
-It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a `configuration-repository-update-frequency` tag in the reconf.xml file will cause it to override the @UpdateFrequency settings of every configuration repository. It is important to notice that it won't affect items annotated with @DoNotUpdate or @UpdateFrequency.
+### Overriding the `@UpdateFrequency` annotation with reconf.xml
+It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a `configuration-repository-update-frequency` tag in the reconf.xml file will cause it to override the `@UpdateFrequency` settings of every configuration repository. It is important to notice that it won't affect items annotated with `@DoNotUpdate` or `@UpdateFrequency`.
 
 ```xml
-<configuration>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd">
     <local-cache>
         <location>/export/application/local-cache</location>
     </local-cache>
@@ -387,11 +389,11 @@ The package `reconf-spring` provides a class for easy integration with Spring, i
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-client</artifactId>
-    <version>1.0.11</version>
+    <version>1.0.12</version>
 </dependency>
 ```
 
-For every configuration repository, declare a bean of class "reconf.spring.RepositoryConfigurationBean" with a "configInterface" attribute configured with the interface containing the @ConfigurationRepository annotation.
+For every configuration repository, declare a bean of class "reconf.spring.RepositoryConfigurationBean" with a "configInterface" attribute configured with the interface containing the `@ConfigurationRepository` annotation.
 
 Assuming that we are using the interface below.
 ```java
