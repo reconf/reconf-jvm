@@ -113,7 +113,7 @@
 
 <h3>A few concepts first</h3>
 
-<p>Two elements form the basis of ReConf: configuration items (@ConfigurationItem) and configuration repositories (@ConfigurationRepository); simply put, one or more items grouped together form a repository. Every configuration item has a <strong>name</strong>, a <strong>component</strong> and a <strong>product</strong>. The latter two attributes can be defined once, in @ConfigurationRepository. Keep with us for more details on how to integrate!</p>
+<p>Two elements form the basis of ReConf: configuration items (<code>@ConfigurationItem</code>) and configuration repositories (<code>@ConfigurationRepository</code>); simply put, one or more items grouped together form a repository. Every configuration item has a <strong>name</strong>, a <strong>component</strong> and a <strong>product</strong>. The latter two attributes can be defined once, in <code>@ConfigurationRepository</code>. Keep with us for more details on how to integrate!</p>
 
 <p><a name="import-our-maven-dependency"></a></p>
 
@@ -124,7 +124,7 @@
 <div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>br.com.uol.reconf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>reconf-client<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.0.11<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0.13<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div>
 
@@ -132,9 +132,11 @@
 
 <h3>Configure your reconf.xml file</h3>
 
-<p>ReConf looks for a file named <strong>reconf.xml</strong> in the classpath. The bare minimum configuration must have two elements, the basic URL where the ReConf server can be found (like <a href="http://server.reconf.intranet">http://server.reconf.intranet</a>) and a directory to store the local cache (for example /export/application/local-cache). The example below provides a complete file.</p>
+<p>ReConf looks for a file named <strong>reconf.xml</strong> in the classpath. The bare minimum configuration must have two elements, the basic URL where the ReConf server can be found (like <a href="http://server.reconf.intranet">http://server.reconf.intranet</a>) and a directory to store the local cache (for example /export/application/local-cache).</p>
 
-<div class="highlight"><pre><span class="nt">&lt;configuration&gt;</span>
+<p>The file below is an example of a very simple configuration file. There is an XSD file available at <a href="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd">https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd</a>. </p>
+
+<div class="highlight"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;local-cache&gt;</span>
         <span class="nt">&lt;location&gt;</span>/export/application/local-cache<span class="nt">&lt;/location&gt;</span>
     <span class="nt">&lt;/local-cache&gt;</span>
@@ -152,7 +154,7 @@
 
 <p>In order to define a configuration repository, you must create a new Java interface and decorate it with the annotations provided by the reconf-client jar.</p>
 
-<p>The example below provides a very simple configuration repository where each @ConfigurationItem will update itself every 10 seconds.</p>
+<p>The example below provides a very simple configuration repository where each <code>@ConfigurationItem</code> will update itself every 10 seconds.</p>
 
 <div class="highlight"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
@@ -479,7 +481,7 @@
 
 <h3>Setting up items with different characteristics</h3>
 
-<p>It is possible to specialize an item, setting it up with characteristics that deviate from the ones configured in the @ConfigurationRepository annotation. The library operates using a simple rule: when inspecting an item, if nothing is found, the item will inherit the attributes defined in the interface. Otherwise, just the particular difference found will be applied.</p>
+<p>It is possible to specialize an item, setting it up with characteristics that deviate from the ones configured in the <code>@ConfigurationRepository</code> annotation. The library operates using a simple rule: when inspecting an item, if nothing is found, the item will inherit the attributes defined in the interface. Otherwise, just the particular difference found will be applied.</p>
 
 <h4>Reading the configuration from another component and/or product</h4>
 
@@ -509,7 +511,7 @@
 
 <h4>Setting up a specific update frequency policy.</h4>
 
-<p>This example depicts a mixed repository in which the items "welcome.text" and "promotional.price" are updated on a ten-second basis. The @DoNotUpdate annotation causes the "currency.code" item to remain with its original value, obtained as soon as the repository is created. When applied to an item, the @UpdateFrequency annotation causes the item to be updated in a specific frequency, different than the one inherited. In the example below, the value of "minimum.age" will be updated once a day.</p>
+<p>This example depicts a mixed repository in which the items "welcome.text" and "promotional.price" are updated on a ten-second basis. The <code>@DoNotUpdate</code> annotation causes the "currency.code" item to remain with its original value, obtained as soon as the repository is created. When applied to an item, the <code>@UpdateFrequency</code> annotation causes the item to be updated in a specific frequency, different than the one inherited. In the example below, the value of "minimum.age" will be updated once a day.</p>
 
 <div class="highlight"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
@@ -538,7 +540,7 @@
 
 <h3>Updating a ConfigurationRepository through code</h3>
 
-<p>There's a way to force an update operation of all @ConfigurationItem of a @ConfigurationRepository, regardless of the @UpdateFrequency or @DoNotUpdate present in the interface. To enable it, add a <strong>void</strong> method to the interface and annotate it with @UpdateConfigurationRepository. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime UpdateConfigurationRepositoryException is thrown to notify the application that a problem has occurred.</p>
+<p>There's a way to force an update operation of every <code>@ConfigurationItem</code> of a <code>@ConfigurationRepository</code>, regardless the presence of <code>@UpdateFrequency</code> or <code>@DoNotUpdate</code> annotations. To enable it, add a <strong>void</strong> method to the interface and annotate it with <code>@UpdateConfigurationRepository</code>. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime <code>UpdateConfigurationRepositoryException</code> is thrown to notify the application that a problem has occurred.</p>
 
 <div class="highlight"><pre><span class="kn">package</span> <span class="n">examples</span><span class="o">;</span>
 
@@ -597,7 +599,7 @@
 
 <p>To activate localized log messages, add the tag <code>locale</code> in the reconf.xml file. The locale must comply with the <a href="http://www.oracle.com/technetwork/java/javase/locales-137662.html">JDK 6 and JRE 6 Supported Locales</a>. Besides the default locale (en_US) the library also provides an additional one, Portuguese Brazil (pt_BR).</p>
 
-<div class="highlight"><pre><span class="nt">&lt;configuration&gt;</span>
+<div class="highlight"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;locale&gt;</span>pt_BR<span class="nt">&lt;/locale&gt;</span>
     <span class="nt">&lt;local-cache&gt;</span>
         <span class="nt">&lt;location&gt;</span>/export/application/local-cache<span class="nt">&lt;/location&gt;</span>
@@ -612,9 +614,9 @@
 
 <h3>Overriding the @UpdateFrequency annotation with reconf.xml</h3>
 
-<p>It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a <code>configuration-repository-update-frequency</code> tag in the reconf.xml file will cause it to override the @UpdateFrequency settings of every configuration repository. It is important to notice that it won't affect items annotated with @DoNotUpdate or @UpdateFrequency.</p>
+<p>It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a <code>configuration-repository-update-frequency</code> tag in the reconf.xml file will cause it to override the <code>@UpdateFrequency</code> settings of every configuration repository. It is important to notice that it won't affect items annotated with <code>@DoNotUpdate</code> or <code>@UpdateFrequency</code>.</p>
 
-<div class="highlight"><pre><span class="nt">&lt;configuration&gt;</span>
+<div class="highlight"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;local-cache&gt;</span>
         <span class="nt">&lt;location&gt;</span>/export/application/local-cache<span class="nt">&lt;/location&gt;</span>
     <span class="nt">&lt;/local-cache&gt;</span>
@@ -643,11 +645,11 @@
 <div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>br.com.uol.reconf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>reconf-client<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.0.11<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0.13<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div>
 
-<p>For every configuration repository, declare a bean of class "reconf.spring.RepositoryConfigurationBean" with a "configInterface" attribute configured with the interface containing the @ConfigurationRepository annotation.</p>
+<p>For every configuration repository, declare a bean of class "reconf.spring.RepositoryConfigurationBean" with a "configInterface" attribute configured with the interface containing the <code>@ConfigurationRepository</code> annotation.</p>
 
 <p>Assuming that we are using the interface below.</p>
 
