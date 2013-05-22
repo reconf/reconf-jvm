@@ -23,7 +23,7 @@ import reconf.client.proxy.*;
 import reconf.infra.log.*;
 
 
-public class LocalConfigurationUpdater extends ConfigurationUpdater {
+class LocalConfigurationUpdater extends ConfigurationUpdater {
 
     public LocalConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
         super(toUpdate, target);

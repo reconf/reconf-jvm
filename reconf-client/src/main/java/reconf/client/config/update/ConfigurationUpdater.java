@@ -32,13 +32,13 @@ public class ConfigurationUpdater implements Runnable {
     protected final MethodConfiguration methodCfg;
     protected final CountDownLatch latch;
 
-    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
+    ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
         methodValue = toUpdate;
         methodCfg = target;
         latch = new CountDownLatch(0);
     }
 
-    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+    ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
         methodValue = toUpdate;
         methodCfg = target;
         this.latch = latch;

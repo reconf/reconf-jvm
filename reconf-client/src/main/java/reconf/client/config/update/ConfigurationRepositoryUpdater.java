@@ -33,16 +33,22 @@ import reconf.infra.throwables.*;
 public class ConfigurationRepositoryUpdater implements Runnable {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationRepositoryUpdater.class);
-    protected final ConfigurationRepositoryElement cfgRepository;
-    protected final ConfigurationRepositoryData data;
-    protected Map<Method, Object> independentMethodValue = new ConcurrentHashMap<Method, Object>();
-    protected Map<Method, Object> atomicMethodValue = new ConcurrentHashMap<Method, Object>();
+    private final ConfigurationRepositoryElement cfgRepository;
+    private final ConfigurationRepositoryData data;
+    private Map<Method, Object> independentMethodValue = new ConcurrentHashMap<Method, Object>();
+    private Map<Method, Object> atomicMethodValue = new ConcurrentHashMap<Method, Object>();
+    private ConfigurationUpdaterFactory factory;
 
-    public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement arg) {
-        cfgRepository = arg;
-        data = new ConfigurationRepositoryData(arg);
+    public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ConfigurationUpdaterFactory factory) {
+        this.factory = factory;
+        cfgRepository = elem;
+        data = new ConfigurationRepositoryData(elem);
         load();
         scheduleIndependent();
+    }
+
+    public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement arg) {
+        this(arg, new ConfigurationUpdaterFactoryImpl());
     }
 
     public void syncNow(Class<? extends RuntimeException> cls) {
@@ -68,10 +74,10 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         try {
             for (MethodConfiguration config : data.getAll()) {
                 if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
-                    service.execute(new ConfigurationUpdater(independentMethodValue, config, latch));
+                    service.execute(factory.standard(independentMethodValue, config, latch));
                 } else {
-                    service.execute(new RemoteConfigurationUpdater(remote, config, latch));
-                    service.execute(new LocalConfigurationUpdater(local, config, latch));
+                    service.execute(factory.remote(remote, config, latch));
+                    service.execute(factory.local(local, config, latch));
                 }
             }
             waitFor(latch);
@@ -121,7 +127,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
     private void scheduleIndependent() {
         ScheduledExecutorService service = Executors.newScheduledThreadPool(data.getIndependentReload().size());
         for (MethodConfiguration config : data.getIndependentReload()) {
-            service.scheduleAtFixedRate(new ConfigurationUpdater(independentMethodValue, config), config.getReloadInterval(), config.getReloadInterval(), config.getReloadTimeUnit());
+            service.scheduleAtFixedRate(factory.standard(independentMethodValue, config), config.getReloadInterval(), config.getReloadInterval(), config.getReloadTimeUnit());
         }
     }
 
@@ -136,7 +142,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
 
         try {
             for (MethodConfiguration config : data.getAtomicReload()) {
-                service.execute(new RemoteConfigurationUpdater(updated, config, latch));
+                service.execute(factory.remote(updated, config, latch));
             }
             waitFor(latch);
             atomicMethodValue = mergeAtomicMethodObjectWith(updated);
@@ -187,9 +193,9 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         try {
             for (MethodConfiguration config : data.getAll()) {
                 if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
-                    service.submit(new RemoteConfigurationUpdater(updateIndependent, config, latch));
+                    service.submit(factory.remote(updateIndependent, config, latch));
                 } else {
-                    service.submit(new RemoteConfigurationUpdater(updateAtomic, config, latch));
+                    service.submit(factory.remote(updateAtomic, config, latch));
                 }
             }
             waitFor(latch);
