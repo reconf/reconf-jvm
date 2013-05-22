@@ -58,7 +58,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         }
     }
 
-    protected void load() {
+    private void load() {
         CountDownLatch latch = new CountDownLatch(data.getAll().size() + data.getAtomicReload().size());
         ExecutorService service = Executors.newFixedThreadPool(data.getAll().size() + data.getAtomicReload().size());
 
@@ -68,10 +68,10 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         try {
             for (MethodConfiguration config : data.getAll()) {
                 if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
-                    service.submit(new ConfigurationUpdater(independentMethodValue, config, latch));
+                    service.execute(new ConfigurationUpdater(independentMethodValue, config, latch));
                 } else {
-                    service.submit(new RemoteConfigurationUpdater(remote, config, latch));
-                    service.submit(new LocalConfigurationUpdater(local, config, latch));
+                    service.execute(new RemoteConfigurationUpdater(remote, config, latch));
+                    service.execute(new LocalConfigurationUpdater(local, config, latch));
                 }
             }
             waitFor(latch);
@@ -105,7 +105,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         }
     }
 
-    protected void validateLoadResult() {
+    private void validateLoadResult() {
         if ((independentMethodValue.size() + atomicMethodValue.size()) != data.getAll().size()) {
             throw new ReConfInitializationError(msg.format("error.missing.item", cfgRepository.getInterfaceClass()));
         }
@@ -136,9 +136,10 @@ public class ConfigurationRepositoryUpdater implements Runnable {
 
         try {
             for (MethodConfiguration config : data.getAtomicReload()) {
-                service.submit(new RemoteConfigurationUpdater(updated, config, latch));
+                service.execute(new RemoteConfigurationUpdater(updated, config, latch));
             }
             waitFor(latch);
+            atomicMethodValue = mergeAtomicMethodObjectWith(updated);
 
         } catch (Exception ignored) {
             LoggerHolder.getLog().error(msg.format("error.load", cfgRepository.getInterfaceClass()));
@@ -148,7 +149,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         }
     }
 
-    protected Map<Method,Object> mergeAtomicMethodObjectWith(Map<Method, Object> updated) {
+    private Map<Method,Object> mergeAtomicMethodObjectWith(Map<Method, Object> updated) {
         if (!shouldMerge(updated)) {
             return atomicMethodValue;
         }
@@ -161,7 +162,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         return result;
     }
 
-    protected boolean shouldMerge(Map<Method, Object> updated) {
+    private boolean shouldMerge(Map<Method, Object> updated) {
         List<String> notFound = new ArrayList<String>();
         for (Entry<Method, Object> each : atomicMethodValue.entrySet()) {
             if (updated.get(each.getKey()) == null) {
