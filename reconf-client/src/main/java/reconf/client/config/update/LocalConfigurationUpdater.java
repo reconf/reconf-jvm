@@ -26,11 +26,11 @@ import reconf.infra.log.*;
 
 public class LocalConfigurationUpdater extends ConfigurationUpdater {
 
-    public LocalConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, FactoryLocator locator) {
+    public LocalConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, ServiceLocator locator) {
         super(toUpdate, target, locator);
     }
 
-    public LocalConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch, FactoryLocator locator) {
+    public LocalConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch, ServiceLocator locator) {
         super(toUpdate, target, latch, locator);
     }
 

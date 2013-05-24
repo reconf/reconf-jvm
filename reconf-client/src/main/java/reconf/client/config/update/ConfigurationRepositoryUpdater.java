@@ -38,9 +38,9 @@ public class ConfigurationRepositoryUpdater implements Runnable {
     private final ConfigurationRepositoryData data;
     private Map<Method, Object> independentMethodValue = new ConcurrentHashMap<Method, Object>();
     private Map<Method, Object> atomicMethodValue = new ConcurrentHashMap<Method, Object>();
-    private FactoryLocator locator;
+    private ServiceLocator locator;
 
-    public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, FactoryLocator locator) {
+    public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ServiceLocator locator) {
         this.locator = locator;
         cfgRepository = elem;
         data = new ConfigurationRepositoryData(elem, locator);
@@ -242,7 +242,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
     }
 
     private void commitTemporaryDatabaseChanges() {
-        Environment.getManager().commitTemporaryUpdate(cfgRepository.getProduct(), cfgRepository.getComponent(), cfgRepository.getInterfaceClass());
+        locator.databaseManagerLocator().databaseManager().commitTemporaryUpdate(cfgRepository.getProduct(), cfgRepository.getComponent(), cfgRepository.getInterfaceClass());
     }
 
     public int getReloadInterval() {

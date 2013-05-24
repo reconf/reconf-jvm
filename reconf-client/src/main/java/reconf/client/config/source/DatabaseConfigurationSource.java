@@ -18,6 +18,7 @@ package reconf.client.config.source;
 import java.lang.reflect.*;
 import org.apache.commons.lang.*;
 import reconf.client.adapters.*;
+import reconf.client.factory.*;
 import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
@@ -31,8 +32,9 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
     private final String key;
     private final ConfigurationAdapter adapter;
     private final Method method;
+    private final ServiceLocator locator;
 
-    public DatabaseConfigurationSource(String product, String component, Method method, String key, ConfigurationAdapter adapter) {
+    public DatabaseConfigurationSource(String product, String component, Method method, String key, ConfigurationAdapter adapter, ServiceLocator locator) {
 
         if (StringUtils.isBlank(key)) {
             throw new NullPointerException(msg.get("error.stub"));
@@ -59,11 +61,12 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
         this.component = component;
         this.adapter = adapter;
         this.method = method;
+        this.locator = locator;
     }
 
     public String get() {
         try {
-            DatabaseManager proxy = Environment.getManager();
+            DatabaseManager proxy = locator.databaseManagerLocator().databaseManager();
             return proxy.get(product, component, method, key);
 
         } catch (Throwable t) {
@@ -74,7 +77,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
 
     public void update(String value) {
         try {
-            DatabaseManager manager = Environment.getManager();
+            DatabaseManager manager = locator.databaseManagerLocator().databaseManager();
             manager.upsert(product, component, method, key, value);
 
         } catch (Throwable t) {
@@ -84,7 +87,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
 
     public void temporaryUpdate(String value) {
         try {
-            DatabaseManager manager = Environment.getManager();
+            DatabaseManager manager = locator.databaseManagerLocator().databaseManager();
             manager.temporaryUpsert(product, component, method, key, value);
 
         } catch (Throwable t) {

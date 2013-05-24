@@ -15,13 +15,14 @@
  */
 package reconf.client.factory;
 
-import java.util.concurrent.*;
 import reconf.infra.http.*;
 
 
-public class ServerStubFactoryImpl implements ServerStubFactory {
+public interface ServiceLocator {
 
-    public ServerStub serverStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry) {
-        return new ServerStub(serviceUri, timeout, timeUnit, maxRetry);
-    }
+    ServiceLocator defaultImplementation = new ServiceLocatorImpl();
+
+    SimpleHttpDelegatorFactory simpleHttpDelegatorFactory();
+    ServerStubFactory serverStubFactory();
+    DatabaseManagerLocator databaseManagerLocator();
 }

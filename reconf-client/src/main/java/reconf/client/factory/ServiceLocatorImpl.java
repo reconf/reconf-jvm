@@ -18,10 +18,21 @@ package reconf.client.factory;
 import reconf.infra.http.*;
 
 
-public interface FactoryLocator {
+public class ServiceLocatorImpl implements ServiceLocator {
 
-    FactoryLocator defaultImplementation = new FactoryLocatorImpl();
+    @Override
+    public SimpleHttpDelegatorFactory simpleHttpDelegatorFactory() {
+        return SimpleHttpDelegatorFactory.defaultImplementation;
+    }
 
-    SimpleHttpDelegatorFactory simpleHttpDelegatorFactory();
-    ServerStubFactory serverStubFactory();
+    @Override
+    public ServerStubFactory serverStubFactory() {
+        return ServerStubFactory.defaultImplementation;
+    }
+
+    @Override
+    public DatabaseManagerLocator databaseManagerLocator() {
+        return DatabaseManagerLocator.defaultImplementation;
+    }
+
 }

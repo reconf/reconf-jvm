@@ -26,11 +26,11 @@ import reconf.infra.log.*;
 
 public class RemoteConfigurationUpdater extends ConfigurationUpdater {
 
-    public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, FactoryLocator locator) {
+    public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, ServiceLocator locator) {
         super(toUpdate, target, locator);
     }
 
-    public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch, FactoryLocator locator) {
+    public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch, ServiceLocator locator) {
         super(toUpdate, target, latch, locator);
     }
 

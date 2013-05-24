@@ -15,19 +15,14 @@
  */
 package reconf.client.factory;
 
-import reconf.infra.http.*;
+import reconf.client.setup.*;
 
 
-public class FactoryLocatorImpl implements FactoryLocator {
-
-    @Override
-    public SimpleHttpDelegatorFactory simpleHttpDelegatorFactory() {
-        return SimpleHttpDelegatorFactory.defaultImplementation;
-    }
+public class DatabaseManagerLocatorImpl implements DatabaseManagerLocator {
 
     @Override
-    public ServerStubFactory serverStubFactory() {
-        return ServerStubFactory.defaultImplementation;
+    public DatabaseManager databaseManager() {
+        return Environment.getManager();
     }
 
 }

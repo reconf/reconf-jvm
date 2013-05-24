@@ -38,9 +38,9 @@ public class MethodConfiguration {
     private final ConfigurationRepositoryElement cfgRepository;
     private final ConfigurationItemElement remoteItem;
     private final ServerStub stub;
-    private final FactoryLocator locator;
+    private final ServiceLocator locator;
 
-    public MethodConfiguration(ConfigurationRepositoryElement cfgRepository, ConfigurationItemElement itemConfiguration, FactoryLocator locator) {
+    public MethodConfiguration(ConfigurationRepositoryElement cfgRepository, ConfigurationItemElement itemConfiguration, ServiceLocator locator) {
         this.cfgRepository = cfgRepository;
         this.remoteItem = itemConfiguration;
         this.locator = locator;
@@ -51,7 +51,7 @@ public class MethodConfiguration {
         try {
             ConfigurationAdapter adapter = getRemoteAdapter();
             ConfigurationSourceHolder holder = new ConfigurationSourceHolder(new RemoteConfigurationSource(remoteItem.getValue(), stub, adapter),
-                    new DatabaseConfigurationSource(stub.getProduct(), stub.getComponent(), getMethod(), remoteItem.getValue(), adapter));
+                    new DatabaseConfigurationSource(stub.getProduct(), stub.getComponent(), getMethod(), remoteItem.getValue(), adapter, locator));
             return holder;
 
         } catch (Throwable t) {
@@ -73,7 +73,7 @@ public class MethodConfiguration {
 
     private ServerStub createStub() {
         ConnectionSettings settings = cfgRepository.getConnectionSettings();
-        ServerStub stub = locator.serverStubFactory().create(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit(), settings.getMaxRetry());
+        ServerStub stub = locator.serverStubFactory().serverStub(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit(), settings.getMaxRetry());
         stub.setComponent(StringUtils.isNotBlank(remoteItem.getComponent()) ? remoteItem.getComponent() : cfgRepository.getComponent());
         stub.setProduct(StringUtils.isNotBlank(remoteItem.getProduct()) ? remoteItem.getProduct() : cfgRepository.getProduct());
         return stub;

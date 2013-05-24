@@ -32,16 +32,16 @@ public class ConfigurationUpdater implements Runnable {
     protected final Map<Method, Object> methodValue;
     protected final MethodConfiguration methodCfg;
     protected final CountDownLatch latch;
-    protected final FactoryLocator locator;
+    protected final ServiceLocator locator;
 
-    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, FactoryLocator locator) {
+    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, ServiceLocator locator) {
         methodValue = toUpdate;
         methodCfg = target;
         latch = new CountDownLatch(0);
         this.locator = locator;
     }
 
-    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch, FactoryLocator locator) {
+    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch, ServiceLocator locator) {
         methodValue = toUpdate;
         methodCfg = target;
         this.latch = latch;

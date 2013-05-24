@@ -28,9 +28,9 @@ public class ConfigurationRepositoryData {
     private final List<MethodConfiguration> atomicReload = new ArrayList<MethodConfiguration>();
     private final List<MethodConfiguration> doNotReload = new ArrayList<MethodConfiguration>();
     private final List<MethodConfiguration> all = new ArrayList<MethodConfiguration>();
-    private final FactoryLocator locator;
+    private final ServiceLocator locator;
 
-    public ConfigurationRepositoryData(ConfigurationRepositoryElement arg, FactoryLocator locator) {
+    public ConfigurationRepositoryData(ConfigurationRepositoryElement arg, ServiceLocator locator) {
         this.cfgRepository = arg;
         this.locator = locator;
         findMethodsToProxy();

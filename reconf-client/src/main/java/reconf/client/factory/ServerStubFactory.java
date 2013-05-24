@@ -23,5 +23,5 @@ public interface ServerStubFactory {
 
     ServerStubFactory defaultImplementation = new ServerStubFactoryImpl();
 
-    ServerStub create(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry);
+    ServerStub serverStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry);
 }
