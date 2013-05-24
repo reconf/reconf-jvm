@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import reconf.client.config.source.*;
 import reconf.client.constructors.*;
+import reconf.client.factory.*;
 import reconf.client.proxy.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
@@ -32,13 +33,13 @@ public class ConfigurationUpdater implements Runnable {
     protected final MethodConfiguration methodCfg;
     protected final CountDownLatch latch;
 
-    ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
+    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
         methodValue = toUpdate;
         methodCfg = target;
         latch = new CountDownLatch(0);
     }
 
-    ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
         methodValue = toUpdate;
         methodCfg = target;
         this.latch = latch;
@@ -92,7 +93,7 @@ public class ConfigurationUpdater implements Runnable {
             data = new MethodData(methodCfg.getMethod(), clazz, value, obtained.getAdapter());
         }
 
-        Object result = ObjectConstructors.get(clazz).construct(data);
+        Object result = ObjectConstructorFactory.get(clazz).construct(data);
         methodValue.put(methodCfg.getMethod(), result);
     }
 

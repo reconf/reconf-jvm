@@ -23,13 +23,13 @@ import reconf.client.proxy.*;
 import reconf.infra.log.*;
 
 
-class RemoteConfigurationUpdater extends ConfigurationUpdater {
+public class RemoteConfigurationUpdater extends ConfigurationUpdater {
 
-    RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
+    public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
         super(toUpdate, target);
     }
 
-    RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+    public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
         super(toUpdate, target, latch);
     }
 

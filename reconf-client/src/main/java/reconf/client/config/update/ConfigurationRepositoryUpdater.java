@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.*;
 import org.apache.commons.lang.*;
 import reconf.client.elements.*;
+import reconf.client.factory.*;
 import reconf.client.proxy.*;
 import reconf.client.proxy.MethodConfiguration.ReloadStrategy;
 import reconf.client.setup.*;
@@ -48,7 +49,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
     }
 
     public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement arg) {
-        this(arg, new ConfigurationUpdaterFactoryImpl());
+        this(arg, ConfigurationUpdaterFactory.defaultImplementation);
     }
 
     public void syncNow(Class<? extends RuntimeException> cls) {

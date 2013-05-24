@@ -17,6 +17,7 @@ package reconf.client.constructors;
 
 import java.lang.reflect.*;
 import java.util.*;
+import reconf.client.factory.*;
 
 
 public class ArrayConstructor implements ObjectConstructor {
@@ -46,7 +47,7 @@ public class ArrayConstructor implements ObjectConstructor {
         Object result = Array.newInstance(returnClass, parsed.size());
 
         for (int i = 0; i < parsed.size(); i++) {
-            Array.set(result, i, ObjectConstructors.get(returnClass).construct(new MethodData(data.getMethod(), returnClass, parsed.get(i))));
+            Array.set(result, i, ObjectConstructorFactory.get(returnClass).construct(new MethodData(data.getMethod(), returnClass, parsed.get(i))));
         }
         return result;
     }

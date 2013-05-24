@@ -13,20 +13,21 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.constructors;
+package reconf.client.factory;
 
 import java.lang.reflect.*;
 import java.util.*;
+import reconf.client.constructors.*;
 
 
-public final class ObjectConstructors {
+public final class ObjectConstructorFactory {
 
     private static final ArrayConstructor array = new ArrayConstructor();
     private static final MapConstructor map = new MapConstructor();
     private static final SimpleConstructor simple = new SimpleConstructor();
     private static final CollectionConstructor collection = new CollectionConstructor();
 
-    private ObjectConstructors() {
+    private ObjectConstructorFactory() {
         throw new UnsupportedOperationException();
     }
 

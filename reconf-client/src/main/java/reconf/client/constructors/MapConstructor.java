@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 import org.apache.commons.lang.*;
+import reconf.client.factory.*;
 import reconf.infra.i18n.*;
 
 public class MapConstructor implements ObjectConstructor {
@@ -71,12 +72,12 @@ public class MapConstructor implements ObjectConstructor {
 
             Object value;
             if (valueType instanceof Class) {
-                value = ObjectConstructors.get(valueType).construct(new MethodData(data.getMethod(), valueType, each.getValue()));
+                value = ObjectConstructorFactory.get(valueType).construct(new MethodData(data.getMethod(), valueType, each.getValue()));
 
             } else {
-                value = ObjectConstructors.get(valueType).construct(new MethodData(data.getMethod(), valueType, each.getValue()));
+                value = ObjectConstructorFactory.get(valueType).construct(new MethodData(data.getMethod(), valueType, each.getValue()));
             }
-            mapInstance.put(ObjectConstructors.get(keyType).construct(new MethodData(data.getMethod(), keyType, each.getKey())), value);
+            mapInstance.put(ObjectConstructorFactory.get(keyType).construct(new MethodData(data.getMethod(), keyType, each.getKey())), value);
 
         }
 

@@ -19,6 +19,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
 import org.apache.commons.lang.*;
+import reconf.client.factory.*;
 import reconf.infra.i18n.*;
 
 
@@ -65,7 +66,7 @@ public class CollectionConstructor implements ObjectConstructor {
         }
 
         for (String s : new StringParser(data.getValue()).getTokens()) {
-            Object o = ObjectConstructors.get(innerClass).construct(new MethodData(data.getMethod(), innerClass, s));
+            Object o = ObjectConstructorFactory.get(innerClass).construct(new MethodData(data.getMethod(), innerClass, s));
             if (o != null) {
                 collectionInstance.add(o);
             }

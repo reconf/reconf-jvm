@@ -13,14 +13,17 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.config.update;
+package reconf.client.factory;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
+import reconf.client.config.update.*;
 import reconf.client.proxy.*;
 
 public interface ConfigurationUpdaterFactory {
+
+    ConfigurationUpdaterFactory defaultImplementation = new ConfigurationUpdaterFactoryImpl();
 
     ConfigurationUpdater standard(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch);
 
