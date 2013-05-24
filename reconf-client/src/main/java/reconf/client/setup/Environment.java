@@ -20,7 +20,7 @@ import java.util.*;
 import javax.validation.*;
 import org.apache.commons.collections.*;
 import org.apache.commons.lang.*;
-import reconf.client.elements.*;
+import reconf.client.factory.*;
 import reconf.infra.i18n.*;
 import reconf.infra.io.*;
 import reconf.infra.io.InputStreamReader;

@@ -13,13 +13,14 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.elements;
+package reconf.client.factory;
 
 import java.util.*;
 import javax.validation.*;
 import org.apache.commons.collections.*;
 import org.apache.commons.lang.*;
 import reconf.client.annotations.*;
+import reconf.client.elements.*;
 import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;

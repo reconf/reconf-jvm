@@ -17,10 +17,12 @@ package reconf.client.proxy;
 
 import java.lang.reflect.*;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.*;
 import reconf.client.annotations.*;
 import reconf.client.config.update.*;
 import reconf.client.elements.*;
 import reconf.client.factory.*;
+import reconf.client.locator.*;
 import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 
@@ -28,16 +30,17 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationRepositoryFactory.class);
     private ConfigurationRepositoryUpdater updater;
-
-    static {
-        Environment.setUp();
-    }
+    private static ConfigurationRepositoryElementFactory factory;
+    private static final ReentrantLock lock = new ReentrantLock();
 
     public static synchronized <T> T create(Class<T> arg) {
+        setUpIfNeeded();
         return newInstance(arg, Environment.getFactory().create(arg));
     }
 
     public static synchronized <T> T create(Class<T> arg, Customization customization) {
+        setUpIfNeeded();
+
         ConfigurationRepositoryElement repo = Environment.getFactory().create(arg);
         if (customization == null) {
             customization = Customization.EMPTY;
@@ -50,6 +53,22 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
             item.setValue(customization.getCustomItem(item.getValue()));
         }
         return newInstance(arg, repo);
+    }
+
+    private static synchronized void setUpIfNeeded() {
+        if (factory != null) {
+            return;
+        }
+        boolean locked = lock.tryLock();
+        if (!locked) {
+            return;
+        }
+        try {
+            Environment.setUp();
+            factory = Environment.getFactory();
+        } finally {
+            lock.unlock();
+        }
     }
 
     private static synchronized <T> T newInstance(Class<T> arg, ConfigurationRepositoryElement repo) {

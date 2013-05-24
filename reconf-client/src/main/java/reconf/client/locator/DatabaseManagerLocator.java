@@ -13,16 +13,14 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.factory;
+package reconf.client.locator;
 
 import reconf.client.setup.*;
 
 
-public class DatabaseManagerLocatorImpl implements DatabaseManagerLocator {
+public interface DatabaseManagerLocator {
 
-    @Override
-    public DatabaseManager databaseManager() {
-        return Environment.getManager();
-    }
+    DatabaseManagerLocator defaultImplementation = new DatabaseManagerLocatorImpl();
 
+    DatabaseManager find();
 }

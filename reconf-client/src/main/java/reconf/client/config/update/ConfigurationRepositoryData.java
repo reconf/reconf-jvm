@@ -17,7 +17,7 @@ package reconf.client.config.update;
 
 import java.util.*;
 import reconf.client.elements.*;
-import reconf.client.factory.*;
+import reconf.client.locator.*;
 import reconf.client.proxy.*;
 
 

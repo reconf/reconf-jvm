@@ -21,10 +21,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.*;
 import org.apache.commons.lang.*;
 import reconf.client.elements.*;
-import reconf.client.factory.*;
+import reconf.client.locator.*;
 import reconf.client.proxy.*;
 import reconf.client.proxy.MethodConfiguration.ReloadStrategy;
-import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 import reconf.infra.system.*;
@@ -242,7 +241,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
     }
 
     private void commitTemporaryDatabaseChanges() {
-        locator.databaseManagerLocator().databaseManager().commitTemporaryUpdate(cfgRepository.getProduct(), cfgRepository.getComponent(), cfgRepository.getInterfaceClass());
+        locator.databaseManagerLocator().find().commitTemporaryUpdate(cfgRepository.getProduct(), cfgRepository.getComponent(), cfgRepository.getInterfaceClass());
     }
 
     public int getReloadInterval() {

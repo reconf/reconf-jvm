@@ -19,7 +19,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
 import reconf.client.config.source.*;
-import reconf.client.factory.*;
+import reconf.client.locator.*;
 import reconf.client.proxy.*;
 import reconf.infra.log.*;
 

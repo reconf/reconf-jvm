@@ -13,16 +13,27 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.factory;
+package reconf.client.locator;
 
+import reconf.client.factory.*;
 import reconf.infra.http.*;
 
 
-public interface ServiceLocator {
+public class ServiceLocatorImpl implements ServiceLocator {
 
-    ServiceLocator defaultImplementation = new ServiceLocatorImpl();
+    @Override
+    public SimpleHttpDelegatorFactory simpleHttpDelegatorFactory() {
+        return SimpleHttpDelegatorFactory.defaultImplementation;
+    }
 
-    SimpleHttpDelegatorFactory simpleHttpDelegatorFactory();
-    ServerStubFactory serverStubFactory();
-    DatabaseManagerLocator databaseManagerLocator();
+    @Override
+    public ServerStubFactory serverStubFactory() {
+        return ServerStubFactory.defaultImplementation;
+    }
+
+    @Override
+    public DatabaseManagerLocator databaseManagerLocator() {
+        return DatabaseManagerLocator.defaultImplementation;
+    }
+
 }

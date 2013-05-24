@@ -21,7 +21,7 @@ import org.apache.commons.lang.*;
 import reconf.client.adapters.*;
 import reconf.client.config.source.*;
 import reconf.client.elements.*;
-import reconf.client.factory.*;
+import reconf.client.locator.*;
 import reconf.client.setup.*;
 import reconf.infra.http.*;
 import reconf.infra.i18n.*;

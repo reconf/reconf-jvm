@@ -18,7 +18,7 @@ package reconf.client.config.source;
 import java.lang.reflect.*;
 import org.apache.commons.lang.*;
 import reconf.client.adapters.*;
-import reconf.client.factory.*;
+import reconf.client.locator.*;
 import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
@@ -66,7 +66,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
 
     public String get() {
         try {
-            DatabaseManager proxy = locator.databaseManagerLocator().databaseManager();
+            DatabaseManager proxy = locator.databaseManagerLocator().find();
             return proxy.get(product, component, method, key);
 
         } catch (Throwable t) {
@@ -77,7 +77,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
 
     public void update(String value) {
         try {
-            DatabaseManager manager = locator.databaseManagerLocator().databaseManager();
+            DatabaseManager manager = locator.databaseManagerLocator().find();
             manager.upsert(product, component, method, key, value);
 
         } catch (Throwable t) {
@@ -87,7 +87,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
 
     public void temporaryUpdate(String value) {
         try {
-            DatabaseManager manager = locator.databaseManagerLocator().databaseManager();
+            DatabaseManager manager = locator.databaseManagerLocator().find();
             manager.temporaryUpsert(product, component, method, key, value);
 
         } catch (Throwable t) {
