@@ -20,6 +20,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 import reconf.client.config.update.*;
 import reconf.client.elements.*;
+import reconf.client.factory.*;
 import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 
@@ -53,7 +54,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
 
     private static synchronized <T> T newInstance(Class<T> arg, ConfigurationRepositoryElement repo) {
         ConfigurationRepositoryFactory factory = new ConfigurationRepositoryFactory();
-        factory.updater = new ConfigurationRepositoryUpdater(repo);
+        factory.updater = new ConfigurationRepositoryUpdater(repo, FactoryLocator.defaultImplementation);
         ScheduledExecutorService service = null;
         if (factory.updater.shouldReload()) {
              service = Executors.newScheduledThreadPool(1);

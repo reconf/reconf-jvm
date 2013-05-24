@@ -13,23 +13,21 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.infra.http;
+package reconf.client.factory;
 
-import java.util.concurrent.*;
-import org.apache.http.client.*;
-import org.apache.http.client.methods.*;
+import reconf.infra.http.*;
 
-public class RequestTask implements Callable<SimpleHttpResponse> {
 
-    private final HttpClient httpClient;
-    private final HttpUriRequest request;
+public class FactoryLocatorImpl implements FactoryLocator {
 
-    public RequestTask(HttpClient httpClient, HttpUriRequest request) {
-        this.httpClient = httpClient;
-        this.request = request;
+    @Override
+    public ConfigurationUpdaterFactory configurationUpdaterFactory() {
+        return ConfigurationUpdaterFactory.defaultImplementation;
     }
 
-    public SimpleHttpResponse call() throws Exception {
-        return new SimpleHttpResponse(httpClient, request);
+    @Override
+    public SimpleHttpDelegatorFactory simpleHttpDelegatorFactory() {
+        return SimpleHttpDelegatorFactory.defaultImplementation;
     }
+
 }

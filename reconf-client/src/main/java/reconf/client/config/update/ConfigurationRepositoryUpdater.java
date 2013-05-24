@@ -38,18 +38,14 @@ public class ConfigurationRepositoryUpdater implements Runnable {
     private final ConfigurationRepositoryData data;
     private Map<Method, Object> independentMethodValue = new ConcurrentHashMap<Method, Object>();
     private Map<Method, Object> atomicMethodValue = new ConcurrentHashMap<Method, Object>();
-    private ConfigurationUpdaterFactory factory;
+    private FactoryLocator locator;
 
-    public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ConfigurationUpdaterFactory factory) {
-        this.factory = factory;
+    public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, FactoryLocator locator) {
+        this.locator = locator;
         cfgRepository = elem;
         data = new ConfigurationRepositoryData(elem);
         load();
         scheduleIndependent();
-    }
-
-    public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement arg) {
-        this(arg, ConfigurationUpdaterFactory.defaultImplementation);
     }
 
     public void syncNow(Class<? extends RuntimeException> cls) {
@@ -75,10 +71,10 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         try {
             for (MethodConfiguration config : data.getAll()) {
                 if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
-                    service.execute(factory.standard(independentMethodValue, config, latch));
+                    service.execute(locator.configurationUpdaterFactory().standard(independentMethodValue, config, latch));
                 } else {
-                    service.execute(factory.remote(remote, config, latch));
-                    service.execute(factory.local(local, config, latch));
+                    service.execute(locator.configurationUpdaterFactory().remote(remote, config, latch));
+                    service.execute(locator.configurationUpdaterFactory().local(local, config, latch));
                 }
             }
             waitFor(latch);
@@ -128,7 +124,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
     private void scheduleIndependent() {
         ScheduledExecutorService service = Executors.newScheduledThreadPool(data.getIndependentReload().size());
         for (MethodConfiguration config : data.getIndependentReload()) {
-            service.scheduleAtFixedRate(factory.standard(independentMethodValue, config), config.getReloadInterval(), config.getReloadInterval(), config.getReloadTimeUnit());
+            service.scheduleAtFixedRate(locator.configurationUpdaterFactory().standard(independentMethodValue, config), config.getReloadInterval(), config.getReloadInterval(), config.getReloadTimeUnit());
         }
     }
 
@@ -143,7 +139,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
 
         try {
             for (MethodConfiguration config : data.getAtomicReload()) {
-                service.execute(factory.remote(updated, config, latch));
+                service.execute(locator.configurationUpdaterFactory().remote(updated, config, latch));
             }
             waitFor(latch);
             atomicMethodValue = mergeAtomicMethodObjectWith(updated);
@@ -194,9 +190,9 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         try {
             for (MethodConfiguration config : data.getAll()) {
                 if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
-                    service.submit(factory.remote(updateIndependent, config, latch));
+                    service.submit(locator.configurationUpdaterFactory().remote(updateIndependent, config, latch));
                 } else {
-                    service.submit(factory.remote(updateAtomic, config, latch));
+                    service.submit(locator.configurationUpdaterFactory().remote(updateAtomic, config, latch));
                 }
             }
             waitFor(latch);

@@ -16,12 +16,14 @@
 package reconf.infra.http;
 
 import java.util.concurrent.*;
+import reconf.infra.http.layer.*;
 import reconf.infra.i18n.*;
 
 public class ServerStub {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(ServerStub.class);
     private static final String PROTOCOL = "reconf.client-v1+text/plain";
+    private SimpleHttpDelegatorFactory factory;
     private final String serviceUri;
     private final long timeout;
     private final TimeUnit timeunit;
@@ -31,22 +33,27 @@ public class ServerStub {
     private String instance;
 
     public ServerStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry) {
+        this(serviceUri, timeout, timeUnit, maxRetry, SimpleHttpDelegatorFactory.defaultImplementation);
+    }
+
+    public ServerStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry, SimpleHttpDelegatorFactory factory) {
         this.serviceUri = serviceUri;
         this.timeout = timeout;
         this.timeunit = timeUnit;
         this.instance = LocalHostname.getName();
         this.maxRetry = maxRetry;
+        this.factory = factory;
     }
 
     public String get(String property) throws Exception {
-        final SimpleHttpRequest httpGet = SimpleHttpClient.newGetRequest(serviceUri, product, component, property)
+        final SimpleHttpRequest httpGet = factory.newGetRequest(serviceUri, product, component, property)
                 .addQueryParam("instance", instance)
                 .addHeaderField("Accept-Encoding", "gzip,deflate")
                 .addHeaderField("X-ReConf-Protocol", PROTOCOL);
 
         int status = 0;
         try {
-            SimpleHttpResponse result = SimpleHttpClient.executeAvoidingSSL(httpGet, timeout, timeunit, maxRetry);
+            SimpleHttpResponse result = factory.executeAvoidingSSL(httpGet, timeout, timeunit, maxRetry);
             status = result.getStatusCode();
             if (status == 200) {
                 return result.getBodyAsString();

@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.infra.http;
+package reconf.infra.http.layer;
 
 import java.io.*;
 import java.net.*;
