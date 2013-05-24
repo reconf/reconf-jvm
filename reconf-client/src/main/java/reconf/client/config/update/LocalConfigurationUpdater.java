@@ -19,18 +19,19 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
 import reconf.client.config.source.*;
+import reconf.client.factory.*;
 import reconf.client.proxy.*;
 import reconf.infra.log.*;
 
 
 public class LocalConfigurationUpdater extends ConfigurationUpdater {
 
-    public LocalConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
-        super(toUpdate, target);
+    public LocalConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, FactoryLocator locator) {
+        super(toUpdate, target, locator);
     }
 
-    public LocalConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
-        super(toUpdate, target, latch);
+    public LocalConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch, FactoryLocator locator) {
+        super(toUpdate, target, latch, locator);
     }
 
     protected void update() {

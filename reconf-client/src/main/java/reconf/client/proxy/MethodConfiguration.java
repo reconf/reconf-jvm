@@ -21,6 +21,7 @@ import org.apache.commons.lang.*;
 import reconf.client.adapters.*;
 import reconf.client.config.source.*;
 import reconf.client.elements.*;
+import reconf.client.factory.*;
 import reconf.client.setup.*;
 import reconf.infra.http.*;
 import reconf.infra.i18n.*;
@@ -36,12 +37,13 @@ public class MethodConfiguration {
 
     private final ConfigurationRepositoryElement cfgRepository;
     private final ConfigurationItemElement remoteItem;
-
     private final ServerStub stub;
+    private final FactoryLocator locator;
 
-    public MethodConfiguration(ConfigurationRepositoryElement cfgRepository, ConfigurationItemElement itemConfiguration) {
+    public MethodConfiguration(ConfigurationRepositoryElement cfgRepository, ConfigurationItemElement itemConfiguration, FactoryLocator locator) {
         this.cfgRepository = cfgRepository;
         this.remoteItem = itemConfiguration;
+        this.locator = locator;
         this.stub = createStub();
     }
 
@@ -71,7 +73,7 @@ public class MethodConfiguration {
 
     private ServerStub createStub() {
         ConnectionSettings settings = cfgRepository.getConnectionSettings();
-        ServerStub stub = new ServerStub(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit(), settings.getMaxRetry());
+        ServerStub stub = locator.serverStubFactory().create(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit(), settings.getMaxRetry());
         stub.setComponent(StringUtils.isNotBlank(remoteItem.getComponent()) ? remoteItem.getComponent() : cfgRepository.getComponent());
         stub.setProduct(StringUtils.isNotBlank(remoteItem.getProduct()) ? remoteItem.getProduct() : cfgRepository.getProduct());
         return stub;

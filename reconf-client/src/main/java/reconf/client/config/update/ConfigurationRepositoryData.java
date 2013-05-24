@@ -17,6 +17,7 @@ package reconf.client.config.update;
 
 import java.util.*;
 import reconf.client.elements.*;
+import reconf.client.factory.*;
 import reconf.client.proxy.*;
 
 
@@ -27,15 +28,17 @@ public class ConfigurationRepositoryData {
     private final List<MethodConfiguration> atomicReload = new ArrayList<MethodConfiguration>();
     private final List<MethodConfiguration> doNotReload = new ArrayList<MethodConfiguration>();
     private final List<MethodConfiguration> all = new ArrayList<MethodConfiguration>();
+    private final FactoryLocator locator;
 
-    public ConfigurationRepositoryData(ConfigurationRepositoryElement arg) {
+    public ConfigurationRepositoryData(ConfigurationRepositoryElement arg, FactoryLocator locator) {
         this.cfgRepository = arg;
+        this.locator = locator;
         findMethodsToProxy();
     }
 
     private void findMethodsToProxy() {
         for (ConfigurationItemElement item : cfgRepository.getConfigurationItems()) {
-            MethodConfiguration methodCfg = new MethodConfiguration(cfgRepository, item);
+            MethodConfiguration methodCfg = new MethodConfiguration(cfgRepository, item, locator);
             all.add(methodCfg);
             switch (methodCfg.getReloadStrategy()) {
                 case ATOMIC : atomicReload.add(methodCfg); break;

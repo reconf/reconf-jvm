@@ -21,13 +21,13 @@ import reconf.infra.http.*;
 public class FactoryLocatorImpl implements FactoryLocator {
 
     @Override
-    public ConfigurationUpdaterFactory configurationUpdaterFactory() {
-        return ConfigurationUpdaterFactory.defaultImplementation;
+    public SimpleHttpDelegatorFactory simpleHttpDelegatorFactory() {
+        return SimpleHttpDelegatorFactory.defaultImplementation;
     }
 
     @Override
-    public SimpleHttpDelegatorFactory simpleHttpDelegatorFactory() {
-        return SimpleHttpDelegatorFactory.defaultImplementation;
+    public ServerStubFactory serverStubFactory() {
+        return ServerStubFactory.defaultImplementation;
     }
 
 }
