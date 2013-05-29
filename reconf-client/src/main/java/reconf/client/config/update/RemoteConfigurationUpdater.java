@@ -19,19 +19,18 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
 import reconf.client.config.source.*;
-import reconf.client.locator.*;
 import reconf.client.proxy.*;
 import reconf.infra.log.*;
 
 
 public class RemoteConfigurationUpdater extends ConfigurationUpdater {
 
-    public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, ServiceLocator locator) {
-        super(toUpdate, target, locator);
+    public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
+        super(toUpdate, target);
     }
 
-    public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch, ServiceLocator locator) {
-        super(toUpdate, target, latch, locator);
+    public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+        super(toUpdate, target, latch);
     }
 
     protected void update() {

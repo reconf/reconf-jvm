@@ -70,10 +70,10 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         try {
             for (MethodConfiguration config : data.getAll()) {
                 if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
-                    service.execute(new ConfigurationUpdater(independentMethodValue, config, latch, locator));
+                    service.execute(locator.configurationUpdaterFactory().standard(independentMethodValue, config, latch));
                 } else {
-                    service.execute(new RemoteConfigurationUpdater(remote, config, latch, locator));
-                    service.execute(new LocalConfigurationUpdater(local, config, latch, locator));
+                    service.execute(locator.configurationUpdaterFactory().remote(remote, config, latch));
+                    service.execute(locator.configurationUpdaterFactory().local(local, config, latch));
                 }
             }
             waitFor(latch);
@@ -123,7 +123,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
     private void scheduleIndependent() {
         ScheduledExecutorService service = Executors.newScheduledThreadPool(data.getIndependentReload().size());
         for (MethodConfiguration config : data.getIndependentReload()) {
-            service.scheduleAtFixedRate(new ConfigurationUpdater(independentMethodValue, config, locator), config.getReloadInterval(), config.getReloadInterval(), config.getReloadTimeUnit());
+            service.scheduleAtFixedRate(locator.configurationUpdaterFactory().standard(independentMethodValue, config), config.getReloadInterval(), config.getReloadInterval(), config.getReloadTimeUnit());
         }
     }
 
@@ -138,7 +138,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
 
         try {
             for (MethodConfiguration config : data.getAtomicReload()) {
-                service.execute(new RemoteConfigurationUpdater(updated, config, latch, locator));
+                service.execute(locator.configurationUpdaterFactory().remote(updated, config, latch));
             }
             waitFor(latch);
             atomicMethodValue = mergeAtomicMethodObjectWith(updated);
@@ -189,9 +189,9 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         try {
             for (MethodConfiguration config : data.getAll()) {
                 if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
-                    service.submit(new RemoteConfigurationUpdater(updateIndependent, config, latch, locator));
+                    service.submit(locator.configurationUpdaterFactory().remote(updateIndependent, config, latch));
                 } else {
-                    service.submit(new RemoteConfigurationUpdater(updateAtomic, config, latch, locator));
+                    service.submit(locator.configurationUpdaterFactory().remote(updateAtomic, config, latch));
                 }
             }
             waitFor(latch);

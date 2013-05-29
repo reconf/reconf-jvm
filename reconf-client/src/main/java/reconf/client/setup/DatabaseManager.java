@@ -76,7 +76,7 @@ public class DatabaseManager implements ShutdownBean {
             }
 
         } catch (Throwable t) {
-            throw new RuntimeException(t);
+            throw new ReConfInitializationError(t);
         }
     }
 
@@ -405,7 +405,9 @@ public class DatabaseManager implements ShutdownBean {
         try {
             LoggerHolder.getLog().info(msg.get("db.stopping"));
             execute("SHUTDOWN");
-            dataSource.close();
+            if (dataSource != null) {
+                dataSource.close();
+            }
             LoggerHolder.getLog().info(msg.get("db.stopped"));
         } catch (Exception ignored) {
             LoggerHolder.getLog().warn(msg.get("error.db.stopping"), ignored);

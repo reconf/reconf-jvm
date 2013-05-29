@@ -21,7 +21,6 @@ import java.util.concurrent.*;
 import reconf.client.config.source.*;
 import reconf.client.constructors.*;
 import reconf.client.factory.*;
-import reconf.client.locator.*;
 import reconf.client.proxy.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
@@ -33,20 +32,17 @@ public class ConfigurationUpdater implements Runnable {
     protected final Map<Method, Object> methodValue;
     protected final MethodConfiguration methodCfg;
     protected final CountDownLatch latch;
-    protected final ServiceLocator locator;
 
-    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, ServiceLocator locator) {
+    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
         methodValue = toUpdate;
         methodCfg = target;
         latch = new CountDownLatch(0);
-        this.locator = locator;
     }
 
-    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch, ServiceLocator locator) {
+    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
         methodValue = toUpdate;
         methodCfg = target;
         this.latch = latch;
-        this.locator = locator;
     }
 
     public void run() {

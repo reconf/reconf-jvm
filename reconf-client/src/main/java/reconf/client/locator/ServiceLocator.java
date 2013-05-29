@@ -26,4 +26,5 @@ public interface ServiceLocator {
     SimpleHttpDelegatorFactory simpleHttpDelegatorFactory();
     ServerStubFactory serverStubFactory();
     DatabaseManagerLocator databaseManagerLocator();
+    ConfigurationUpdaterFactory configurationUpdaterFactory();
 }

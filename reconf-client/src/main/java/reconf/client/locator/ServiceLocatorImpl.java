@@ -36,4 +36,9 @@ public class ServiceLocatorImpl implements ServiceLocator {
         return DatabaseManagerLocator.defaultImplementation;
     }
 
+    @Override
+    public ConfigurationUpdaterFactory configurationUpdaterFactory() {
+        return ConfigurationUpdaterFactory.defaultImplementation;
+    }
+
 }
