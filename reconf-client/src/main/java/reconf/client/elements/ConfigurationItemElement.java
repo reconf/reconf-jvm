@@ -26,6 +26,7 @@ import reconf.client.adapters.*;
 import reconf.client.annotations.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
+import reconf.infra.throwables.*;
 
 
 public class ConfigurationItemElement {
@@ -46,7 +47,7 @@ public class ConfigurationItemElement {
 
             ConfigurationItem ann = method.getAnnotation(ConfigurationItem.class);
             if (ann == null) {
-                continue;
+                throw new ReConfInitializationError(msg.format("error.notConfiguredMethod", method.toString()));
             }
 
             ConfigurationItemElement resultItem = null;
