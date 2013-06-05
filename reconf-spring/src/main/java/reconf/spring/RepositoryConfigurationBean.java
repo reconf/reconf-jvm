@@ -26,7 +26,6 @@ public class RepositoryConfigurationBean implements FactoryBean<Object> {
     private Customization customization = Customization.EMPTY;
     private static ConcurrentMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
 
-    @Override
     public Object getObject() throws Exception {
         String key = configInterface.getName() + " - " + customization;
         if (cache.containsKey(key)) {
@@ -38,12 +37,10 @@ public class RepositoryConfigurationBean implements FactoryBean<Object> {
         return result;
     }
 
-    @Override
     public Class<?> getObjectType() {
         return configInterface;
     }
 
-    @Override
     public boolean isSingleton() {
         return true;
     }

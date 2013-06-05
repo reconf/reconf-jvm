@@ -47,7 +47,7 @@ public class ConfigurationItemElement {
 
             ConfigurationItem ann = method.getAnnotation(ConfigurationItem.class);
             if (ann == null) {
-                throw new ReConfInitializationError(msg.format("error.notConfiguredMethod", method.toString()));
+                throw new ReConfInitializationError(msg.format("error.not.configured.method", method.toString()));
             }
 
             ConfigurationItemElement resultItem = null;
