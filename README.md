@@ -388,7 +388,7 @@ The package `reconf-spring` provides a class for easy integration with Spring, i
 ```xml
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
-    <artifactId>reconf-client</artifactId>
+    <artifactId>reconf-spring</artifactId>
     <version>1.1.0</version>
 </dependency>
 ```
