@@ -44,6 +44,11 @@ public class ConfigurationRepositoryElementFactory {
     }
 
     private ConfigurationRepositoryElement createNewRepositoryFor(Class<?> arg) {
+        
+        if(!arg.isInterface()) {
+            throw new ReConfInitializationError(msg.format("error.is.not.interface", arg.getCanonicalName()));
+        }
+        
         if (!arg.isAnnotationPresent(ConfigurationRepository.class)) {
             return null;
         }
