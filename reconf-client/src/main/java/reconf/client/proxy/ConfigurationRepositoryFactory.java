@@ -83,13 +83,23 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (method.isAnnotationPresent(UpdateConfigurationRepository.class)) {
-            updater.syncNow(method.getAnnotation(UpdateConfigurationRepository.class).onErrorThrow());
-            return null;
-        }
-        if (!method.isAnnotationPresent(ConfigurationItem.class)) {
+        boolean updateAnnotationPresent = method.isAnnotationPresent(UpdateConfigurationRepository.class);
+        boolean configurationAnnotationPresent = method.isAnnotationPresent(ConfigurationItem.class);
+
+        if (!configurationAnnotationPresent && !updateAnnotationPresent) {
             throw new IllegalArgumentException(msg.format("error.method", method));
         }
-        return updater.getValueOf(method);
+        
+        if (updateAnnotationPresent) {
+            updater.syncNow(method.getAnnotation(UpdateConfigurationRepository.class).onErrorThrow());
+        }
+
+        Object configValue = null;
+        
+        if(configurationAnnotationPresent) {
+            configValue = updater.getValueOf(method);
+        }
+        
+        return configValue;
     }
 }
