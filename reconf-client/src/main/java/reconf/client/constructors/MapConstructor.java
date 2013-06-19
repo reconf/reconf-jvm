@@ -39,9 +39,16 @@ public class MapConstructor implements ObjectConstructor {
 
         if (data.getReturnType() instanceof ParameterizedType){
             ParameterizedType parameterized = (ParameterizedType) data.getReturnType();
+
             returnClass = (Class<?>) parameterized.getRawType();
-            keyType = parameterized.getActualTypeArguments()[0];
-            valueType = parameterized.getActualTypeArguments()[1];
+
+            if (parameterized.getActualTypeArguments().length != 2) {
+                throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
+
+            } else {
+                keyType = parameterized.getActualTypeArguments()[0];
+                valueType = parameterized.getActualTypeArguments()[1];
+            }
 
         } else if (data.getReturnType() instanceof Class) {
             returnClass = (Class<?>) data.getReturnType();
