@@ -46,7 +46,7 @@ public class CollectionConstructorCollectionStringTest {
         Object o = new CollectionConstructor().construct(data);
         Assert.assertTrue(o.getClass().equals(targetClass));
         Assert.assertTrue(((Collection<Collection<?>>) o).size() == 1);
-        Assert.assertTrue(((ArrayList<ArrayList<String>>) o).get(0).isEmpty());
+        Assert.assertTrue(((ArrayList<LinkedList<String>>) o).get(0).isEmpty());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class CollectionConstructorCollectionStringTest {
     public void test_two_elem_string_list() throws Throwable {
         data = new MethodData(method, method.getGenericReturnType(), "[['x'], ['y']]");
         Object o = new CollectionConstructor().construct(data);
-        ArrayList<ArrayList<String>> outer = (ArrayList<ArrayList<String>>) o;
+        ArrayList<LinkedList<String>> outer = (ArrayList<LinkedList<String>>) o;
         Assert.assertTrue(outer.size() == 2);
         Assert.assertTrue(outer.get(0).size() == 1);
         Assert.assertTrue(outer.get(0).get(0).equals("x"));
@@ -72,5 +72,5 @@ public class CollectionConstructorCollectionStringTest {
 }
 
 interface CollectionConstructorCollectionStringTarget {
-    ArrayList<ArrayList<String>> get();
+    ArrayList<LinkedList<String>> get();
 }

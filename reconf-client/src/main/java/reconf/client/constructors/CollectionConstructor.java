@@ -34,18 +34,17 @@ public class CollectionConstructor implements ObjectConstructor {
         }
 
         Class<?> returnClass = null;
-        Class<?> innerClass = null;
+        Type innerClass = null;
 
         if (data.getReturnType() instanceof ParameterizedType){
             ParameterizedType parameterized = (ParameterizedType) data.getReturnType();
             returnClass = (Class<?>) parameterized.getRawType();
 
             if (parameterized.getActualTypeArguments()[0] instanceof ParameterizedType) {
-                ParameterizedType innerParameterized = (ParameterizedType) parameterized.getActualTypeArguments()[0];
-                innerClass = (Class<?>) innerParameterized.getRawType();
+                innerClass = parameterized.getActualTypeArguments()[0];
 
             } else if (parameterized.getActualTypeArguments()[0] instanceof Class<?>) {
-                innerClass = (Class<?>) parameterized.getActualTypeArguments()[0];
+                innerClass = parameterized.getActualTypeArguments()[0];
             }
         } else if (data.getReturnType() instanceof Class) {
             returnClass = (Class<?>) data.getReturnType();
@@ -55,7 +54,11 @@ public class CollectionConstructor implements ObjectConstructor {
                 if (parameterized.getActualTypeArguments().length != 1) {
                     throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
                 }
-                innerClass = (Class<?>) parameterized.getActualTypeArguments()[0];
+                if (parameterized.getActualTypeArguments()[0] instanceof TypeVariable) {
+                    throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
+                } else {
+                    innerClass = parameterized.getActualTypeArguments()[0];
+                }
 
             } else {
                 innerClass = Object.class;
