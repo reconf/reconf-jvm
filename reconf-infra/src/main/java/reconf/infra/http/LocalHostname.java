@@ -15,16 +15,42 @@
  */
 package reconf.infra.http;
 
+import java.io.*;
 import java.net.*;
 
 
 public class LocalHostname {
 
     public static String getName() {
+        String runtime = runtimeStrategy();
+        String fallback = fallbackStrategy();
+        return runtime != null ? runtime : fallback != null ? fallback : "";
+    }
+
+    private static String fallbackStrategy() {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (Exception e) {
-            return "";
+            return null;
+        }
+    }
+
+    private static String runtimeStrategy() {
+        BufferedReader in = null;
+        try {
+            Process proc = Runtime.getRuntime().exec("hostname");
+            proc.waitFor();
+            in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            return in.readLine();
+        } catch (Exception e) {
+            return null;
+
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception ignored) {}
+            }
         }
     }
 }

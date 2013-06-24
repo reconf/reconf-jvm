@@ -21,6 +21,7 @@ import javax.validation.*;
 import org.apache.commons.collections.*;
 import org.apache.commons.lang.*;
 import reconf.client.factory.*;
+import reconf.infra.http.*;
 import reconf.infra.i18n.*;
 import reconf.infra.io.*;
 import reconf.infra.io.InputStreamReader;
@@ -72,6 +73,8 @@ public class Environment {
             factory = new ConfigurationRepositoryElementFactory(config);
             LoggerHolder.getLog().info(msg.get("db.setup"));
             mgr = new DatabaseManager(config.getLocalCacheSettings());
+
+            LoggerHolder.getLog().info(msg.format("instance.name", LocalHostname.getName()));
 
         } catch (ReConfInitializationError e) {
             if (mgr != null) {
