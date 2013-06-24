@@ -39,11 +39,27 @@ public class MapConstructor implements ObjectConstructor {
 
         if (data.getReturnType() instanceof ParameterizedType){
             ParameterizedType parameterized = (ParameterizedType) data.getReturnType();
-
             returnClass = (Class<?>) parameterized.getRawType();
 
-            if (parameterized.getActualTypeArguments().length != 2) {
-                throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
+            if (parameterized.getActualTypeArguments().length == 1) {
+                Type first = parameterized.getActualTypeArguments()[0];
+                if (returnClass.getGenericSuperclass() != null && returnClass.getGenericSuperclass() instanceof ParameterizedType) {
+                    parameterized = (ParameterizedType) returnClass.getGenericSuperclass();
+                    if (parameterized.getActualTypeArguments().length != 2) {
+                        throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
+                    }
+                    if (parameterized.getActualTypeArguments()[0] instanceof TypeVariable) {
+                        keyType = first;
+                        valueType = parameterized.getActualTypeArguments()[1];
+
+                    } else if (parameterized.getActualTypeArguments()[1] instanceof TypeVariable) {
+                        valueType = first;
+                        keyType = parameterized.getActualTypeArguments()[0];
+
+                    } else {
+                        throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
+                    }
+                }
 
             } else {
                 keyType = parameterized.getActualTypeArguments()[0];
@@ -52,8 +68,19 @@ public class MapConstructor implements ObjectConstructor {
 
         } else if (data.getReturnType() instanceof Class) {
             returnClass = (Class<?>) data.getReturnType();
-            keyType = Object.class;
-            valueType = Object.class;
+
+            if (returnClass.getGenericSuperclass() != null && returnClass.getGenericSuperclass() instanceof ParameterizedType) {
+                ParameterizedType parameterized = (ParameterizedType) returnClass.getGenericSuperclass();
+                if (parameterized.getActualTypeArguments().length != 2) {
+                    throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
+                }
+                keyType = parameterized.getActualTypeArguments()[0];
+                valueType = parameterized.getActualTypeArguments()[1];
+
+            } else {
+                keyType = Object.class;
+                valueType = Object.class;
+            }
 
         } else {
             throw new IllegalArgumentException(msg.get("error.return"));
