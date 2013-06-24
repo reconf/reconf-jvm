@@ -48,8 +48,19 @@ public class CollectionConstructor implements ObjectConstructor {
                 innerClass = (Class<?>) parameterized.getActualTypeArguments()[0];
             }
         } else if (data.getReturnType() instanceof Class) {
-            innerClass = Object.class;
             returnClass = (Class<?>) data.getReturnType();
+
+            if (returnClass.getGenericSuperclass() != null && returnClass.getGenericSuperclass() instanceof ParameterizedType) {
+                ParameterizedType parameterized = (ParameterizedType) returnClass.getGenericSuperclass();
+                if (parameterized.getActualTypeArguments().length != 1) {
+                    throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
+                }
+                innerClass = (Class<?>) parameterized.getActualTypeArguments()[0];
+
+            } else {
+                innerClass = Object.class;
+            }
+
         } else {
             throw new IllegalArgumentException(msg.get("error.return"));
         }
