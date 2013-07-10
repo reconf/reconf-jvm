@@ -37,8 +37,14 @@ public class DatabaseManager implements ShutdownBean {
     private final File directory;
     private final BasicDataSource dataSource;
     private static final String driverClassName = "org.hsqldb.jdbc.JDBCDriver";
-    private static final String cryptKey;
 
+    private final String DEFINITIVE_INSERT = "INSERT INTO PUBLIC.PRD_COMP_CONFIG_V1 (NAM_CLASS, NAM_METHOD, PROD, COMP, PROP, VALUE, UPDATED) VALUES (?,?,?,?,?,?,?)";
+    private final String TEMPORARY_INSERT = "INSERT INTO PUBLIC.PRD_COMP_CONFIG_V1 (NAM_CLASS, NAM_METHOD, PROD, COMP, PROP, NEW_VALUE, UPDATED) VALUES (?,?,?,?,?,?,?)";
+    private final String DEFINITIVE_UPDATE = "UPDATE PUBLIC.PRD_COMP_CONFIG_V1 SET VALUE = ?, UPDATED = ? WHERE PROD = ? AND COMP = ? AND PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ?";
+    private final String TEMPORARY_UPDATE = "UPDATE PUBLIC.PRD_COMP_CONFIG_V1 SET NEW_VALUE = ?, UPDATED = ? WHERE PROD = ? AND COMP = ? AND PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ?";
+    private final String COMMIT_TEMP_CHANGES = "UPDATE PUBLIC.PRD_COMP_CONFIG_V1 SET VALUE = NEW_VALUE, NEW_VALUE = NULL, UPDATED = ? WHERE PROD IN (%s) AND COMP IN (%s) AND NAM_CLASS = ? AND NEW_VALUE IS NOT NULL";
+
+    private static final String cryptKey;
     static {
         try {
             SecretKeySpec key = new SecretKeySpec("abcdefghijklmnop".getBytes(), "AES");
@@ -49,11 +55,6 @@ public class DatabaseManager implements ShutdownBean {
             throw new Error(msg.get("error.crypt.key"));
         }
     }
-
-    private final String DEFINITIVE_INSERT = "INSERT INTO PUBLIC.PRD_COMP_CONFIG_V1 (NAM_CLASS, NAM_METHOD, PROD, COMP, PROP, VALUE, UPDATED) VALUES (?,?,?,?,?,?,?)";
-    private final String TEMPORARY_INSERT = "INSERT INTO PUBLIC.PRD_COMP_CONFIG_V1 (NAM_CLASS, NAM_METHOD, PROD, COMP, PROP, NEW_VALUE, UPDATED) VALUES (?,?,?,?,?,?,?)";
-    private final String DEFINITIVE_UPDATE = "UPDATE PUBLIC.PRD_COMP_CONFIG_V1 SET VALUE = ?, UPDATED = ? WHERE PROD = ? AND COMP = ? AND PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ?";
-    private final String TEMPORARY_UPDATE = "UPDATE PUBLIC.PRD_COMP_CONFIG_V1 SET NEW_VALUE = ?, UPDATED = ? WHERE PROD = ? AND COMP = ? AND PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ?";
 
     public DatabaseManager(LocalCacheSettings config) {
         new ShutdownInterceptor(this).register();
@@ -298,7 +299,7 @@ public class DatabaseManager implements ShutdownBean {
     }
 
 
-    public void commitTemporaryUpdate(String product, String component, Class<?> declaringClass) {
+    public void commitTemporaryUpdate(Collection<String> product, Collection<String> component, Class<?> declaringClass) {
         synchronized (dataSource) {
             if (dataSource.isClosed()) {
                 return;
@@ -306,14 +307,13 @@ public class DatabaseManager implements ShutdownBean {
         }
         Connection conn = null;
         PreparedStatement stmt = null;
+        String qry = String.format(COMMIT_TEMP_CHANGES, StringUtils.join(toUpper(product), ","), StringUtils.join(toUpper(component), ","));
 
         try {
             conn = getConnection();
-            stmt = conn.prepareStatement("UPDATE PUBLIC.PRD_COMP_CONFIG_V1 SET VALUE = NEW_VALUE, NEW_VALUE = NULL, UPDATED = ? WHERE PROD = ? AND COMP = ? AND NAM_CLASS = ? AND NEW_VALUE IS NOT NULL");
+            stmt = conn.prepareStatement(qry);
             stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
-            stmt.setString(2, StringUtils.upperCase(product));
-            stmt.setString(3, StringUtils.upperCase(component));
-            stmt.setString(4, declaringClass.getName());
+            stmt.setString(2, declaringClass.getName());
             int changed = stmt.executeUpdate();
             LoggerHolder.getLog().debug(msg.format("db.update.number", changed));
 
@@ -325,6 +325,14 @@ public class DatabaseManager implements ShutdownBean {
             close(stmt);
             close(conn);
         }
+    }
+
+    private Collection<String> toUpper(Collection<String> arg) {
+        Set<String> result = new LinkedHashSet<String>();
+        for (String str : arg) {
+            result.add("'" + StringUtils.upperCase(str) + "'");
+        }
+        return result;
     }
 
     private void createTable() throws Exception {

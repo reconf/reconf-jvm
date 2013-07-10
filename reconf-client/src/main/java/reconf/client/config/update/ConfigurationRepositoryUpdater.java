@@ -241,7 +241,7 @@ public class ConfigurationRepositoryUpdater implements Runnable {
     }
 
     private void commitTemporaryDatabaseChanges() {
-        locator.databaseManagerLocator().find().commitTemporaryUpdate(cfgRepository.getProduct(), cfgRepository.getComponent(), cfgRepository.getInterfaceClass());
+        locator.databaseManagerLocator().find().commitTemporaryUpdate(cfgRepository.getInnerProducts(), cfgRepository.getInnerComponents(), cfgRepository.getInterfaceClass());
     }
 
     public int getReloadInterval() {

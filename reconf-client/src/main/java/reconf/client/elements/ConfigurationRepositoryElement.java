@@ -51,6 +51,18 @@ public class ConfigurationRepositoryElement {
         this.component = component;
     }
 
+    public Collection<String> getInnerComponents() {
+        Set<String> result = new LinkedHashSet<String>();
+        for (ConfigurationItemElement elem : configurationItems) {
+            if (elem.getComponent() == null) {
+                result.add(component);
+            } else {
+                result.add(elem.getComponent());
+            }
+        }
+        return result;
+    }
+
     @NotNull(message="{elements.ConfigurationRepositoryElement.error.product}")
     @NotEmpty(message="{elements.ConfigurationRepositoryElement.error.product}")
     public String getProduct() {
@@ -58,6 +70,18 @@ public class ConfigurationRepositoryElement {
     }
     public void setProduct(String product) {
         this.product = product;
+    }
+
+    public Collection<String> getInnerProducts() {
+        Set<String> result = new LinkedHashSet<String>();
+        for (ConfigurationItemElement elem : configurationItems) {
+            if (elem.getProduct() == null) {
+                result.add(product);
+            } else {
+                result.add(elem.getProduct());
+            }
+        }
+        return result;
     }
 
     public DoNotUpdateElement getDoNotUpdate() {
