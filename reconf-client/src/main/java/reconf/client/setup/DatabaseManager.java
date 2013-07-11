@@ -113,7 +113,7 @@ public class DatabaseManager implements ShutdownBean {
     private BasicDataSource createDataSource() {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(driverClassName);
-        ds.setUrl("jdbc:hsqldb:file:" + directory.getPath() + ";crypt_key="+cryptKey+";crypt_type=AES;crypt_lobs=true;ifexists=true;shutdown=true");
+        ds.setUrl("jdbc:hsqldb:file:" + directory.getPath() + ";hsqldb.lock_file=false;hsqldb.crypt_key="+cryptKey+";hsqldb.crypt_type=AES;hsqldb.crypt_lobs=true;hsqldb.ifexists=true;hsqldb.shutdown=true");
         ds.setUsername("reconfdb");
         ds.setPassword("local");
         return ds;
@@ -403,7 +403,7 @@ public class DatabaseManager implements ShutdownBean {
     private synchronized void firstConnection() throws SQLException {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(driverClassName);
-        ds.setUrl("jdbc:hsqldb:file:" + directory.getPath() + ";crypt_key="+cryptKey+";crypt_type=AES;crypt_lobs=true;shutdown=true");
+        ds.setUrl("jdbc:hsqldb:file:" + directory.getPath() + ";hsqldb.lock_file=false;hsqldb.crypt_key="+cryptKey+";hsqldb.crypt_type=AES;hsqldb.crypt_lobs=true;hsqldb.shutdown=true");
         ds.setUsername("reconfdb");
         ds.setPassword("local");
         ds.getConnection().close();
