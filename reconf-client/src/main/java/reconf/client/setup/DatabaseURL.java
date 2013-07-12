@@ -133,7 +133,6 @@ public class DatabaseURL {
         for (Entry<String, String> each : params.entrySet()) {
             result.add(each.getKey() + "=" + each.getValue());
         }
-        System.out.println(";" + StringUtils.join(result, ";"));
         return ";" + StringUtils.join(result, ";");
     }
 
