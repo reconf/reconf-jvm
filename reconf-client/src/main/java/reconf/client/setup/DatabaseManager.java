@@ -19,12 +19,9 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.sql.*;
 import java.util.*;
-import javax.crypto.*;
-import javax.crypto.spec.*;
-import org.apache.commons.codec.binary.*;
 import org.apache.commons.dbcp.*;
 import org.apache.commons.io.*;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 import reconf.infra.shutdown.*;
@@ -36,25 +33,12 @@ public class DatabaseManager implements ShutdownBean {
     private static final MessagesBundle msg = MessagesBundle.getBundle(DatabaseManager.class);
     private final File directory;
     private final BasicDataSource dataSource;
-    private static final String driverClassName = "org.hsqldb.jdbc.JDBCDriver";
 
-    private final String DEFINITIVE_INSERT = "INSERT INTO PUBLIC.PRD_COMP_CONFIG_V1 (NAM_CLASS, NAM_METHOD, PROD, COMP, PROP, VALUE, UPDATED) VALUES (?,?,?,?,?,?,?)";
-    private final String TEMPORARY_INSERT = "INSERT INTO PUBLIC.PRD_COMP_CONFIG_V1 (NAM_CLASS, NAM_METHOD, PROD, COMP, PROP, NEW_VALUE, UPDATED) VALUES (?,?,?,?,?,?,?)";
-    private final String DEFINITIVE_UPDATE = "UPDATE PUBLIC.PRD_COMP_CONFIG_V1 SET VALUE = ?, UPDATED = ? WHERE PROD = ? AND COMP = ? AND PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ?";
-    private final String TEMPORARY_UPDATE = "UPDATE PUBLIC.PRD_COMP_CONFIG_V1 SET NEW_VALUE = ?, UPDATED = ? WHERE PROD = ? AND COMP = ? AND PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ?";
-    private final String COMMIT_TEMP_CHANGES = "UPDATE PUBLIC.PRD_COMP_CONFIG_V1 SET VALUE = NEW_VALUE, NEW_VALUE = NULL, UPDATED = ? WHERE PROD IN (%s) AND COMP IN (%s) AND NAM_CLASS = ? AND NEW_VALUE IS NOT NULL";
-
-    private static final String cryptKey;
-    static {
-        try {
-            SecretKeySpec key = new SecretKeySpec("abcdefghijklmnop".getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-            cryptKey = new String(Hex.encodeHex(cipher.doFinal("remoteconfigdb".getBytes())));
-        } catch (Exception e) {
-            throw new Error(msg.get("error.crypt.key"));
-        }
-    }
+    private final String DEFINITIVE_INSERT = "INSERT INTO PUBLIC.CLS_METHOD_PROP_VALUE_V2 (NAM_CLASS, NAM_METHOD, FULL_PROP, VALUE, UPDATED) VALUES (?,?,?,?,?)";
+    private final String TEMPORARY_INSERT = "INSERT INTO PUBLIC.CLS_METHOD_PROP_VALUE_V2 (NAM_CLASS, NAM_METHOD, FULL_PROP, NEW_VALUE, UPDATED) VALUES (?,?,?,?,?)";
+    private final String DEFINITIVE_UPDATE = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET VALUE = ?, UPDATED = ? WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ?";
+    private final String TEMPORARY_UPDATE = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET NEW_VALUE = ?, UPDATED = ? WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ?";
+    private final String COMMIT_TEMP_CHANGES = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET VALUE = NEW_VALUE, NEW_VALUE = NULL, UPDATED = ? WHERE FULL_PROP IN (%s) AND NAM_CLASS = ? AND NEW_VALUE IS NOT NULL";
 
     public DatabaseManager(LocalCacheSettings config) {
         new ShutdownInterceptor(this).register();
@@ -66,12 +50,16 @@ public class DatabaseManager implements ShutdownBean {
             this.directory = config.getBackupLocation();
             provisionBackupDirectory();
 
-            firstConnection();
-            dataSource = createDataSource();
-            useCompressed(config.isCompressed());
-            if (config.getMaxLogFileSize() > 0) {
-                logFileSize(config.getMaxLogFileSize());
+            DatabaseURL url = DatabaseURL.location(directory.getPath()).encrypted();
+            if (config.isCompressed()) {
+                url = url.compressed();
             }
+            if (config.getMaxLogFileSize() > 0) {
+                url = url.maxLogFileSize(config.getMaxLogFileSize());
+            }
+
+            firstConnection(url);
+            dataSource = createDataSource(url);
             if (!tableExists()) {
                 createTable();
             }
@@ -110,12 +98,12 @@ public class DatabaseManager implements ShutdownBean {
         }
     }
 
-    private BasicDataSource createDataSource() {
+    private BasicDataSource createDataSource(DatabaseURL arg) {
         BasicDataSource ds = new BasicDataSource();
-        ds.setDriverClassName(driverClassName);
-        ds.setUrl("jdbc:hsqldb:file:" + directory.getPath() + ";hsqldb.lock_file=false;hsqldb.crypt_key="+cryptKey+";hsqldb.crypt_type=AES;hsqldb.crypt_lobs=true;hsqldb.ifexists=true;hsqldb.shutdown=true");
-        ds.setUsername("reconfdb");
-        ds.setPassword("local");
+        ds.setDriverClassName(arg.getDriverClassName());
+        ds.setUrl(arg.buildRuntimeURL());
+        ds.setUsername(arg.getLogin());
+        ds.setPassword(arg.getPass());
         return ds;
     }
 
@@ -125,11 +113,11 @@ public class DatabaseManager implements ShutdownBean {
         try {
             conn = getConnection();
             stmt = conn.createStatement();
-            stmt.execute("SELECT 1                               " +
-                         "FROM   INFORMATION_SCHEMA.TABLES       " +
-                         "WHERE  TABLE_CATALOG = 'PUBLIC'        " +
-                         "AND    TABLE_SCHEMA = 'PUBLIC'         " +
-                         "AND    TABLE_NAME='PRD_COMP_CONFIG_V1' ");
+            stmt.execute("SELECT 1                                     " +
+                         "FROM   INFORMATION_SCHEMA.TABLES             " +
+                         "WHERE  TABLE_CATALOG = 'PUBLIC'              " +
+                         "AND    TABLE_SCHEMA = 'PUBLIC'               " +
+                         "AND    TABLE_NAME='CLS_METHOD_PROP_VALUE_V2' ");
             return stmt.getResultSet().next();
 
         } finally {
@@ -138,26 +126,22 @@ public class DatabaseManager implements ShutdownBean {
         }
     }
 
-    public String get(String product, String component, Method method, String key) {
+    public String get(String fullProperty, Method method) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
             conn = getConnection();
-            stmt = conn.prepareStatement("SELECT VALUE                      " +
-                                         "FROM   PUBLIC.PRD_COMP_CONFIG_V1  " +
-                                         "WHERE  PROD = ?                   " +
-                                         "AND    COMP = ?                   " +
-                                         "AND    PROP = ?                   " +
-                                         "AND    NAM_CLASS = ?              " +
-                                         "AND    NAM_METHOD = ?             ");
+            stmt = conn.prepareStatement("SELECT VALUE                           " +
+                                         "FROM   PUBLIC.CLS_METHOD_PROP_VALUE_V2 " +
+                                         "WHERE  FULL_PROP = ?                   " +
+                                         "AND    NAM_CLASS = ?                   " +
+                                         "AND    NAM_METHOD = ?                  ");
 
-            stmt.setString(1, StringUtils.upperCase(product));
-            stmt.setString(2, StringUtils.upperCase(component));
-            stmt.setString(3, StringUtils.upperCase(key));
-            stmt.setString(4, method.getDeclaringClass().getName());
-            stmt.setString(5, method.getName());
+            stmt.setString(1, StringUtils.upperCase(fullProperty));
+            stmt.setString(2, method.getDeclaringClass().getName());
+            stmt.setString(3, method.getName());
             rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -186,10 +170,10 @@ public class DatabaseManager implements ShutdownBean {
 
         try {
             conn = getConnection();
-            stmt = conn.prepareStatement("SELECT PROD, COMP, PROP, VALUE FROM PUBLIC.PRD_COMP_CONFIG_V1");
+            stmt = conn.prepareStatement("SELECT FULL_PROP, VALUE FROM PUBLIC.CLS_METHOD_PROP_VALUE_V2");
             rs = stmt.executeQuery();
             while (rs.next()) {
-                result.put(rs.getString("PROD") + "." + rs.getString("COMP") + "." + rs.getString("PROP"), rs.getString("VALUE"));
+                result.put(rs.getString("FULL_PROP"), rs.getString("VALUE"));
             }
 
         } catch (Exception e) {
@@ -204,15 +188,15 @@ public class DatabaseManager implements ShutdownBean {
         return result;
     }
 
-    public void upsert(String product, String component, Method method, String key, String value) {
-        innerUpsert(product, component, method, key, value, true);
+    public void upsert(String fullProperty, Method method, String value) {
+        innerUpsert(fullProperty, method, value, true);
     }
 
-    public void temporaryUpsert(String product, String component, Method method, String key, String value) {
-        innerUpsert(product, component, method, key, value, false);
+    public void temporaryUpsert(String fullProperty, Method method, String value) {
+        innerUpsert(fullProperty, method, value, false);
     }
 
-    private void innerUpsert(String product, String component, Method method, String key, String value, boolean definitive) {
+    private void innerUpsert(String fullProperty, Method method, String value, boolean definitive) {
         synchronized (dataSource) {
             if (dataSource.isClosed()) {
                 return;
@@ -224,25 +208,21 @@ public class DatabaseManager implements ShutdownBean {
         try {
             conn = getConnection();
 
-            if (needToInsert(product, component, method, key)) {
+            if (needToInsert(fullProperty, method)) {
                 stmt = conn.prepareStatement(definitive ? DEFINITIVE_INSERT : TEMPORARY_INSERT);
                 stmt.setString(1, method.getDeclaringClass().getName());
                 stmt.setString(2, method.getName());
-                stmt.setString(3, StringUtils.upperCase(product));
-                stmt.setString(4, StringUtils.upperCase(component));
-                stmt.setString(5, StringUtils.upperCase(key));
-                stmt.setString(6, value);
-                stmt.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
+                stmt.setString(3, StringUtils.upperCase(fullProperty));
+                stmt.setString(4, value);
+                stmt.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
 
             } else {
                 stmt = conn.prepareStatement(definitive ? DEFINITIVE_UPDATE : TEMPORARY_UPDATE);
                 stmt.setString(1, value);
                 stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-                stmt.setString(3, StringUtils.upperCase(product));
-                stmt.setString(4, StringUtils.upperCase(component));
-                stmt.setString(5, StringUtils.upperCase(key));
-                stmt.setString(6, method.getDeclaringClass().getName());
-                stmt.setString(7, method.getName());
+                stmt.setString(3, StringUtils.upperCase(fullProperty));
+                stmt.setString(4, method.getDeclaringClass().getName());
+                stmt.setString(5, method.getName());
             }
 
             if (0 == stmt.executeUpdate()) {
@@ -259,26 +239,22 @@ public class DatabaseManager implements ShutdownBean {
         }
     }
 
-    private boolean needToInsert(String product, String component, Method method, String key) {
+    private boolean needToInsert(String fullProperty, Method method) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
             conn = getConnection();
-            stmt = conn.prepareStatement("SELECT 1                          " +
-                                         "FROM   PUBLIC.PRD_COMP_CONFIG_V1  " +
-                                         "WHERE  PROD = ?                   " +
-                                         "AND    COMP = ?                   " +
-                                         "AND    PROP = ?                   " +
-                                         "AND    NAM_CLASS = ?              " +
-                                         "AND    NAM_METHOD = ?             ");
+            stmt = conn.prepareStatement("SELECT 1                               " +
+                                         "FROM   PUBLIC.CLS_METHOD_PROP_VALUE_V2 " +
+                                         "WHERE  FULL_PROP = ?                   " +
+                                         "AND    NAM_CLASS = ?                   " +
+                                         "AND    NAM_METHOD = ?                  ");
 
-            stmt.setString(1, StringUtils.upperCase(product));
-            stmt.setString(2, StringUtils.upperCase(component));
-            stmt.setString(3, StringUtils.upperCase(key));
-            stmt.setString(4, method.getDeclaringClass().getName());
-            stmt.setString(5, method.getName());
+            stmt.setString(1, StringUtils.upperCase(fullProperty));
+            stmt.setString(2, method.getDeclaringClass().getName());
+            stmt.setString(3, method.getName());
             rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -299,7 +275,7 @@ public class DatabaseManager implements ShutdownBean {
     }
 
 
-    public void commitTemporaryUpdate(Collection<String> product, Collection<String> component, Class<?> declaringClass) {
+    public void commitTemporaryUpdate(Collection<String> fullProperties, Class<?> declaringClass) {
         synchronized (dataSource) {
             if (dataSource.isClosed()) {
                 return;
@@ -307,7 +283,7 @@ public class DatabaseManager implements ShutdownBean {
         }
         Connection conn = null;
         PreparedStatement stmt = null;
-        String qry = String.format(COMMIT_TEMP_CHANGES, StringUtils.join(toUpper(product), ","), StringUtils.join(toUpper(component), ","));
+        String qry = String.format(COMMIT_TEMP_CHANGES, StringUtils.join(toUpper(fullProperties), ","));
 
         try {
             conn = getConnection();
@@ -336,24 +312,14 @@ public class DatabaseManager implements ShutdownBean {
     }
 
     private void createTable() throws Exception {
-            execute("CREATE TABLE PUBLIC.PRD_COMP_CONFIG_V1                  " +
-                    "(NAM_CLASS VARCHAR(255) NOT NULL,                       " +
-                    " NAM_METHOD VARCHAR(255) NOT NULL,                      " +
-                    " PROD VARCHAR(50) NOT NULL,                             " +
-                    " COMP VARCHAR(50) NOT NULL,                             " +
-                    " PROP VARCHAR(255) NOT NULL,                            " +
-                    " VALUE LONGVARCHAR,                                     " +
-                    " NEW_VALUE LONGVARCHAR,                                 " +
-                    " UPDATED TIMESTAMP,                                     " +
-                    " PRIMARY KEY (NAM_CLASS, NAM_METHOD, PROD, COMP, PROP)) ");
-    }
-
-    private synchronized void useCompressed(boolean compressed) throws Exception {
-        execute("SET FILES SCRIPT FORMAT " + (compressed ? "COMPRESSED" : "TEXT"));
-    }
-
-    private synchronized void logFileSize(int arg) throws Exception {
-        execute("SET FILES LOG SIZE " + (arg));
+            execute("CREATE TABLE PUBLIC.CLS_METHOD_PROP_VALUE_V2     " +
+                    "(NAM_CLASS VARCHAR(255) NOT NULL,                " +
+                    " NAM_METHOD VARCHAR(255) NOT NULL,               " +
+                    " FULL_PROP LONGVARCHAR NOT NULL,                 " +
+                    " VALUE LONGVARCHAR,                              " +
+                    " NEW_VALUE LONGVARCHAR,                          " +
+                    " UPDATED TIMESTAMP,                              " +
+                    " PRIMARY KEY (NAM_CLASS, NAM_METHOD, FULL_PROP)) ");
     }
 
     private synchronized void execute(String cmd) throws Exception {
@@ -400,12 +366,12 @@ public class DatabaseManager implements ShutdownBean {
         return conn;
     }
 
-    private synchronized void firstConnection() throws SQLException {
+    private synchronized void firstConnection(DatabaseURL arg) throws SQLException {
         BasicDataSource ds = new BasicDataSource();
-        ds.setDriverClassName(driverClassName);
-        ds.setUrl("jdbc:hsqldb:file:" + directory.getPath() + ";hsqldb.lock_file=false;hsqldb.crypt_key="+cryptKey+";hsqldb.crypt_type=AES;hsqldb.crypt_lobs=true;hsqldb.shutdown=true");
-        ds.setUsername("reconfdb");
-        ds.setPassword("local");
+        ds.setDriverClassName(arg.getDriverClassName());
+        ds.setUrl(arg.buildInitalURL());
+        ds.setUsername(arg.getLogin());
+        ds.setPassword(arg.getPass());
         ds.getConnection().close();
     }
 

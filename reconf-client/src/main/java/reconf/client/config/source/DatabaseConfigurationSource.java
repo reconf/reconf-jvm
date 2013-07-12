@@ -27,25 +27,15 @@ import reconf.infra.log.*;
 public class DatabaseConfigurationSource implements ConfigurationSource {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(DatabaseConfigurationSource.class);
-    private final String product;
-    private final String component;
-    private final String key;
+    private final String fullProperty;
     private final ConfigurationAdapter adapter;
     private final Method method;
     private final ServiceLocator locator;
 
-    public DatabaseConfigurationSource(String product, String component, Method method, String key, ConfigurationAdapter adapter, ServiceLocator locator) {
+    public DatabaseConfigurationSource(String fullProperty, Method method, ConfigurationAdapter adapter, ServiceLocator locator) {
 
-        if (StringUtils.isBlank(key)) {
+        if (StringUtils.isBlank(fullProperty)) {
             throw new NullPointerException(msg.get("error.stub"));
-        }
-
-        if (StringUtils.isBlank(product)) {
-            throw new NullPointerException(msg.get("error.product"));
-        }
-
-        if (StringUtils.isBlank(component)) {
-            throw new NullPointerException(msg.get("error.component"));
         }
 
         if (null == adapter) {
@@ -56,9 +46,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
             throw new NullPointerException(msg.get("error.method"));
         }
 
-        this.key = key;
-        this.product = product;
-        this.component = component;
+        this.fullProperty = fullProperty;
         this.adapter = adapter;
         this.method = method;
         this.locator = locator;
@@ -67,7 +55,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
     public String get() {
         try {
             DatabaseManager proxy = locator.databaseManagerLocator().find();
-            return proxy.get(product, component, method, key);
+            return proxy.get(fullProperty, method);
 
         } catch (Throwable t) {
             LoggerHolder.getLog().error(msg.format("error.load", getClass().getName()), t);
@@ -78,7 +66,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
     public void update(String value) {
         try {
             DatabaseManager manager = locator.databaseManagerLocator().find();
-            manager.upsert(product, component, method, key, value);
+            manager.upsert(fullProperty, method, value);
 
         } catch (Throwable t) {
             LoggerHolder.getLog().error(msg.get("error.save"), t);
@@ -88,7 +76,7 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
     public void temporaryUpdate(String value) {
         try {
             DatabaseManager manager = locator.databaseManagerLocator().find();
-            manager.temporaryUpsert(product, component, method, key, value);
+            manager.temporaryUpsert(fullProperty, method, value);
 
         } catch (Throwable t) {
             LoggerHolder.getLog().error(msg.get("error.save"), t);

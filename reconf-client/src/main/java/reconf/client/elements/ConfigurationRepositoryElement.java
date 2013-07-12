@@ -18,6 +18,7 @@ package reconf.client.elements;
 import java.util.*;
 import javax.validation.*;
 import javax.validation.constraints.*;
+import org.apache.commons.lang.*;
 import org.apache.commons.lang.builder.*;
 import org.hibernate.validator.constraints.*;
 import reconf.client.setup.*;
@@ -51,14 +52,23 @@ public class ConfigurationRepositoryElement {
         this.component = component;
     }
 
-    public Collection<String> getInnerComponents() {
+    public Collection<String> getFullProperties() {
         Set<String> result = new LinkedHashSet<String>();
         for (ConfigurationItemElement elem : configurationItems) {
-            if (elem.getComponent() == null) {
-                result.add(component);
+            String productName = null;
+            if (StringUtils.isEmpty(elem.getProduct())) {
+                productName = getProduct();
             } else {
-                result.add(elem.getComponent());
+                productName = elem.getProduct();
             }
+
+            String componentName = null;
+            if (StringUtils.isEmpty(elem.getComponent())) {
+                componentName = getComponent();
+            } else {
+                componentName = elem.getComponent();
+            }
+            result.add(FullPropertyElement.from(productName, componentName, elem.getValue()));
         }
         return result;
     }
@@ -70,18 +80,6 @@ public class ConfigurationRepositoryElement {
     }
     public void setProduct(String product) {
         this.product = product;
-    }
-
-    public Collection<String> getInnerProducts() {
-        Set<String> result = new LinkedHashSet<String>();
-        for (ConfigurationItemElement elem : configurationItems) {
-            if (elem.getProduct() == null) {
-                result.add(product);
-            } else {
-                result.add(elem.getProduct());
-            }
-        }
-        return result;
     }
 
     public DoNotUpdateElement getDoNotUpdate() {

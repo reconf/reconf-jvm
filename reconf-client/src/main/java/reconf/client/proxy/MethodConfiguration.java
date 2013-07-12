@@ -51,7 +51,7 @@ public class MethodConfiguration {
         try {
             ConfigurationAdapter adapter = getRemoteAdapter();
             ConfigurationSourceHolder holder = new ConfigurationSourceHolder(new RemoteConfigurationSource(remoteItem.getValue(), stub, adapter),
-                    new DatabaseConfigurationSource(stub.getProduct(), stub.getComponent(), getMethod(), remoteItem.getValue(), adapter, locator));
+                    new DatabaseConfigurationSource(FullPropertyElement.from(stub.getProduct(), stub.getComponent(), remoteItem.getValue()), getMethod(), adapter, locator));
             return holder;
 
         } catch (Throwable t) {
