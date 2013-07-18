@@ -16,6 +16,7 @@
 package reconf.client.proxy;
 
 import java.lang.reflect.*;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
 import reconf.client.annotations.*;
@@ -33,19 +34,45 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
     private static ConfigurationRepositoryElementFactory factory;
     private static final ReentrantLock lock = new ReentrantLock();
 
+    private static final Map<Class<?>, Map<Customization, Object>> cachedProxies = new ConcurrentHashMap<Class<?>, Map<Customization, Object>>();
+    
     public static synchronized <T> T create(Class<T> arg) {
-        setUpIfNeeded();
-        return newInstance(arg, Environment.getFactory().create(arg));
+        return create(arg, null);
     }
 
+    @SuppressWarnings("unchecked")
     public static synchronized <T> T create(Class<T> arg, Customization customization) {
-        setUpIfNeeded();
-
-        ConfigurationRepositoryElement repo = Environment.getFactory().create(arg);
+        Map<Customization, Object> classProxies = cachedProxies.get(arg);
+        T proxy = null;
+        
         if (customization == null) {
             customization = Customization.EMPTY;
         }
+        
+        if(null == classProxies) {
+            classProxies = new ConcurrentHashMap<Customization, Object>();
+            cachedProxies.put(arg, classProxies);
+        }
 
+        proxy = (T) classProxies.get(customization);            
+        
+        if(null == proxy) {            
+            proxy = createNonCachedProxy(arg, customization);        
+            classProxies.put(customization, proxy);
+        }
+                
+        return proxy;
+    }
+
+    /**
+     * @param arg
+     * @param customization
+     */
+    private static <T> T createNonCachedProxy(Class<T> arg, Customization customization) {
+        setUpIfNeeded();
+        
+        ConfigurationRepositoryElement repo = Environment.getFactory().create(arg);
+        
         repo.setComponent(customization.getCustomComponent(repo.getComponent()));
         for (ConfigurationItemElement item : repo.getConfigurationItems()) {
             item.setProduct(repo.getProduct());

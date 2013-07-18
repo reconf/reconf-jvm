@@ -3,14 +3,17 @@
 .settings/*
 reconf-client/.settings/*
 reconf-client/target/*
+reconf-client/bin/*
 reconf-client/.classpath
 reconf-client/.project
 reconf-infra/.settings/*
 reconf-infra/target/*
+reconf-infra/bin/*
 reconf-infra/.classpath
 reconf-infra/.project
 reconf-spring/.settings/*
 reconf-spring/target/*
+reconf-spring/bin/*
 reconf-spring/.classpath
 reconf-spring/.project
 reconf-spring/.springBeans
