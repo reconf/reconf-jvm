@@ -32,14 +32,28 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
     private ConfigurationRepositoryUpdater updater;
     private static ConfigurationRepositoryElementFactory factory;
     private static final ReentrantLock lock = new ReentrantLock();
+    private static ConcurrentMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
 
     public static synchronized <T> T create(Class<T> arg) {
         setUpIfNeeded();
-        return newInstance(arg, Environment.getFactory().create(arg));
+
+        String key = arg.getName();
+        if (cache.containsKey(key)) {
+            return (T) cache.get(key);
+        }
+
+        Object result = newInstance(arg, Environment.getFactory().create(arg));
+        cache.putIfAbsent(key, result);
+        return (T) result;
     }
 
     public static synchronized <T> T create(Class<T> arg, Customization customization) {
         setUpIfNeeded();
+
+        String key = arg.getName() + (customization == null ? "" : customization);
+        if (cache.containsKey(key)) {
+            return (T) cache.get(key);
+        }
 
         ConfigurationRepositoryElement repo = Environment.getFactory().create(arg);
         if (customization == null) {
@@ -52,7 +66,10 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
             item.setComponent(customization.getCustomComponent(item.getComponent()));
             item.setValue(customization.getCustomItem(item.getValue()));
         }
-        return newInstance(arg, repo);
+
+        Object result = newInstance(arg, repo);
+        cache.putIfAbsent(key, result);
+        return (T) result;
     }
 
     private static synchronized void setUpIfNeeded() {
@@ -89,17 +106,17 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         if (!configurationAnnotationPresent && !updateAnnotationPresent) {
             throw new IllegalArgumentException(msg.format("error.method", method));
         }
-        
+
         if (updateAnnotationPresent) {
             updater.syncNow(method.getAnnotation(UpdateConfigurationRepository.class).onErrorThrow());
         }
 
         Object configValue = null;
-        
+
         if(configurationAnnotationPresent) {
             configValue = updater.getValueOf(method);
         }
-        
+
         return configValue;
     }
 }

@@ -15,7 +15,6 @@
  */
 package reconf.spring;
 
-import java.util.concurrent.*;
 import org.springframework.beans.factory.*;
 import reconf.client.proxy.*;
 
@@ -24,17 +23,9 @@ public class RepositoryConfigurationBean implements FactoryBean<Object> {
 
     private Class<?> configInterface;
     private Customization customization = Customization.EMPTY;
-    private static ConcurrentMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
 
     public Object getObject() throws Exception {
-        String key = configInterface.getName() + " - " + customization;
-        if (cache.containsKey(key)) {
-            return cache.get(key);
-        }
-
-        Object result = ConfigurationRepositoryFactory.create(getConfigInterface(), getCustomization());
-        cache.putIfAbsent(key, result);
-        return result;
+        return ConfigurationRepositoryFactory.create(getConfigInterface(), getCustomization());
     }
 
     public Class<?> getObjectType() {
