@@ -22,7 +22,7 @@ import reconf.client.proxy.*;
 public class ProxyFactoryTest {
 
     public static void main(String[] args) throws Exception {
-        WelcomeConfiguration welcome = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class);
+        WelcomeConfiguration welcome = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class);
 
         Customization cust = new Customization();
         cust.setComponentPrefix("cp-");
@@ -30,7 +30,7 @@ public class ProxyFactoryTest {
         cust.setComponentItemPrefix("kp-");
         cust.setComponentItemSuffix("-ks");
 
-        WelcomeConfiguration customWelcome = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class, cust);
+        WelcomeConfiguration customWelcome = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class, cust);
 
         System.out.println(welcome.getText() + ", " + customWelcome.getText());
         System.out.println(welcome.getMap()  + ", " + customWelcome.getMap());
