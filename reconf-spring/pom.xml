@@ -19,7 +19,7 @@
     <parent>
         <groupId>br.com.uol.reconf</groupId>
         <artifactId>reconf-parent</artifactId>
-        <version>1.4.0</version>
+        <version>1.4.1-SNAPSHOT</version>
     </parent>
     <artifactId>reconf-spring</artifactId>
     <name>ReConf Spring Integration</name>
