@@ -122,7 +122,7 @@ public interface WelcomeConfiguration {
 <a name="using-a-configurationrepository"/>
 ### Using a ConfigurationRepository
 
-Configuration repositories are easily created via `create` method provided by the reconf.client.proxy.ConfigurationRepositoryFactory class. Creating a proxy is a costly operation and, because of that, it's a good practice to call it only once for each repository managed by ReConf.
+Configuration repositories are easily obtained via `get` method provided by the reconf.client.proxy.ConfigurationRepositoryFactory class. Creating a proxy is a costly operation and, because of that, it's a good practice to call it only once for each repository managed by ReConf.
 
 ```java
     public static void main(String[] args) {
