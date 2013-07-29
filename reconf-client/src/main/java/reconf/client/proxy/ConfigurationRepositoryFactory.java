@@ -34,7 +34,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
     private static final ReentrantLock lock = new ReentrantLock();
     private static ConcurrentMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
 
-    public static synchronized <T> T create(Class<T> arg) {
+    public static synchronized <T> T get(Class<T> arg) {
         setUpIfNeeded();
 
         String key = arg.getName();
@@ -47,7 +47,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         return (T) result;
     }
 
-    public static synchronized <T> T create(Class<T> arg, Customization customization) {
+    public static synchronized <T> T get(Class<T> arg, Customization customization) {
         setUpIfNeeded();
 
         String key = arg.getName() + (customization == null ? "" : customization);

@@ -71,7 +71,7 @@ Add these lines to the `pom.xml` file
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-client</artifactId>
-    <version>1.3.2</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 
@@ -126,7 +126,7 @@ Configuration repositories are easily created via `create` method provided by th
 
 ```java
     public static void main(String[] args) {
-        WelcomeConfiguration welcome = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class);
+        WelcomeConfiguration welcome = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class);
         System.out.println(welcome.getText());
     }
 ```
@@ -320,9 +320,9 @@ Customizations are a feature that allows the developer to solve the following pr
         cust.setComponentItemPrefix("kp-");
         cust.setComponentItemSuffix("-ks");
 
-        WelcomeConfiguration welcome = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class);
+        WelcomeConfiguration welcome = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class);
 
-        WelcomeConfiguration customWelcome = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class, cust);
+        WelcomeConfiguration customWelcome = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class, cust);
         System.out.println(welcome.getText() + ", " + customWelcome.getText());
     }
 ```
@@ -389,7 +389,7 @@ The package `reconf-spring` provides a class for easy integration with Spring, i
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-spring</artifactId>
-    <version>1.3.2</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 

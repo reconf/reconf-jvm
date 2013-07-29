@@ -22,8 +22,8 @@ import reconf.client.proxy.*;
 public class EqualsTest {
 
     public static void main(String[] args) throws Exception {
-        WelcomeConfiguration welcome1 = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class);
-        WelcomeConfiguration welcome2 = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class);
+        WelcomeConfiguration welcome1 = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class);
+        WelcomeConfiguration welcome2 = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class);
 
         Customization cust = new Customization();
         cust.setComponentPrefix("cp-");
@@ -31,8 +31,8 @@ public class EqualsTest {
         cust.setComponentItemPrefix("kp-");
         cust.setComponentItemSuffix("-ks");
 
-        WelcomeConfiguration customWelcome1 = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class, cust);
-        WelcomeConfiguration customWelcome2 = ConfigurationRepositoryFactory.create(WelcomeConfiguration.class, cust);
+        WelcomeConfiguration customWelcome1 = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class, cust);
+        WelcomeConfiguration customWelcome2 = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class, cust);
 
         System.out.println(welcome1 == welcome2);
         System.out.println(welcome1 == customWelcome1);

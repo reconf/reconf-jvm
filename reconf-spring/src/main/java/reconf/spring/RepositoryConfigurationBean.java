@@ -25,7 +25,7 @@ public class RepositoryConfigurationBean implements FactoryBean<Object> {
     private Customization customization = Customization.EMPTY;
 
     public Object getObject() throws Exception {
-        return ConfigurationRepositoryFactory.create(getConfigInterface(), getCustomization());
+        return ConfigurationRepositoryFactory.get(getConfigInterface(), getCustomization());
     }
 
     public Class<?> getObjectType() {
