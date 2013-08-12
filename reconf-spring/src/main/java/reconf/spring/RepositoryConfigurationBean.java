@@ -18,8 +18,7 @@ package reconf.spring;
 import org.springframework.beans.factory.*;
 import reconf.client.proxy.*;
 
-
-public class RepositoryConfigurationBean implements FactoryBean<Object> {
+public class RepositoryConfigurationBean implements FactoryBean {
 
     private Class<?> configInterface;
     private Customization customization = Customization.EMPTY;
