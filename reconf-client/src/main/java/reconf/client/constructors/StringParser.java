@@ -26,8 +26,10 @@ public class StringParser {
     private static final MessagesBundle msg = MessagesBundle.getBundle(StringParser.class);
     private List<String> tokens = new ArrayList<String>();
     private final Stack<Character> openClose = new Stack<Character>();
+    private MethodData data;
 
-    public StringParser(MethodData data) {
+    public StringParser(MethodData arg) {
+        this.data = arg;
 
         if (StringUtils.isEmpty(data.getValue())) {
             return;
@@ -155,7 +157,7 @@ public class StringParser {
 
     public Map<String, String> getTokensAsMap() {
         if (tokens.size() % 2 != 0) {
-            throw new IllegalStateException(msg.format("error.map", LineSeparator.value(), tokens));
+            throw new IllegalStateException(msg.format("error.map", LineSeparator.value(), tokens, data.getMethod()));
         }
 
         Map<String, String> result = new LinkedHashMap<String, String>();
