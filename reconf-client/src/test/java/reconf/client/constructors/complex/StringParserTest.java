@@ -16,6 +16,7 @@
 package reconf.client.constructors.complex;
 
 import java.util.*;
+import org.apache.commons.lang.*;
 import org.junit.*;
 import reconf.client.constructors.*;
 
@@ -24,7 +25,7 @@ public class StringParserTest {
 
     @Test
     public void test_inner_col() {
-        StringParser type = new StringParser("[ ['a'] ]");
+        StringParser type = new StringParser(methodDataOf("[ ['a'] ]"));
         List<String> values = type.getTokens();
         Assert.assertTrue(values.size() == 1);
         Assert.assertTrue(values.get(0).equals("['a']"));
@@ -32,7 +33,7 @@ public class StringParserTest {
 
     @Test
     public void test_escaped_inner_col() {
-        StringParser type = new StringParser("[ ['[a]'] ]");
+        StringParser type = new StringParser(methodDataOf("[ ['[a]'] ]"));
         List<String> values = type.getTokens();
         Assert.assertTrue(values.size() == 1);
         Assert.assertTrue(values.get(0).equals("['[a]']"));
@@ -40,7 +41,7 @@ public class StringParserTest {
 
     @Test
     public void test_escaped_two_elem_inner_col() {
-        StringParser type = new StringParser("[ ['[a]', 'b'], ['c'] ]");
+        StringParser type = new StringParser(methodDataOf("[ ['[a]', 'b'], ['c'] ]"));
         List<String> values = type.getTokens();
         Assert.assertTrue(values.size() == 2);
         Assert.assertTrue(values.get(0).equals("['[a]', 'b']"));
@@ -49,7 +50,7 @@ public class StringParserTest {
 
     @Test
     public void test_escaped_single_quote_elem() {
-        StringParser type = new StringParser("[ ['\\''] ]");
+        StringParser type = new StringParser(methodDataOf("[ ['\\''] ]"));
         List<String> values = type.getTokens();
         Assert.assertTrue(values.size() == 1);
         Assert.assertTrue(values.get(0).equals("[''']"));
@@ -58,7 +59,7 @@ public class StringParserTest {
     @Test
     public void test_escaped_double_backslash() {
         //essa entrada simula o valor \\ vindo do remote
-        StringParser type = new StringParser("[ ['\\\\'] ]");
+        StringParser type = new StringParser(methodDataOf("[ ['\\\\'] ]"));
         List<String> values = type.getTokens();
         Assert.assertTrue(values.size() == 1);
         Assert.assertTrue(values.get(0).equals("['\\']"));
@@ -66,14 +67,14 @@ public class StringParserTest {
 
     @Test
     public void test_new_line() {
-        StringParser type = new StringParser("[ '\n' ]");
+        StringParser type = new StringParser(methodDataOf("[ '\n' ]"));
         Assert.assertTrue(type.getTokens().size() == 1);
         Assert.assertTrue(type.getTokens().iterator().next().equals("'\n'"));
     }
 
     @Test
     public void test_two_elem() {
-        StringParser type = new StringParser("[ '\n' , 'x', 'y' ]");
+        StringParser type = new StringParser(methodDataOf("[ '\n' , 'x', 'y' ]"));
         List<String> values = type.getTokens();
         Assert.assertTrue(values.size() == 3);
         Assert.assertTrue(values.get(0).equals("'\n'"));
@@ -83,7 +84,7 @@ public class StringParserTest {
 
     @Test
     public void test_three_elem() {
-        StringParser type = new StringParser("[ '0', '1' , '2' erro ]");
+        StringParser type = new StringParser(methodDataOf("[ '0', '1' , '2' notAToken ]"));
         List<String> values = type.getTokens();
         Assert.assertTrue(values.size() == 3);
         Assert.assertTrue(values.get(0).equals("'0'"));
@@ -93,13 +94,13 @@ public class StringParserTest {
 
     @Test
     public void empty_invalid() {
-        StringParser type = new StringParser("[ erro ]");
+        StringParser type = new StringParser(methodDataOf("[ notAToken ]"));
         Assert.assertTrue(type.getTokens().isEmpty());
     }
 
     @Test
     public void valid_with_escape() {
-        StringParser type = new StringParser("[ '\\\\', '\\\\' ]");
+        StringParser type = new StringParser(methodDataOf("[ '\\\\', '\\\\' ]"));
         List<String> values = type.getTokens();
         Assert.assertTrue(values.size() == 2);
         Assert.assertTrue(values.get(0).equals("'\\'"));
@@ -108,10 +109,18 @@ public class StringParserTest {
 
     @Test
     public void valid_with_separator() {
-        StringParser type = new StringParser("[ '\\'', '\\'' ]");
+        StringParser type = new StringParser(methodDataOf("[ '\\'', '\\'' ]"));
         List<String> values = type.getTokens();
         Assert.assertTrue(values.size() == 2);
         Assert.assertTrue(values.get(0).equals("'''"));
         Assert.assertTrue(values.get(1).equals("'''"));
+    }
+
+    private MethodData methodDataOf(String arg) {
+        try {
+            return new MethodData(Object.class.getMethod("toString", ArrayUtils.EMPTY_CLASS_ARRAY), String.class, arg);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

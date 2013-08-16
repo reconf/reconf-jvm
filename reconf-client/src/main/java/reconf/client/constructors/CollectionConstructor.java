@@ -52,10 +52,10 @@ public class CollectionConstructor implements ObjectConstructor {
             if (returnClass.getGenericSuperclass() != null && returnClass.getGenericSuperclass() instanceof ParameterizedType) {
                 ParameterizedType parameterized = (ParameterizedType) returnClass.getGenericSuperclass();
                 if (parameterized.getActualTypeArguments().length != 1) {
-                    throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
+                    throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType(), data.getMethod()));
                 }
                 if (parameterized.getActualTypeArguments()[0] instanceof TypeVariable) {
-                    throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
+                    throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType(), data.getMethod()));
                 } else {
                     innerClass = parameterized.getActualTypeArguments()[0];
                 }
@@ -65,11 +65,11 @@ public class CollectionConstructor implements ObjectConstructor {
             }
 
         } else {
-            throw new IllegalArgumentException(msg.get("error.return"));
+            throw new IllegalArgumentException(msg.format("error.return", data.getMethod()));
         }
 
         if (returnClass.isInterface()) {
-            returnClass = getDefaultImplementation(returnClass);
+            returnClass = getDefaultImplementation(data, returnClass);
         }
 
         Constructor<?> constructor = returnClass.getConstructor(ArrayUtils.EMPTY_CLASS_ARRAY);
@@ -79,7 +79,7 @@ public class CollectionConstructor implements ObjectConstructor {
             return collectionInstance;
         }
 
-        for (String s : new StringParser(data.getValue()).getTokens()) {
+        for (String s : new StringParser(data).getTokens()) {
             Object o = ObjectConstructorFactory.get(innerClass).construct(new MethodData(data.getMethod(), innerClass, s));
             if (o != null) {
                 collectionInstance.add(o);
@@ -89,7 +89,7 @@ public class CollectionConstructor implements ObjectConstructor {
         return collectionInstance;
     }
 
-    private Class<?> getDefaultImplementation(Class<?> returnClass) {
+    private Class<?> getDefaultImplementation(MethodData data, Class<?> returnClass) {
         if (Collection.class.equals(returnClass)) {
             return ArrayList.class;
         }
@@ -111,6 +111,6 @@ public class CollectionConstructor implements ObjectConstructor {
         if (BlockingDeque.class.equals(returnClass)) {
             return LinkedBlockingDeque.class;
         }
-        throw new UnsupportedOperationException(msg.format("error.implementation", returnClass));
+        throw new UnsupportedOperationException(msg.format("error.implementation", returnClass, data.getMethod()));
     }
 }

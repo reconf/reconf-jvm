@@ -46,7 +46,7 @@ public class SimpleConstructor implements ObjectConstructor {
 
         String trimmed = StringUtils.defaultString(StringUtils.trim(data.getValue()));
         if (!trimmed.startsWith("'") || !trimmed.endsWith("'")) {
-            throw new RuntimeException(msg.format("error.invalid.string", data.getValue()));
+            throw new RuntimeException(msg.format("error.invalid.string", data.getValue(), data.getMethod()));
         }
 
         String wholeValue = StringUtils.substring(trimmed, 1, trimmed.length()-1);
@@ -104,7 +104,7 @@ public class SimpleConstructor implements ObjectConstructor {
             constructor.setAccessible(true);
 
         } catch (NoSuchMethodException ignored) {
-            throw new IllegalStateException(msg.format("error.string.constructor", returnClass.getSimpleName()));
+            throw new IllegalStateException(msg.format("error.string.constructor", returnClass.getSimpleName(), data.getMethod()));
         }
 
         try {

@@ -43,7 +43,7 @@ public class ArrayConstructor implements ObjectConstructor {
             return Array.newInstance(returnClass, 0);
         }
 
-        List<String> parsed = new StringParser(data.getValue()).getTokens();
+        List<String> parsed = new StringParser(data).getTokens();
         Object result = Array.newInstance(returnClass, parsed.size());
 
         for (int i = 0; i < parsed.size(); i++) {

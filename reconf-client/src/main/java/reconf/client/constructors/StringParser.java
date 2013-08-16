@@ -27,21 +27,21 @@ public class StringParser {
     private List<String> tokens = new ArrayList<String>();
     private final Stack<Character> openClose = new Stack<Character>();
 
-    public StringParser(String value) {
+    public StringParser(MethodData data) {
 
-        if (StringUtils.isEmpty(value)) {
+        if (StringUtils.isEmpty(data.getValue())) {
             return;
         }
 
-        String trimmed = StringUtils.defaultString(StringUtils.trim(value));
+        String trimmed = StringUtils.defaultString(StringUtils.trim(data.getValue()));
         if (!trimmed.startsWith("[") || !trimmed.endsWith("]")) {
-            throw new RuntimeException(msg.get("error.complex.type"));
+            throw new RuntimeException(msg.format("error.complex.type", data.getMethod()));
         }
 
         String wholeValue = StringUtils.substring(trimmed, 1, trimmed.length()-1);
         extractTokens(wholeValue);
         if (openClose.size() % 2 != 0) {
-            throw new IllegalArgumentException(msg.format("error.invalid.string", value));
+            throw new IllegalArgumentException(msg.format("error.invalid.string", data.getValue(), data.getMethod()));
         }
     }
 

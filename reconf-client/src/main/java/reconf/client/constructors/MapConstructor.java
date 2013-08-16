@@ -46,7 +46,7 @@ public class MapConstructor implements ObjectConstructor {
                 if (returnClass.getGenericSuperclass() != null && returnClass.getGenericSuperclass() instanceof ParameterizedType) {
                     parameterized = (ParameterizedType) returnClass.getGenericSuperclass();
                     if (parameterized.getActualTypeArguments().length != 2) {
-                        throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
+                        throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType(), data.getMethod()));
                     }
                     if (parameterized.getActualTypeArguments()[0] instanceof TypeVariable) {
                         keyType = first;
@@ -57,7 +57,7 @@ public class MapConstructor implements ObjectConstructor {
                         keyType = parameterized.getActualTypeArguments()[0];
 
                     } else {
-                        throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
+                        throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType(), data.getMethod()));
                     }
                 }
 
@@ -72,7 +72,7 @@ public class MapConstructor implements ObjectConstructor {
             if (returnClass.getGenericSuperclass() != null && returnClass.getGenericSuperclass() instanceof ParameterizedType) {
                 ParameterizedType parameterized = (ParameterizedType) returnClass.getGenericSuperclass();
                 if (parameterized.getActualTypeArguments().length != 2) {
-                    throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType()));
+                    throw new IllegalArgumentException(msg.format("error.cant.build.type", data.getReturnType(), data.getMethod()));
                 }
                 keyType = parameterized.getActualTypeArguments()[0];
                 valueType = parameterized.getActualTypeArguments()[1];
@@ -83,11 +83,11 @@ public class MapConstructor implements ObjectConstructor {
             }
 
         } else {
-            throw new IllegalArgumentException(msg.get("error.return"));
+            throw new IllegalArgumentException(msg.format("error.return", data.getMethod()));
         }
 
         if (returnClass.isInterface()) {
-            returnClass = getDefaultImplementation(returnClass);
+            returnClass = getDefaultImplementation(data, returnClass);
         }
 
         Constructor<?> constructor = returnClass.getConstructor(ArrayUtils.EMPTY_CLASS_ARRAY);
@@ -98,10 +98,10 @@ public class MapConstructor implements ObjectConstructor {
         }
 
         if ((!(keyType instanceof Class)) || (!StringUtils.startsWith(data.getValue(), "[") || !StringUtils.endsWith(data.getValue(), "]"))) {
-            throw new IllegalArgumentException(msg.format("error.build", data.getValue()));
+            throw new IllegalArgumentException(msg.format("error.build", data.getValue(), data.getMethod()));
         }
 
-        StringParser parser = new StringParser(data.getValue());
+        StringParser parser = new StringParser(data);
         for (Entry<String, String> each : parser.getTokensAsMap().entrySet()) {
 
             Object value;
@@ -118,7 +118,7 @@ public class MapConstructor implements ObjectConstructor {
         return mapInstance;
     }
 
-    private Class<?> getDefaultImplementation(Class<?> returnClass) {
+    private Class<?> getDefaultImplementation(MethodData data, Class<?> returnClass) {
         if (Map.class.equals(returnClass)) {
             return HashMap.class;
         }
@@ -131,6 +131,6 @@ public class MapConstructor implements ObjectConstructor {
         if (NavigableMap.class.equals(returnClass) || SortedMap.class.equals(returnClass)) {
             return TreeMap.class;
         }
-        throw new UnsupportedOperationException(msg.format("error.implementation", returnClass));
+        throw new UnsupportedOperationException(msg.format("error.implementation", returnClass, data.getMethod()));
     }
 }
