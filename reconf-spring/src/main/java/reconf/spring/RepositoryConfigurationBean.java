@@ -18,6 +18,7 @@ package reconf.spring;
 import org.springframework.beans.factory.*;
 import reconf.client.proxy.*;
 
+@SuppressWarnings("rawtypes")
 public class RepositoryConfigurationBean implements FactoryBean {
 
     private Class<?> configInterface;
