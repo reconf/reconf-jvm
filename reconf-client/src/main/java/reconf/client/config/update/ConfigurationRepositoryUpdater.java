@@ -30,7 +30,7 @@ import reconf.infra.system.*;
 import reconf.infra.throwables.*;
 
 
-public class ConfigurationRepositoryUpdater implements Runnable {
+public class ConfigurationRepositoryUpdater extends Thread {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationRepositoryUpdater.class);
     private final ConfigurationRepositoryElement cfgRepository;
@@ -42,6 +42,8 @@ public class ConfigurationRepositoryUpdater implements Runnable {
     public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ServiceLocator locator) {
         this.locator = locator;
         cfgRepository = elem;
+        setName(elem.getInterfaceClass().getName() + "_updater");
+        setDaemon(true);
         data = new ConfigurationRepositoryData(elem, locator);
         load();
         scheduleIndependent();
@@ -53,7 +55,12 @@ public class ConfigurationRepositoryUpdater implements Runnable {
 
     public void run() {
         try {
-            update();
+            while (!Thread.currentThread().isInterrupted()) {
+                getReloadTimeUnit().sleep(getReloadInterval());
+                update();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
 
         } catch (Throwable t) {
             LoggerHolder.getLog().error(msg.format("error.reloading.all.items", cfgRepository.getInterfaceClass()), t);
@@ -121,9 +128,9 @@ public class ConfigurationRepositoryUpdater implements Runnable {
     }
 
     private void scheduleIndependent() {
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(data.getIndependentReload().size());
         for (MethodConfiguration config : data.getIndependentReload()) {
-            service.scheduleAtFixedRate(locator.configurationUpdaterFactory().standard(independentMethodValue, config), config.getReloadInterval(), config.getReloadInterval(), config.getReloadTimeUnit());
+            ConfigurationUpdater indUpdater = locator.configurationUpdaterFactory().independent(independentMethodValue, config, config.getReloadInterval(), config.getReloadTimeUnit());
+            indUpdater.setDaemon(true);
         }
     }
 
@@ -244,14 +251,14 @@ public class ConfigurationRepositoryUpdater implements Runnable {
         locator.databaseManagerLocator().find().commitTemporaryUpdate(cfgRepository.getFullProperties(), cfgRepository.getInterfaceClass());
     }
 
-    public int getReloadInterval() {
+    private int getReloadInterval() {
         if (!shouldReload()) {
             return 0;
         }
         return cfgRepository.getUpdateFrequency().getInterval();
     }
 
-    public TimeUnit getReloadTimeUnit() {
+    private TimeUnit getReloadTimeUnit() {
         if (!shouldReload()) {
             return TimeUnit.DAYS;
         }

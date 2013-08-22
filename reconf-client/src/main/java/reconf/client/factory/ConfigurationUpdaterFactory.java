@@ -26,12 +26,12 @@ public interface ConfigurationUpdaterFactory {
 
     ConfigurationUpdaterFactory defaultImplementation = new ConfigurationUpdaterFactoryImpl();
 
-    ConfigurationUpdater standard(Map<Method, Object> toUpdate, MethodConfiguration target);
+    ConfigurationUpdater independent(Map<Method, Object> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit);
     ConfigurationUpdater standard(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch);
 
-    RemoteConfigurationUpdater remote(Map<Method, Object> toUpdate, MethodConfiguration target);
-    RemoteConfigurationUpdater remote(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch);
+    ConfigurationUpdater remote(Map<Method, Object> toUpdate, MethodConfiguration target);
+    ConfigurationUpdater remote(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch);
 
-    LocalConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target);
-    LocalConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch);
+    ConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target);
+    ConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch);
 }

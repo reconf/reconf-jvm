@@ -39,6 +39,11 @@ public class LocalConfigurationUpdater extends ConfigurationUpdater {
         ConfigurationSource obtained = null;
 
         try {
+            if (Thread.currentThread().isInterrupted()) {
+                releaseLatch();
+                return;
+            }
+
             LoggerHolder.getLog().debug(msg.format("method.reload", getClass().getName(), methodCfg.getMethod().getName()));
             ConfigurationSourceHolder holder = methodCfg.getConfigurationSourceHolder();
             value = holder.getDb().get();

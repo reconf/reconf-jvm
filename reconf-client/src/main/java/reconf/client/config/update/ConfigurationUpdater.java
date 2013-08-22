@@ -26,7 +26,7 @@ import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 
 
-public class ConfigurationUpdater implements Runnable {
+public class ConfigurationUpdater extends Thread {
 
     protected final static MessagesBundle msg = MessagesBundle.getBundle(ConfigurationUpdater.class);
     protected final Map<Method, Object> methodValue;
@@ -34,12 +34,14 @@ public class ConfigurationUpdater implements Runnable {
     protected final CountDownLatch latch;
 
     public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
+        setName(target.getMethod().toString() + "_updater");
         methodValue = toUpdate;
         methodCfg = target;
         latch = new CountDownLatch(0);
     }
 
     public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+        setName(target.getMethod().toString() + "_updater");
         methodValue = toUpdate;
         methodCfg = target;
         this.latch = latch;

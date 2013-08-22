@@ -25,7 +25,7 @@ import reconf.client.proxy.*;
 public class ConfigurationUpdaterFactoryImpl implements ConfigurationUpdaterFactory {
 
     @Override
-    public ConfigurationUpdater standard(Map<Method, Object> toUpdate, MethodConfiguration target) {
+    public ConfigurationUpdater independent(Map<Method, Object> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit) {
         return new ConfigurationUpdater(toUpdate, target);
     }
 
@@ -35,22 +35,22 @@ public class ConfigurationUpdaterFactoryImpl implements ConfigurationUpdaterFact
     }
 
     @Override
-    public RemoteConfigurationUpdater remote(Map<Method, Object> toUpdate, MethodConfiguration target) {
+    public ConfigurationUpdater remote(Map<Method, Object> toUpdate, MethodConfiguration target) {
         return new RemoteConfigurationUpdater(toUpdate, target);
     }
 
     @Override
-    public RemoteConfigurationUpdater remote(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+    public ConfigurationUpdater remote(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
         return new RemoteConfigurationUpdater(toUpdate, target, latch);
     }
 
     @Override
-    public LocalConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target) {
+    public ConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target) {
         return new LocalConfigurationUpdater(toUpdate, target);
     }
 
     @Override
-    public LocalConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+    public ConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
         return new LocalConfigurationUpdater(toUpdate, target, latch);
     }
 
