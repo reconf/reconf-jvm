@@ -71,7 +71,7 @@ Add these lines to the `pom.xml` file
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-client</artifactId>
-    <version>1.5.0</version>
+    <version>1.5.1</version>
 </dependency>
 ```
 
@@ -389,7 +389,7 @@ The package `reconf-spring` provides a class for easy integration with Spring, i
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-spring</artifactId>
-    <version>1.5.0</version>
+    <version>1.5.1</version>
 </dependency>
 ```
 
