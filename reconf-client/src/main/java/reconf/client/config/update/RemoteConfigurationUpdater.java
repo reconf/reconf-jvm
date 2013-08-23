@@ -41,6 +41,7 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
         try {
             if (Thread.currentThread().isInterrupted()) {
                 releaseLatch();
+                logInterruptedThread();
                 return;
             }
 

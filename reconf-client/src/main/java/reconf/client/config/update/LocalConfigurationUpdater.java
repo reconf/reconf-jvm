@@ -41,6 +41,7 @@ public class LocalConfigurationUpdater extends ConfigurationUpdater {
         try {
             if (Thread.currentThread().isInterrupted()) {
                 releaseLatch();
+                logInterruptedThread();
                 return;
             }
 

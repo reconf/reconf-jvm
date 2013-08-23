@@ -43,7 +43,6 @@ public class ConfigurationRepositoryUpdater extends Thread {
         this.locator = locator;
         cfgRepository = elem;
         setName(elem.getInterfaceClass().getName() + "_updater");
-        setDaemon(true);
         data = new ConfigurationRepositoryData(elem, locator);
         load();
         scheduleIndependent();
@@ -60,6 +59,7 @@ public class ConfigurationRepositoryUpdater extends Thread {
                 update();
             }
         } catch (InterruptedException e) {
+            LoggerHolder.getLog().warn(msg.format("interrupted.thread", getName()));
             Thread.currentThread().interrupt();
 
         } catch (Throwable t) {
@@ -129,8 +129,7 @@ public class ConfigurationRepositoryUpdater extends Thread {
 
     private void scheduleIndependent() {
         for (MethodConfiguration config : data.getIndependentReload()) {
-            ConfigurationUpdater indUpdater = locator.configurationUpdaterFactory().independent(independentMethodValue, config, config.getReloadInterval(), config.getReloadTimeUnit());
-            indUpdater.setDaemon(true);
+            locator.configurationUpdaterFactory().independent(independentMethodValue, config, config.getReloadInterval(), config.getReloadTimeUnit());
         }
     }
 

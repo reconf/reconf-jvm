@@ -39,6 +39,7 @@ public class IndependentConfigurationUpdater extends ConfigurationUpdater {
                 update();
             }
         } catch (InterruptedException e) {
+            logInterruptedThread();
             Thread.currentThread().interrupt();
         }
     }

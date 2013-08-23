@@ -59,6 +59,7 @@ public class ConfigurationUpdater extends Thread {
         try {
             if (Thread.currentThread().isInterrupted()) {
                 releaseLatch();
+                logInterruptedThread();
                 return;
             }
 
@@ -108,5 +109,9 @@ public class ConfigurationUpdater extends Thread {
         if (latch != null) {
             latch.countDown();
         }
+    }
+
+    protected void logInterruptedThread() {
+        LoggerHolder.getLog().warn(msg.format("interrupted.thread", getName()));
     }
 }
