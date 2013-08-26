@@ -7,7 +7,7 @@
         <compressed>true</compressed>
     </local-cache>
     <server>
-        <url>http://config-reader.remote-admin.intranet</url>
+        <url>http://reader.reconf.intranet</url>
         <timeout>20</timeout>
         <time-unit>SECONDS</time-unit>
         <max-retry>3</max-retry>

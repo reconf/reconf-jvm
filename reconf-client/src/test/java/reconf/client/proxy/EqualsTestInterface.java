@@ -13,29 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.examples;
+package reconf.client.proxy;
 
-import java.util.*;
-import java.util.concurrent.*;
-import reconf.client.adapters.*;
 import reconf.client.annotations.*;
 
-
 @ConfigurationRepository(component="test", product="test")
-@UpdateFrequency(interval=10, timeUnit=TimeUnit.SECONDS)
-public interface WelcomeConfiguration {
+public interface EqualsTestInterface {
 
-    @ConfigurationItem("texto.de.boas.vindas")
-    String getText();
-
-    @ConfigurationItem("hugemap.param")
-    Map<Long, String> getMap();
-
-    @ConfigurationItem(value="hugemap.param", adapter=RawStringConfigurationAdapter.class)
-    @UpdateFrequency(interval=100, timeUnit=TimeUnit.MINUTES)
-    @DoNotUpdate
-    String getRawMap();
-
-    @UpdateConfigurationRepository
-    void updateIt();
+    @ConfigurationItem("value")
+    String getValue();
 }

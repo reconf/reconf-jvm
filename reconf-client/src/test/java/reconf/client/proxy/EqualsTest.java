@@ -13,17 +13,15 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.debug;
+package reconf.client.proxy;
 
-import reconf.client.examples.*;
-import reconf.client.proxy.*;
 
 
 public class EqualsTest {
 
     public static void main(String[] args) throws Exception {
-        WelcomeConfiguration welcome1 = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class);
-        WelcomeConfiguration welcome2 = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class);
+        EqualsTestInterface iface1 = ConfigurationRepositoryFactory.get(EqualsTestInterface.class);
+        EqualsTestInterface iface2 = ConfigurationRepositoryFactory.get(EqualsTestInterface.class);
 
         Customization cust = new Customization();
         cust.setComponentPrefix("cp-");
@@ -31,15 +29,15 @@ public class EqualsTest {
         cust.setComponentItemPrefix("kp-");
         cust.setComponentItemSuffix("-ks");
 
-        WelcomeConfiguration customWelcome1 = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class, cust);
-        WelcomeConfiguration customWelcome2 = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class, cust);
+        EqualsTestInterface customIface1 = ConfigurationRepositoryFactory.get(EqualsTestInterface.class, cust);
+        EqualsTestInterface customIface2 = ConfigurationRepositoryFactory.get(EqualsTestInterface.class, cust);
 
-        System.out.println(welcome1 == welcome2);
-        System.out.println(welcome1 == customWelcome1);
-        System.out.println(welcome2 == customWelcome1);
-        System.out.println(customWelcome1 == customWelcome2);
-        System.out.println(welcome1 == customWelcome2);
-        System.out.println(welcome2 == customWelcome2);
+        System.out.println(iface1 == iface2);
+        System.out.println(iface1 == customIface1);
+        System.out.println(iface2 == customIface1);
+        System.out.println(customIface1 == customIface2);
+        System.out.println(iface1 == customIface2);
+        System.out.println(iface2 == customIface2);
         System.exit(0);
     }
 }
