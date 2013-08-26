@@ -47,7 +47,7 @@ public class ConfigurationRepositoryUpdater extends DogThread {
         this.locator = locator;
         this.factory = factory;
         cfgRepository = elem;
-        setName(elem.getInterfaceClass().getName() + "_updater [" + new Object().toString() + "]");
+        setName(elem.getInterfaceClass().getName() + "_updater[" + new Object().toString() + "]");
         data = new ConfigurationRepositoryData(elem, locator);
         load();
         scheduleIndependent();

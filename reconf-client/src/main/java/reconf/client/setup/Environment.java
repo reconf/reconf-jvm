@@ -65,6 +65,7 @@ public class Environment {
             config.setAnnotationOverride(parser.getAnnotationOverride());
             config.setConnectionSettings(parser.getConnectionSettings());
             config.setLocalCacheSettings(parser.getLocalCacheSettings());
+            config.setExperimentalFeatures(parser.isExperimentalFeatures());
 
             msg = MessagesBundle.getBundle(Environment.class);
             LoggerHolder.getLog().info(msg.get("file.load"));
@@ -79,7 +80,7 @@ public class Environment {
             LoggerHolder.getLog().info(msg.format("instance.name", LocalHostname.getName()));
 
             checker = new ThreadWatchdog();
-            if (parser.isExperimentalFeatures()) {
+            if (config.isExperimentalFeatures()) {
                 checker.start();
             }
 

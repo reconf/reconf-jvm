@@ -35,14 +35,14 @@ public class ConfigurationUpdater extends DogThread {
     protected final CountDownLatch latch;
 
     public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
-        setName(target.getMethod().toString() + "_updater  [" + new Object().toString() + "]");
+        setName(target.getMethod().toString() + "_updater[" + new Object().toString() + "]");
         methodValue = toUpdate;
         methodCfg = target;
         latch = new CountDownLatch(0);
     }
 
     public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
-        setName(target.getMethod().toString() + "_updater");
+        setName(target.getMethod().toString() + "_updater[" + new Object().toString() + "]");
         methodValue = toUpdate;
         methodCfg = target;
         this.latch = latch;
