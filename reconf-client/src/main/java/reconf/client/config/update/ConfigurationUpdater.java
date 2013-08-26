@@ -21,12 +21,13 @@ import java.util.concurrent.*;
 import reconf.client.config.source.*;
 import reconf.client.constructors.*;
 import reconf.client.factory.*;
+import reconf.client.health.check.*;
 import reconf.client.proxy.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 
 
-public class ConfigurationUpdater extends Thread {
+public class ConfigurationUpdater extends DogThread {
 
     protected final static MessagesBundle msg = MessagesBundle.getBundle(ConfigurationUpdater.class);
     protected final Map<Method, Object> methodValue;
@@ -34,7 +35,7 @@ public class ConfigurationUpdater extends Thread {
     protected final CountDownLatch latch;
 
     public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
-        setName(target.getMethod().toString() + "_updater");
+        setName(target.getMethod().toString() + "_updater  [" + new Object().toString() + "]");
         methodValue = toUpdate;
         methodCfg = target;
         latch = new CountDownLatch(0);
@@ -113,5 +114,28 @@ public class ConfigurationUpdater extends Thread {
 
     protected void logInterruptedThread() {
         LoggerHolder.getLog().warn(msg.format("interrupted.thread", getName()));
+    }
+
+    @Override
+    public int getReloadInterval() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TimeUnit getReloadTimeUnit() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
+    }
+
+    @Override
+    public void kill() {
+        try {
+            Thread.currentThread().interrupt();
+        } catch (Exception ignored) {
+        }
     }
 }

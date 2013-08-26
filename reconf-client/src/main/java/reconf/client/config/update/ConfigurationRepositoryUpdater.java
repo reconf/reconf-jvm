@@ -21,31 +21,38 @@ import java.util.Map.Entry;
 import java.util.concurrent.*;
 import org.apache.commons.lang.*;
 import reconf.client.elements.*;
+import reconf.client.health.check.*;
 import reconf.client.locator.*;
 import reconf.client.proxy.*;
 import reconf.client.proxy.MethodConfiguration.ReloadStrategy;
+import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 import reconf.infra.system.*;
 import reconf.infra.throwables.*;
 
 
-public class ConfigurationRepositoryUpdater extends Thread {
+public class ConfigurationRepositoryUpdater extends DogThread {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationRepositoryUpdater.class);
     private final ConfigurationRepositoryElement cfgRepository;
     private final ConfigurationRepositoryData data;
     private Map<Method, Object> independentMethodValue = new ConcurrentHashMap<Method, Object>();
     private Map<Method, Object> atomicMethodValue = new ConcurrentHashMap<Method, Object>();
+    private final ConfigurationRepositoryFactory factory;
     private ServiceLocator locator;
+    private List<DogThread> independentReload = new ArrayList<DogThread>();
 
-    public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ServiceLocator locator) {
+    public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ServiceLocator locator, ConfigurationRepositoryFactory factory) {
         this.locator = locator;
+        this.factory = factory;
         cfgRepository = elem;
-        setName(elem.getInterfaceClass().getName() + "_updater");
+        setName(elem.getInterfaceClass().getName() + "_updater [" + new Object().toString() + "]");
         data = new ConfigurationRepositoryData(elem, locator);
         load();
         scheduleIndependent();
+        updateLastExecution();
+        factory.setUpdater(this);
     }
 
     public void syncNow(Class<? extends RuntimeException> cls) {
@@ -56,6 +63,7 @@ public class ConfigurationRepositoryUpdater extends Thread {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 getReloadTimeUnit().sleep(getReloadInterval());
+                updateLastExecution();
                 update();
             }
         } catch (InterruptedException e) {
@@ -129,7 +137,10 @@ public class ConfigurationRepositoryUpdater extends Thread {
 
     private void scheduleIndependent() {
         for (MethodConfiguration config : data.getIndependentReload()) {
-            locator.configurationUpdaterFactory().independent(independentMethodValue, config, config.getReloadInterval(), config.getReloadTimeUnit());
+            DogThread thread = locator.configurationUpdaterFactory().independent(independentMethodValue, config, config.getReloadInterval(), config.getReloadTimeUnit());
+            thread.start();
+            Environment.addThreadToCheck(thread);
+            independentReload.add(thread);
         }
     }
 
@@ -250,14 +261,14 @@ public class ConfigurationRepositoryUpdater extends Thread {
         locator.databaseManagerLocator().find().commitTemporaryUpdate(cfgRepository.getFullProperties(), cfgRepository.getInterfaceClass());
     }
 
-    private int getReloadInterval() {
+    public int getReloadInterval() {
         if (!shouldReload()) {
             return 0;
         }
         return cfgRepository.getUpdateFrequency().getInterval();
     }
 
-    private TimeUnit getReloadTimeUnit() {
+    public TimeUnit getReloadTimeUnit() {
         if (!shouldReload()) {
             return TimeUnit.DAYS;
         }
@@ -270,5 +281,22 @@ public class ConfigurationRepositoryUpdater extends Thread {
 
     public boolean shouldReload() {
         return !data.getAtomicReload().isEmpty();
+    }
+
+    @Override
+    public void kill() {
+        try {
+            for (Thread t : independentReload) {
+                t.interrupt();
+            }
+            super.interrupt();
+        } catch (Exception ignored) {
+        }
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        ConfigurationRepositoryUpdater clone = new ConfigurationRepositoryUpdater(cfgRepository, locator, factory);
+        return clone;
     }
 }

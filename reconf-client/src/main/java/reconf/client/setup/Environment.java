@@ -21,6 +21,7 @@ import javax.validation.*;
 import org.apache.commons.collections.*;
 import org.apache.commons.lang.*;
 import reconf.client.factory.*;
+import reconf.client.health.check.*;
 import reconf.infra.http.*;
 import reconf.infra.i18n.*;
 import reconf.infra.io.*;
@@ -38,6 +39,7 @@ public class Environment {
     private static final ConfigurationRepositoryElementFactory factory;
     private static DatabaseManager mgr;
     private static MessagesBundle msg;
+    private static ThreadWatchdog checker;
 
     static {
         try {
@@ -75,6 +77,11 @@ public class Environment {
             mgr = new DatabaseManager(config.getLocalCacheSettings());
 
             LoggerHolder.getLog().info(msg.format("instance.name", LocalHostname.getName()));
+
+            checker = new ThreadWatchdog();
+            if (parser.isExperimentalFeatures()) {
+                checker.start();
+            }
 
         } catch (ReConfInitializationError e) {
             if (mgr != null) {
@@ -116,5 +123,9 @@ public class Environment {
 
     public static ConfigurationRepositoryElementFactory getFactory() {
         return factory;
+    }
+
+    public static void addThreadToCheck(DogThread thread) {
+        checker.add(thread);
     }
 }

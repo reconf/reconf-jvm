@@ -24,6 +24,7 @@ public class XmlConfiguration {
     private LocalCacheSettings localCacheSettings;
     private ConnectionSettings connectionSettings;
     private GlobalUpdateFrequencySettings annotationOverride;
+    private boolean experimentalFeatures;
 
     @Valid @NotNull
     public LocalCacheSettings getLocalCacheSettings() {
@@ -49,6 +50,13 @@ public class XmlConfiguration {
         this.annotationOverride = annotationOverride;
     }
 
+    public boolean isExperimentalFeatures() {
+        return experimentalFeatures;
+    }
+    public void setExperimentalFeatures(boolean experimentalFeatures) {
+        this.experimentalFeatures = experimentalFeatures;
+    }
+
     @Override
     public String toString() {
         ToStringBuilder result = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -56,6 +64,9 @@ public class XmlConfiguration {
         .append("server", getConnectionSettings());
         if (getAnnotationOverride() != null) {
             result.append("configuration-repository-update-frequency", getAnnotationOverride());
+        }
+        if (experimentalFeatures) {
+            result.append("experimental-features", experimentalFeatures);
         }
         return result.toString();
     }

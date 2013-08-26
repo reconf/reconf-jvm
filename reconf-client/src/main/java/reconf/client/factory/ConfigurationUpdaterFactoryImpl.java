@@ -26,7 +26,7 @@ public class ConfigurationUpdaterFactoryImpl implements ConfigurationUpdaterFact
 
     @Override
     public ConfigurationUpdater independent(Map<Method, Object> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit) {
-        return new ConfigurationUpdater(toUpdate, target);
+        return new IndependentConfigurationUpdater(toUpdate, target, reloadInterval, reloadTimeUnit);
     }
 
     @Override
@@ -53,5 +53,4 @@ public class ConfigurationUpdaterFactoryImpl implements ConfigurationUpdaterFact
     public ConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
         return new LocalConfigurationUpdater(toUpdate, target, latch);
     }
-
 }

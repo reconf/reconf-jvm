@@ -90,10 +90,13 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
 
     private static synchronized <T> T newInstance(Class<T> arg, ConfigurationRepositoryElement repo) {
         ConfigurationRepositoryFactory factory = new ConfigurationRepositoryFactory();
-        factory.updater = new ConfigurationRepositoryUpdater(repo, ServiceLocator.defaultImplementation);
-        if (factory.updater.shouldReload()) {
-             factory.updater.start();
+        ConfigurationRepositoryUpdater thread = new ConfigurationRepositoryUpdater(repo, ServiceLocator.defaultImplementation, factory);
+        Environment.addThreadToCheck(thread);
+
+        if (thread.shouldReload()) {
+            thread.start();
         }
+
         return (T) Proxy.newProxyInstance(arg.getClassLoader(), new Class<?>[] {arg}, factory);
     }
 
@@ -116,5 +119,9 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         }
 
         return configValue;
+    }
+
+    public void setUpdater(ConfigurationRepositoryUpdater updater) {
+        this.updater = updater;
     }
 }

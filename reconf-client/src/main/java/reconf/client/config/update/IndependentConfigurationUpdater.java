@@ -36,11 +36,28 @@ public class IndependentConfigurationUpdater extends ConfigurationUpdater {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 timeUnit.sleep(reloadInterval);
+                updateLastExecution();
                 update();
             }
         } catch (InterruptedException e) {
             logInterruptedThread();
             Thread.currentThread().interrupt();
         }
+    }
+
+    @Override
+    public int getReloadInterval() {
+        return reloadInterval;
+    }
+
+    @Override
+    public TimeUnit getReloadTimeUnit() {
+        return timeUnit;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        IndependentConfigurationUpdater clone = new IndependentConfigurationUpdater(methodValue, methodCfg, reloadInterval, timeUnit);
+        return clone;
     }
 }
