@@ -19,6 +19,7 @@ import java.net.*;
 import java.security.*;
 import java.security.cert.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
 import javax.net.ssl.*;
 import org.apache.http.*;
 import org.apache.http.client.*;
@@ -33,9 +34,11 @@ public class SimpleHttpClient {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(SimpleHttpClient.class);
     private static ExecutorService requestExecutor = Executors.newFixedThreadPool(10, new ThreadFactory() {
+        private final AtomicInteger counter = new AtomicInteger();
+
         @Override
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(r);
+            Thread t = new Thread(r, "reconf-http-client-" + counter.getAndIncrement());
             t.setDaemon(true);
             return t;
         }
