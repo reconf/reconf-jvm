@@ -32,7 +32,7 @@ import reconf.infra.i18n.*;
 public class SimpleHttpClient {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(SimpleHttpClient.class);
-    private static ExecutorService requestExecutor = Executors.newCachedThreadPool(new ThreadFactory() {
+    private static ExecutorService requestExecutor = Executors.newFixedThreadPool(10, new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
