@@ -15,6 +15,7 @@
  */
 package reconf.client.experimental;
 
+import java.util.*;
 import java.util.concurrent.*;
 
 public abstract class ObservableThread extends Thread implements Cloneable {
@@ -34,6 +35,8 @@ public abstract class ObservableThread extends Thread implements Cloneable {
     public abstract TimeUnit getReloadTimeUnit();
 
     public abstract void stopIt();
+
+    public abstract List<ObservableThread> getChildren();
 
     @Override
     public abstract Object clone() throws CloneNotSupportedException;

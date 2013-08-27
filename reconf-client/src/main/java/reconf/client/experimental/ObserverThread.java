@@ -17,6 +17,7 @@ package reconf.client.experimental;
 
 import java.util.*;
 import java.util.concurrent.*;
+import org.apache.commons.collections.*;
 import org.apache.commons.lang.exception.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
@@ -28,14 +29,13 @@ public class ObserverThread extends Thread {
 
     public ObserverThread() {
         setName("Thread Checker");
-        setDaemon(true);
     }
 
     @Override
     public void run() {
         while (true) {
             try {
-                TimeUnit.MINUTES.sleep(5);
+                TimeUnit.MINUTES.sleep(1);
                 LoggerHolder.getLog().debug(msg.get("start"));
                 List<ObservableThread> threads = new ArrayList<ObservableThread>(toWatch);
 
@@ -53,6 +53,11 @@ public class ObserverThread extends Thread {
                 for (ObservableThread rem : toRemove) {
                     toWatch.remove(rem);
                     rem.stopIt();
+                    if (CollectionUtils.isNotEmpty(rem.getChildren())) {
+                        for (ObservableThread child : rem.getChildren()) {
+                            toWatch.remove(child);
+                        }
+                    }
                 }
 
                 for (ObservableThread add : toAdd) {

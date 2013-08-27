@@ -43,8 +43,6 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     private ServiceLocator locator;
     private List<ObservableThread> independentReload = new ArrayList<ObservableThread>();
 
-    private static boolean failed = false;
-
     public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ServiceLocator locator, ConfigurationRepositoryFactory factory) {
         this.locator = locator;
         this.factory = factory;
@@ -67,10 +65,6 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
                 getReloadTimeUnit().sleep(getReloadInterval());
                 updateLastExecution();
                 update();
-                if (!failed) {
-                    failed = true;
-                    throw new InterruptedException("blah");
-                }
             }
         } catch (InterruptedException e) {
             LoggerHolder.getLog().warn(msg.format("interrupted.thread", getName()));
@@ -304,5 +298,10 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     @Override
     public Object clone() {
         return new ConfigurationRepositoryUpdater(cfgRepository, locator, factory);
+    }
+
+    @Override
+    public List<ObservableThread> getChildren() {
+        return independentReload;
     }
 }

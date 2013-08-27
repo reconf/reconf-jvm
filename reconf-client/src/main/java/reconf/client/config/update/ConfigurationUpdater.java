@@ -132,6 +132,11 @@ public class ConfigurationUpdater extends ObservableThread {
     }
 
     @Override
+    public List<ObservableThread> getChildren() {
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
     public void stopIt() {
         try {
             Thread.currentThread().interrupt();
