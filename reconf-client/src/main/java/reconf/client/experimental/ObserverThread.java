@@ -29,6 +29,7 @@ public class ObserverThread extends Thread {
 
     public ObserverThread() {
         setName("Thread Checker");
+        setDaemon(true);
     }
 
     @Override

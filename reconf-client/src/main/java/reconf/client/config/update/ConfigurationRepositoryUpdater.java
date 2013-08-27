@@ -44,6 +44,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     private List<ObservableThread> independentReload = new ArrayList<ObservableThread>();
 
     public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ServiceLocator locator, ConfigurationRepositoryFactory factory) {
+        setDaemon(true);
         this.locator = locator;
         this.factory = factory;
         cfgRepository = elem;
@@ -77,7 +78,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     private void load() {
         CountDownLatch latch = new CountDownLatch(data.getAll().size() + data.getAtomicReload().size());
-        ExecutorService service = Executors.newFixedThreadPool(data.getAll().size() + data.getAtomicReload().size());
+        List<Thread> toExecute = new ArrayList<Thread>();
 
         Map<Method, Object> remote = new ConcurrentHashMap<Method, Object>();
         Map<Method, Object> local = new ConcurrentHashMap<Method, Object>();
@@ -85,11 +86,14 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         try {
             for (MethodConfiguration config : data.getAll()) {
                 if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
-                    service.execute(locator.configurationUpdaterFactory().standard(independentMethodValue, config, latch));
+                    toExecute.add(locator.configurationUpdaterFactory().standard(independentMethodValue, config, latch));
                 } else {
-                    service.execute(locator.configurationUpdaterFactory().remote(remote, config, latch));
-                    service.execute(locator.configurationUpdaterFactory().local(local, config, latch));
+                    toExecute.add(locator.configurationUpdaterFactory().remote(remote, config, latch));
+                    toExecute.add(locator.configurationUpdaterFactory().local(local, config, latch));
                 }
+            }
+            for (Thread thread : toExecute) {
+                thread.start();
             }
             waitFor(latch);
 
@@ -97,7 +101,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             LoggerHolder.getLog().error(msg.format("error.load", cfgRepository.getInterfaceClass()), ignored);
 
         } finally {
-            service.shutdown();
+            interruptAll(toExecute);
         }
 
         if (remote.size() < local.size()) {
@@ -149,13 +153,15 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             return;
         }
 
-        ExecutorService service = Executors.newFixedThreadPool(data.getAtomicReload().size());
+        List<Thread> toExecute = new ArrayList<Thread>(data.getAtomicReload().size());
         CountDownLatch latch = new CountDownLatch(data.getAtomicReload().size());
         Map<Method, Object> updated = new ConcurrentHashMap<Method, Object>();
 
         try {
             for (MethodConfiguration config : data.getAtomicReload()) {
-                service.execute(locator.configurationUpdaterFactory().remote(updated, config, latch));
+                Thread t = locator.configurationUpdaterFactory().remote(updated, config, latch);
+                toExecute.add(t);
+                t.start();
             }
             waitFor(latch);
             atomicMethodValue = mergeAtomicMethodObjectWith(updated);
@@ -164,7 +170,15 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             LoggerHolder.getLog().error(msg.format("error.load", cfgRepository.getInterfaceClass()));
 
         } finally {
-            service.shutdown();
+            interruptAll(toExecute);
+        }
+    }
+
+    private void interruptAll(List<? extends Thread> arg) {
+        for (Thread t : arg) {
+            try {
+                t.interrupt();
+            } catch (Exception ignored) { }
         }
     }
 
@@ -198,7 +212,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     }
 
     private void sync(Class<? extends RuntimeException> cls) {
-        ExecutorService service = Executors.newFixedThreadPool(data.getAll().size());
+        List<Thread> toExecute = new ArrayList<Thread>();
         CountDownLatch latch = new CountDownLatch(data.getAll().size());
         Map<Method, Object> updateAtomic = new ConcurrentHashMap<Method, Object>();
         Map<Method, Object> updateIndependent = new ConcurrentHashMap<Method, Object>();
@@ -206,10 +220,13 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         try {
             for (MethodConfiguration config : data.getAll()) {
                 if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
-                    service.submit(locator.configurationUpdaterFactory().remote(updateIndependent, config, latch));
+                    toExecute.add(locator.configurationUpdaterFactory().remote(updateIndependent, config, latch));
                 } else {
-                    service.submit(locator.configurationUpdaterFactory().remote(updateAtomic, config, latch));
+                    toExecute.add(locator.configurationUpdaterFactory().remote(updateAtomic, config, latch));
                 }
+            }
+            for (Thread thread : toExecute) {
+                thread.start();
             }
             waitFor(latch);
 
@@ -217,7 +234,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             LoggerHolder.getLog().error(msg.format("error.load", cfgRepository.getInterfaceClass()));
 
         } finally {
-            service.shutdown();
+            interruptAll(toExecute);
         }
 
         if (updateAtomic.size() + updateIndependent.size() != data.getAll().size()) {
@@ -285,11 +302,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     @Override
     public void stopIt() {
-        for (Thread t : independentReload) {
-            try {
-                t.interrupt();
-            } catch (Exception ignored) { }
-        }
+        interruptAll(independentReload);
         try {
             super.interrupt();
         } catch (Exception ignored) { }

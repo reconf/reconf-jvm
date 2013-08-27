@@ -32,7 +32,14 @@ import reconf.infra.i18n.*;
 public class SimpleHttpClient {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(SimpleHttpClient.class);
-    private static final ExecutorService requestExecutor = Executors.newCachedThreadPool();
+    private static ExecutorService requestExecutor = Executors.newCachedThreadPool(new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r);
+            t.setDaemon(true);
+            return t;
+        }
+    });
 
     /**
      * Creates a new HTTP GET Request.
@@ -61,10 +68,12 @@ public class SimpleHttpClient {
     }
 
     private static SimpleHttpResponse execute(HttpClient httpClient, SimpleHttpRequest request, long timeout, TimeUnit timeunit) throws Exception {
+
         RequestTask task = new RequestTask(httpClient, request);
-        Future<SimpleHttpResponse> futureResponse = requestExecutor.submit(task);
+        Future<SimpleHttpResponse> futureResponse = null;
 
         try {
+            futureResponse = requestExecutor.submit(task);
             return futureResponse.get(timeout, timeunit);
 
         } catch (TimeoutException e) {

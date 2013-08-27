@@ -27,6 +27,7 @@ public class IndependentConfigurationUpdater extends ConfigurationUpdater {
 
     public IndependentConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit) {
         super(toUpdate, target);
+        setName(target.getMethod().toString() + "_independent_updater[" + new Object().toString() + "]");
         this.timeUnit = reloadTimeUnit;
         this.reloadInterval = reloadInterval;
     }

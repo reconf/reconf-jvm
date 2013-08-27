@@ -27,10 +27,12 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
 
     public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
         super(toUpdate, target);
+        setName(target.getMethod().toString() + "_remote_updater[" + new Object().toString() + "]");
     }
 
     public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
         super(toUpdate, target, latch);
+        setName(target.getMethod().toString() + "_remote_updater[" + new Object().toString() + "]");
     }
 
     protected void update() {
