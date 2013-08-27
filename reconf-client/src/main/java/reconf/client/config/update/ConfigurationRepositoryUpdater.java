@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.*;
 import org.apache.commons.lang.*;
 import reconf.client.elements.*;
-import reconf.client.health.check.*;
+import reconf.client.experimental.*;
 import reconf.client.locator.*;
 import reconf.client.proxy.*;
 import reconf.client.proxy.MethodConfiguration.ReloadStrategy;
@@ -32,7 +32,7 @@ import reconf.infra.system.*;
 import reconf.infra.throwables.*;
 
 
-public class ConfigurationRepositoryUpdater extends DogThread {
+public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationRepositoryUpdater.class);
     private final ConfigurationRepositoryElement cfgRepository;
@@ -41,7 +41,9 @@ public class ConfigurationRepositoryUpdater extends DogThread {
     private Map<Method, Object> atomicMethodValue = new ConcurrentHashMap<Method, Object>();
     private final ConfigurationRepositoryFactory factory;
     private ServiceLocator locator;
-    private List<DogThread> independentReload = new ArrayList<DogThread>();
+    private List<ObservableThread> independentReload = new ArrayList<ObservableThread>();
+
+    private static boolean failed = false;
 
     public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ServiceLocator locator, ConfigurationRepositoryFactory factory) {
         this.locator = locator;
@@ -65,6 +67,10 @@ public class ConfigurationRepositoryUpdater extends DogThread {
                 getReloadTimeUnit().sleep(getReloadInterval());
                 updateLastExecution();
                 update();
+                if (!failed) {
+                    failed = true;
+                    throw new InterruptedException("blah");
+                }
             }
         } catch (InterruptedException e) {
             LoggerHolder.getLog().warn(msg.format("interrupted.thread", getName()));
@@ -137,7 +143,7 @@ public class ConfigurationRepositoryUpdater extends DogThread {
 
     private void scheduleIndependent() {
         for (MethodConfiguration config : data.getIndependentReload()) {
-            DogThread thread = locator.configurationUpdaterFactory().independent(independentMethodValue, config, config.getReloadInterval(), config.getReloadTimeUnit());
+            ObservableThread thread = locator.configurationUpdaterFactory().independent(independentMethodValue, config, config.getReloadInterval(), config.getReloadTimeUnit());
             thread.start();
             Environment.addThreadToCheck(thread);
             independentReload.add(thread);
@@ -284,19 +290,19 @@ public class ConfigurationRepositoryUpdater extends DogThread {
     }
 
     @Override
-    public void kill() {
-        try {
-            for (Thread t : independentReload) {
+    public void stopIt() {
+        for (Thread t : independentReload) {
+            try {
                 t.interrupt();
-            }
-            super.interrupt();
-        } catch (Exception ignored) {
+            } catch (Exception ignored) { }
         }
+        try {
+            super.interrupt();
+        } catch (Exception ignored) { }
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        ConfigurationRepositoryUpdater clone = new ConfigurationRepositoryUpdater(cfgRepository, locator, factory);
-        return clone;
+    public Object clone() {
+        return new ConfigurationRepositoryUpdater(cfgRepository, locator, factory);
     }
 }

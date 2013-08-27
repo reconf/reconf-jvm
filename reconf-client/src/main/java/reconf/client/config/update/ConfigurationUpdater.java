@@ -20,14 +20,14 @@ import java.util.*;
 import java.util.concurrent.*;
 import reconf.client.config.source.*;
 import reconf.client.constructors.*;
+import reconf.client.experimental.*;
 import reconf.client.factory.*;
-import reconf.client.health.check.*;
 import reconf.client.proxy.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 
 
-public class ConfigurationUpdater extends DogThread {
+public class ConfigurationUpdater extends ObservableThread {
 
     protected final static MessagesBundle msg = MessagesBundle.getBundle(ConfigurationUpdater.class);
     protected final Map<Method, Object> methodValue;
@@ -132,7 +132,7 @@ public class ConfigurationUpdater extends DogThread {
     }
 
     @Override
-    public void kill() {
+    public void stopIt() {
         try {
             Thread.currentThread().interrupt();
         } catch (Exception ignored) {

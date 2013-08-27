@@ -166,8 +166,8 @@ public class XmlConfigurationParser extends DefaultHandler {
         if (StringUtils.equalsIgnoreCase("locale", qName)) {
             locale = temp;
         }
-        if (StringUtils.equalsIgnoreCase("experimental-features", qName)) {
-            experimentalFeatures = Boolean.valueOf(temp);
+        if (StringUtils.equalsIgnoreCase("enable-experimental-features", qName)) {
+            experimentalFeatures = true;
         }
         if (StringUtils.equalsIgnoreCase("local-cache", qName)) {
             openLocalCacheSettings = false;

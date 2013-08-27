@@ -20,8 +20,8 @@ import java.util.*;
 import javax.validation.*;
 import org.apache.commons.collections.*;
 import org.apache.commons.lang.*;
+import reconf.client.experimental.*;
 import reconf.client.factory.*;
-import reconf.client.health.check.*;
 import reconf.infra.http.*;
 import reconf.infra.i18n.*;
 import reconf.infra.io.*;
@@ -39,7 +39,7 @@ public class Environment {
     private static final ConfigurationRepositoryElementFactory factory;
     private static DatabaseManager mgr;
     private static MessagesBundle msg;
-    private static ThreadWatchdog checker;
+    private static ObserverThread checker;
 
     static {
         try {
@@ -79,8 +79,8 @@ public class Environment {
 
             LoggerHolder.getLog().info(msg.format("instance.name", LocalHostname.getName()));
 
-            checker = new ThreadWatchdog();
             if (config.isExperimentalFeatures()) {
+                checker = new ObserverThread();
                 checker.start();
             }
 
@@ -126,7 +126,9 @@ public class Environment {
         return factory;
     }
 
-    public static void addThreadToCheck(DogThread thread) {
-        checker.add(thread);
+    public static void addThreadToCheck(ObservableThread thread) {
+        if (checker != null) {
+            checker.add(thread);
+        }
     }
 }

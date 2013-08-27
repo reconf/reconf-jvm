@@ -56,8 +56,7 @@ public class IndependentConfigurationUpdater extends ConfigurationUpdater {
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        IndependentConfigurationUpdater clone = new IndependentConfigurationUpdater(methodValue, methodCfg, reloadInterval, timeUnit);
-        return clone;
+    public Object clone() {
+        return new IndependentConfigurationUpdater(methodValue, methodCfg, reloadInterval, timeUnit);
     }
 }

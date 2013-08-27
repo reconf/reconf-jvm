@@ -13,11 +13,11 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.health.check;
+package reconf.client.experimental;
 
 import java.util.concurrent.*;
 
-public abstract class DogThread extends Thread implements Cloneable {
+public abstract class ObservableThread extends Thread implements Cloneable {
 
     private volatile long lastExecution = System.currentTimeMillis();
 
@@ -33,7 +33,7 @@ public abstract class DogThread extends Thread implements Cloneable {
 
     public abstract TimeUnit getReloadTimeUnit();
 
-    public abstract void kill();
+    public abstract void stopIt();
 
     @Override
     public abstract Object clone() throws CloneNotSupportedException;
