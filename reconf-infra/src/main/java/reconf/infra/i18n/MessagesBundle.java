@@ -16,7 +16,6 @@
 package reconf.infra.i18n;
 
 import java.util.*;
-import reconf.infra.log.*;
 
 
 public class MessagesBundle {
@@ -26,8 +25,6 @@ public class MessagesBundle {
 
     private MessagesBundle(Class<?> cls) {
         Locale locale = LocaleHolder.value();
-        LoggerHolder.getLog().debug("MessagesBundle locale [{}]", locale);
-
         settings = new BundleSettings(cls);
         bundle = ResourceBundle.getBundle(settings.getBundleResourceName(), locale);
     }
