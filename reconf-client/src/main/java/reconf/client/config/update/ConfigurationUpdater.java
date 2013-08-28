@@ -18,6 +18,7 @@ package reconf.client.config.update;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
+import org.apache.commons.lang.*;
 import reconf.client.config.source.*;
 import reconf.client.constructors.*;
 import reconf.client.experimental.*;
@@ -35,10 +36,7 @@ public class ConfigurationUpdater extends ObservableThread {
     protected final CountDownLatch latch;
 
     public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
-        setDaemon(true);
-        methodValue = toUpdate;
-        methodCfg = target;
-        latch = new CountDownLatch(0);
+        this(toUpdate, target, new CountDownLatch(0));
     }
 
     public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
@@ -46,6 +44,15 @@ public class ConfigurationUpdater extends ObservableThread {
         methodValue = toUpdate;
         methodCfg = target;
         this.latch = latch;
+        setUpdaterName();
+    }
+
+    private void setUpdaterName() {
+        setName(StringUtils.replace(methodCfg.getMethod().toString(), "public abstract ", "") + "_" + getUpdaterType() + "_updater" + StringUtils.replace(new Object().toString(), "java.lang.Object", ""));
+    }
+
+    protected String getUpdaterType() {
+        return "standard";
     }
 
     public void run() {
@@ -64,7 +71,7 @@ public class ConfigurationUpdater extends ObservableThread {
                 return;
             }
 
-            LoggerHolder.getLog().debug(msg.format("method.reload", getClass().getName(), methodCfg.getMethod().getName()));
+            LoggerHolder.getLog().debug(msg.format("method.reload", getName(), methodCfg.getMethod().getName()));
             ConfigurationSourceHolder holder = methodCfg.getConfigurationSourceHolder();
             value = holder.getRemote().get();
             if (null != value) {
@@ -79,10 +86,11 @@ public class ConfigurationUpdater extends ObservableThread {
             }
             if (value != null && obtained != null) {
                 updateMap(value, obtained);
+                LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
             }
 
         } catch (Throwable t) {
-            LoggerHolder.getLog().error(msg.format("error.load", getClass().getName()), t);
+            LoggerHolder.getLog().error(msg.format("error.load", getName()), t);
 
         } finally {
             releaseLatch();

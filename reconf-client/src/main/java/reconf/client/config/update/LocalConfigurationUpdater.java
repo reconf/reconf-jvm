@@ -27,12 +27,14 @@ public class LocalConfigurationUpdater extends ConfigurationUpdater {
 
     public LocalConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
         super(toUpdate, target);
-        setName(target.getMethod().toString() + "_local_updater[" + new Object().toString() + "]");
     }
 
     public LocalConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
         super(toUpdate, target, latch);
-        setName(target.getMethod().toString() + "_local_updater[" + new Object().toString() + "]");
+    }
+
+    protected String getUpdaterType() {
+        return "local";
     }
 
     protected void update() {
@@ -47,7 +49,7 @@ public class LocalConfigurationUpdater extends ConfigurationUpdater {
                 return;
             }
 
-            LoggerHolder.getLog().debug(msg.format("method.reload", getClass().getName(), methodCfg.getMethod().getName()));
+            LoggerHolder.getLog().debug(msg.format("method.reload", getName(), methodCfg.getMethod().getName()));
             ConfigurationSourceHolder holder = methodCfg.getConfigurationSourceHolder();
             value = holder.getDb().get();
             if (value != null) {
@@ -56,10 +58,11 @@ public class LocalConfigurationUpdater extends ConfigurationUpdater {
 
             if (value != null && obtained != null) {
                 updateMap(value, obtained);
+                LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
             }
 
         } catch (Throwable t) {
-            LoggerHolder.getLog().error(msg.format("error.load", getClass().getName()), t);
+            LoggerHolder.getLog().error(msg.format("error.load", getName()), t);
 
         } finally {
             releaseLatch();

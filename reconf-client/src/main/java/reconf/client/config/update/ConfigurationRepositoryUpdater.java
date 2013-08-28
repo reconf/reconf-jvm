@@ -48,7 +48,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         this.locator = locator;
         this.factory = factory;
         cfgRepository = elem;
-        setName(elem.getInterfaceClass().getName() + "_updater[" + new Object().toString() + "]");
+        setName(elem.getInterfaceClass().getName() + "_updater" + new Object().toString().replace("java.lang.Object", ""));
         data = new ConfigurationRepositoryData(elem, locator);
         load();
         scheduleIndependent();
@@ -72,7 +72,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             Thread.currentThread().interrupt();
 
         } catch (Throwable t) {
-            LoggerHolder.getLog().error(msg.format("error.reloading.all.items", cfgRepository.getInterfaceClass()), t);
+            LoggerHolder.getLog().error(msg.format("error.reloading.all.items", getName()), t);
         }
     }
 
@@ -98,7 +98,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             waitFor(latch);
 
         } catch (Exception ignored) {
-            LoggerHolder.getLog().error(msg.format("error.load", cfgRepository.getInterfaceClass()), ignored);
+            LoggerHolder.getLog().error(msg.format("error.load", getName()), ignored);
 
         } finally {
             interruptAll(toExecute);
@@ -118,22 +118,22 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     private void waitFor(CountDownLatch latch) {
         try {
-            LoggerHolder.getLog().debug(msg.format("waiting.load", cfgRepository.getInterfaceClass()));
+            LoggerHolder.getLog().debug(msg.format("waiting.load", getName()));
             latch.await();
-            LoggerHolder.getLog().info(msg.format("end.load", cfgRepository.getInterfaceClass()));
+            LoggerHolder.getLog().info(msg.format("end.load", getName()));
         } catch (InterruptedException ignored) {
-            LoggerHolder.getLog().error(msg.format("error.load", cfgRepository.getInterfaceClass()), ignored);
+            LoggerHolder.getLog().error(msg.format("error.load", getName()), ignored);
         }
     }
 
     private void validateLoadResult() {
         if ((independentMethodValue.size() + atomicMethodValue.size()) != data.getAll().size()) {
-            throw new ReConfInitializationError(msg.format("error.missing.item", cfgRepository.getInterfaceClass()));
+            throw new ReConfInitializationError(msg.format("error.missing.item", getName()));
         }
 
         for (MethodConfiguration config : data.getAll()) {
             if (null == config.getMethod()) {
-                throw new ReConfInitializationError(msg.get("error.internal"));
+                throw new ReConfInitializationError(msg.format("error.internal", getName()));
             }
         }
         commitTemporaryDatabaseChanges();
@@ -167,7 +167,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             atomicMethodValue = mergeAtomicMethodObjectWith(updated);
 
         } catch (Exception ignored) {
-            LoggerHolder.getLog().error(msg.format("error.load", cfgRepository.getInterfaceClass()));
+            LoggerHolder.getLog().error(msg.format("error.load", getName()));
 
         } finally {
             interruptAll(toExecute);
@@ -199,7 +199,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         List<String> notFound = new ArrayList<String>();
         for (Entry<Method, Object> each : atomicMethodValue.entrySet()) {
             if (updated.get(each.getKey()) == null) {
-                notFound.add(msg.format("error.retrieving.item", each.getKey()));
+                notFound.add(msg.format("error.retrieving.item", getName(), each.getKey()));
             }
         }
         if (notFound.isEmpty()) {
@@ -207,11 +207,12 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         }
 
         LoggerHolder.getLog().warn(StringUtils.join(notFound, LineSeparator.value()));
-        LoggerHolder.getLog().warn(msg.get("error.retrieving.all.items"));
+        LoggerHolder.getLog().warn(msg.format("error.retrieving.all.items", getName()));
         return false;
     }
 
     private void sync(Class<? extends RuntimeException> cls) {
+        LoggerHolder.getLog().info(msg.format("sync.start", getName()));
         List<Thread> toExecute = new ArrayList<Thread>();
         CountDownLatch latch = new CountDownLatch(data.getAll().size());
         Map<Method, Object> updateAtomic = new ConcurrentHashMap<Method, Object>();
@@ -231,14 +232,14 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             waitFor(latch);
 
         } catch (Exception ignored) {
-            LoggerHolder.getLog().error(msg.format("error.load", cfgRepository.getInterfaceClass()));
+            LoggerHolder.getLog().error(msg.format("sync.error", getName()), ignored);
 
         } finally {
             interruptAll(toExecute);
         }
 
         if (updateAtomic.size() + updateIndependent.size() != data.getAll().size()) {
-            String error = msg.format("error.load", cfgRepository.getInterfaceClass());
+            String error = msg.format("sync.error", getName());
             try {
                 Constructor<?> constructor = null;
                 constructor = cls.getConstructor(String.class);
@@ -256,6 +257,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             }
         }
         finishSync(updateAtomic, updateIndependent);
+        LoggerHolder.getLog().info(msg.format("sync.end", getName()));
     }
 
     private void finishSync(Map<Method, Object> updateAtomic, Map<Method, Object> updateIndependent) {
