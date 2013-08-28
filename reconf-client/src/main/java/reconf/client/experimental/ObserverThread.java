@@ -28,7 +28,7 @@ public class ObserverThread extends Thread {
     private CopyOnWriteArrayList<ObservableThread> toWatch = new CopyOnWriteArrayList<ObservableThread>();
 
     public ObserverThread() {
-        setName("Thread Checker");
+        setName("reconf-thread-checker");
         setDaemon(true);
     }
 
@@ -37,7 +37,7 @@ public class ObserverThread extends Thread {
         while (true) {
             try {
                 TimeUnit.MINUTES.sleep(1);
-                LoggerHolder.getLog().debug(msg.get("start"));
+                LoggerHolder.getLog().debug(msg.format("start", getName()));
                 List<ObservableThread> threads = new ArrayList<ObservableThread>(toWatch);
 
                 List<ObservableThread> toRemove = new ArrayList<ObservableThread>();
@@ -45,7 +45,7 @@ public class ObserverThread extends Thread {
 
                 for (ObservableThread thread : threads) {
                     if (thread.getReloadInterval() > 0 && System.currentTimeMillis() - thread.getLastExecution() > (1.5F * thread.getReloadTimeUnit().toMillis(thread.getReloadInterval()))) {
-                        LoggerHolder.getLog().error(msg.format("not.running", thread.getName()));
+                        LoggerHolder.getLog().error(msg.format("not.running", getName(), thread.getName()));
                         toRemove.add(thread);
                         toAdd.add((ObservableThread) thread.clone());
                     }
@@ -67,7 +67,7 @@ public class ObserverThread extends Thread {
                 }
 
             } catch (Throwable t) {
-                LoggerHolder.getLog().error(msg.format("error", ExceptionUtils.getFullStackTrace(t)));
+                LoggerHolder.getLog().error(msg.format("error", getName(), ExceptionUtils.getFullStackTrace(t)));
             }
         }
     }
@@ -77,5 +77,4 @@ public class ObserverThread extends Thread {
             toWatch.add(thread);
         }
     }
-
 }
