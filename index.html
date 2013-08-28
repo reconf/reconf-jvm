@@ -135,7 +135,7 @@
 <div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>br.com.uol.reconf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>reconf-client<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.1.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.5.8<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div>
 
@@ -190,10 +190,10 @@
 <h3>
 <a name="using-a-configurationrepository" class="anchor" href="#using-a-configurationrepository"><span class="octicon octicon-link"></span></a>Using a ConfigurationRepository</h3>
 
-<p>Configuration repositories are easily created via <code>create</code> method provided by the reconf.client.proxy.ConfigurationRepositoryFactory class. Creating a proxy is a costly operation and, because of that, it's a good practice to call it only once for each repository managed by ReConf.</p>
+<p>Configuration repositories are easily obtained via <code>get</code> method provided by the reconf.client.proxy.ConfigurationRepositoryFactory class. Because creating a proxy is an expensive operation, this operation caches its result; meaning that calling it one or more times will return the same instance when the same arguments are provided.</p>
 
 <div class="highlight"><pre>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">WelcomeConfiguration</span> <span class="n">welcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">WelcomeConfiguration</span> <span class="n">welcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">welcome</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
     <span class="o">}</span>
 </pre></div>
@@ -213,11 +213,12 @@
 <p>Simple objects can be built by the tool as long as they are either primitives (or wrappers) or provide a public constructor that takes one java.lang.String as argument. The table below shows a few examples.</p>
 
 <table>
-<tr>
+<thead><tr>
 <th>returning type</th>
 <th>configuration value</th>
 <th>resulting object</th>
-</tr>
+</tr></thead>
+<tbody>
 <tr>
 <td>java.lang.String</td>
 <td>'my simple String'</td>
@@ -268,17 +269,19 @@
 <td>'10'</td>
 <td>10</td>
 </tr>
+</tbody>
 </table><h4>
 <a name="declaring-arrays-of-objects" class="anchor" href="#declaring-arrays-of-objects"><span class="octicon octicon-link"></span></a>Declaring arrays of objects</h4>
 
 <p>An array fits the "a collection of single objects" definition and so it must be declared inside square brackets. The table below shows a few examples.</p>
 
 <table>
-<tr>
+<thead><tr>
 <th>returning type</th>
 <th>configuration value</th>
 <th>resulting object</th>
-</tr>
+</tr></thead>
+<tbody>
 <tr>
 <td>java.lang.String[ ]</td>
 <td>[ 'a', ' b', 'c' ]</td>
@@ -319,16 +322,18 @@
 <td>[ '-1.01' ]</td>
 <td>[ -1.01 ]</td>
 </tr>
+</tbody>
 </table><h4>
 <a name="before-we-dive-into-collections-of-objects" class="anchor" href="#before-we-dive-into-collections-of-objects"><span class="octicon octicon-link"></span></a>Before we dive into Collections of objects</h4>
 
 <p>To group objects inside a Collection, there is no need to declare the returning type as a concrete implementation (like java.util.ArrayList or java.util.HashSet). The library is shipped with pre-selected implementations according to the type and, if you don't want to use the implementation we chose, simply use the class of choice as the returning type.</p>
 
 <table>
-<tr>
+<thead><tr>
 <th>returning type</th>
 <th>default implementation</th>
-</tr>
+</tr></thead>
+<tbody>
 <tr>
 <td>java.util.Collection</td>
 <td>java.util.ArrayList</td>
@@ -381,17 +386,19 @@
 <td>java.util.SortedMap</td>
 <td>java.util.TreeMap</td>
 </tr>
+</tbody>
 </table><h4>
 <a name="building-collections-of-objects" class="anchor" href="#building-collections-of-objects"><span class="octicon octicon-link"></span></a>Building Collections of objects</h4>
 
 <p>Collections of objects must be delimited by square brackets. The table below shows a few examples.</p>
 
 <table>
-<tr>
+<thead><tr>
 <th>returning type</th>
 <th>configuration value</th>
 <th>resulting collection</th>
-</tr>
+</tr></thead>
+<tbody>
 <tr>
 <td>java.util.Collection</td>
 <td>[ 'a', 'b', 'c' ]</td>
@@ -437,17 +444,19 @@
 <td>[ '-1', '1.01' ]</td>
 <td>-1, 1.01</td>
 </tr>
+</tbody>
 </table><h4>
 <a name="building-maps" class="anchor" href="#building-maps"><span class="octicon octicon-link"></span></a>Building Maps</h4>
 
 <p>A Map is different from a Collection because it contains pairs of tuples of the form Key-Value, whereas a Collection is a container of objects with no relation among themselves. For this reason, the formatting part is different, but not that much, since a Map is a complex type. Just separate a key from its value by using a colon <code>:</code> and a pair of key-values from each other using a comma <code>,</code>.</p>
 
 <table>
-<tr>
+<thead><tr>
 <th>returning type</th>
 <th>configuration value</th>
 <th>resulting map</th>
-</tr>
+</tr></thead>
+<tbody>
 <tr>
 <td>java.util.Map</td>
 <td>[ 'a':'b' , 'c':'d' ]</td>
@@ -493,6 +502,7 @@
 <td>[ '1' : '2' ]</td>
 <td>{ 1 = 2 }</td>
 </tr>
+</tbody>
 </table><p><a name="advanced-features"></a></p>
 
 <h2>
@@ -599,9 +609,9 @@
         <span class="n">cust</span><span class="o">.</span><span class="na">setComponentItemPrefix</span><span class="o">(</span><span class="s">"kp-"</span><span class="o">);</span>
         <span class="n">cust</span><span class="o">.</span><span class="na">setComponentItemSuffix</span><span class="o">(</span><span class="s">"-ks"</span><span class="o">);</span>
 
-        <span class="n">WelcomeConfiguration</span> <span class="n">welcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">WelcomeConfiguration</span> <span class="n">welcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
 
-        <span class="n">WelcomeConfiguration</span> <span class="n">customWelcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">cust</span><span class="o">);</span>
+        <span class="n">WelcomeConfiguration</span> <span class="n">customWelcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">cust</span><span class="o">);</span>
         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">welcome</span><span class="o">.</span><span class="na">getText</span><span class="o">()</span> <span class="o">+</span> <span class="s">", "</span> <span class="o">+</span> <span class="n">customWelcome</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
     <span class="o">}</span>
 </pre></div>
@@ -671,12 +681,12 @@
 <h3>
 <a name="integrating-with-spring" class="anchor" href="#integrating-with-spring"><span class="octicon octicon-link"></span></a>Integrating with Spring</h3>
 
-<p>The package <code>reconf-spring</code> provides a class for easy integration with Spring, including the use of @Autowired annotation. Add the following dependency to the <code>pom.xml</code> file.</p>
+<p>The package <code>reconf-spring</code> provides a class for easy integration with Spring, including the use of <a href="https://github.com/Autowired" class="user-mention">@Autowired</a> annotation. Add the following dependency to the <code>pom.xml</code> file.</p>
 
 <div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>br.com.uol.reconf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>reconf-spring<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.1.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.5.8<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div>
 
