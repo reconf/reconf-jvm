@@ -17,11 +17,8 @@ package reconf.client.elements;
 
 import java.lang.reflect.*;
 import java.util.*;
-import javax.validation.*;
-import javax.validation.constraints.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.lang.builder.*;
-import org.hibernate.validator.constraints.*;
 import reconf.client.adapters.*;
 import reconf.client.annotations.*;
 import reconf.infra.i18n.*;
@@ -105,8 +102,6 @@ public class ConfigurationItemElement {
         }
     }
 
-    @NotNull(message="method.name.null")
-    @NotEmpty(message="method.name.empty")
     public String getMethodName() {
         return methodName;
     }
@@ -114,8 +109,6 @@ public class ConfigurationItemElement {
         this.methodName = methodName;
     }
 
-    @NotNull(message="{elements.ConfigurationItemElement.error.value}")
-    @NotEmpty(message="{elements.ConfigurationItemElement.error.value}")
     public String getValue() {
         return value;
     }
@@ -123,7 +116,6 @@ public class ConfigurationItemElement {
         this.value = value;
     }
 
-    @NotNull(message="adapter.null")
     public Class<? extends ConfigurationAdapter> getAdapter() {
         return adapter;
     }
@@ -131,7 +123,6 @@ public class ConfigurationItemElement {
         this.adapter = adapter;
     }
 
-    @NotNull(message="method.null")
     public Method getMethod() {
         return method;
     }
@@ -160,7 +151,6 @@ public class ConfigurationItemElement {
         this.doNotUpdate = doNotUpdate;
     }
 
-    @Valid
     public UpdateFrequencyElement getUpdateFrequency() {
         return updateFrequency;
     }

@@ -16,11 +16,8 @@
 package reconf.client.elements;
 
 import java.util.*;
-import javax.validation.*;
-import javax.validation.constraints.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.lang.builder.*;
-import org.hibernate.validator.constraints.*;
 import reconf.client.setup.*;
 import reconf.infra.system.*;
 
@@ -35,7 +32,6 @@ public class ConfigurationRepositoryElement {
     private Class<?> interfaceClass;
     private List<ConfigurationItemElement> configurationItems = new ArrayList<ConfigurationItemElement>();
 
-    @NotNull @Valid
     public ConnectionSettings getConnectionSettings() {
         return connectionSettings;
     }
@@ -43,8 +39,6 @@ public class ConfigurationRepositoryElement {
         this.connectionSettings = connectionSettings;
     }
 
-    @NotNull(message="{elements.ConfigurationRepositoryElement.error.component}")
-    @NotEmpty(message="{elements.ConfigurationRepositoryElement.error.component}")
     public String getComponent() {
         return component;
     }
@@ -73,8 +67,6 @@ public class ConfigurationRepositoryElement {
         return result;
     }
 
-    @NotNull(message="{elements.ConfigurationRepositoryElement.error.product}")
-    @NotEmpty(message="{elements.ConfigurationRepositoryElement.error.product}")
     public String getProduct() {
         return product;
     }
@@ -90,7 +82,6 @@ public class ConfigurationRepositoryElement {
         this.doNotUpdate = doNotUpdate;
     }
 
-    @Valid
     public UpdateFrequencyElement getUpdateFrequency() {
         return updateFrequency;
     }
@@ -98,7 +89,6 @@ public class ConfigurationRepositoryElement {
         this.updateFrequency = updateFrequency;
     }
 
-    @NotNull
     public Class<?> getInterfaceClass() {
         return interfaceClass;
     }
@@ -106,7 +96,6 @@ public class ConfigurationRepositoryElement {
         this.interfaceClass = interfaceClass;
     }
 
-    @Valid
     public List<ConfigurationItemElement> getConfigurationItems() {
         return configurationItems;
     }

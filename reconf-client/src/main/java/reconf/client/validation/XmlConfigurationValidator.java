@@ -13,25 +13,26 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.infra.validation;
+package reconf.client.validation;
 
 import java.util.*;
-import java.util.concurrent.*;
-import javax.validation.*;
+import reconf.client.setup.*;
+import reconf.infra.i18n.*;
 
+public class XmlConfigurationValidator {
 
-public class TimeUnitSetValidator implements ConstraintValidator<TimeUnitSet, TimeUnit> {
+    private static final MessagesBundle msg = MessagesBundle.getBundle(XmlConfiguration.class);
 
-    private Set<TimeUnit> allowed;
+    public static Set<String> validate(XmlConfiguration arg) {
+        Set<String> errors = new LinkedHashSet<String>();
 
-    @Override
-    public void initialize(TimeUnitSet constraintAnnotation) {
-        allowed = new HashSet<TimeUnit>(Arrays.asList(constraintAnnotation.allowed()));
+        return errors;
     }
 
-    @Override
-    public boolean isValid(TimeUnit value, ConstraintValidatorContext context) {
-        return allowed.contains(value);
+    private static void checkLocalCacheSettings(XmlConfiguration arg, Collection<String> errors) {
+        if (arg.getLocalCacheSettings() == null) {
+            errors.add("local-cache is null");
+            return;
+        }
     }
-
 }

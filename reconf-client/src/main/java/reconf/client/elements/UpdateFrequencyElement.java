@@ -16,9 +16,7 @@
 package reconf.client.elements;
 
 import java.util.concurrent.*;
-import javax.validation.constraints.*;
 import org.apache.commons.lang.builder.*;
-import reconf.infra.validation.*;
 
 
 public class UpdateFrequencyElement {
@@ -26,8 +24,6 @@ public class UpdateFrequencyElement {
     private Integer interval;
     private TimeUnit timeUnit;
 
-    @NotNull(message="{elements.UpdateFrequencyElement.interval.error}")
-    @Min(value=1,message="{elements.UpdateFrequencyElement.interval.error}")
     public Integer getInterval() {
         return interval;
     }
@@ -35,8 +31,6 @@ public class UpdateFrequencyElement {
         this.interval = interval;
     }
 
-    @NotNull(message="{elements.UpdateFrequencyElement.timeUnit.null}")
-    @TimeUnitSet(allowed={TimeUnit.SECONDS,TimeUnit.MINUTES,TimeUnit.HOURS,TimeUnit.DAYS}, message="{elements.UpdateFrequencyElement.timeUnit.null}")
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }

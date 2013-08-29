@@ -16,9 +16,7 @@
 package reconf.client.setup;
 
 import java.util.concurrent.*;
-import javax.validation.constraints.*;
 import org.apache.commons.lang.builder.*;
-import org.hibernate.validator.constraints.*;
 
 /**
  * The necessary parameters to connect ReConf Server
@@ -30,10 +28,6 @@ public class ConnectionSettings {
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private int maxRetry = 3;
 
-    @URL(message="{setup.ConnectionSettings.url.error}")
-    @NotNull(message="{setup.ConnectionSettings.url.error}")
-    @NotBlank(message="{setup.ConnectionSettings.url.error}")
-    @Size(min=1,message="{setup.ConnectionSettings.url.error}")
     public String getUrl() {
         return url;
     }
@@ -41,7 +35,6 @@ public class ConnectionSettings {
         this.url = url;
     }
 
-    @Min(value=1,message="{setup.ConnectionSettings.timeout.error}")
     public int getTimeout() {
         return timeout;
     }
@@ -49,7 +42,6 @@ public class ConnectionSettings {
         this.timeout = timeout;
     }
 
-    @NotNull(message="{setup.ConnectionSettings.timeUnit.null}")
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }
@@ -57,8 +49,6 @@ public class ConnectionSettings {
         this.timeUnit = timeUnit;
     }
 
-    @Min(value=1,message="{setup.ConnectionSettings.retry.error}")
-    @Max(value=5,message="{setup.ConnectionSettings.retry.error}")
     public int getMaxRetry() {
         return maxRetry;
     }

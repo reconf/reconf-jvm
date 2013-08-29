@@ -13,25 +13,8 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.infra.validation;
+package reconf.client.validation;
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.*;
+public class LocalCacheSettingsValidator {
 
-import java.lang.annotation.*;
-import java.util.concurrent.*;
-
-import javax.validation.*;
-
-
-@Target( { METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
-@Retention(RUNTIME)
-@Constraint(validatedBy=TimeUnitSetValidator.class)
-@Documented
-public @interface TimeUnitSet {
-
-    Class<?>[] groups() default { };
-    Class<? extends Payload>[] payload() default {};
-    String message() default "{javax.validation.constraints.TimeUnitSet.message}";
-    TimeUnit[] allowed();
 }
