@@ -24,12 +24,12 @@ public class ConfigurationItemElementValidator {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationItemElement.class);
 
-    public static Set<String> validate(int pos, ConfigurationItemElement arg) {
+    public static Map<String, String> validate(int pos, ConfigurationItemElement arg) {
         if (arg == null) {
-            return Collections.EMPTY_SET;
+            return Collections.EMPTY_MAP;
         }
 
-        Set<String> errors = new LinkedHashSet<String>();
+        Map<String, String> errors = new LinkedHashMap<String, String>();
         String prefix = getPrefix(pos);
         checkMethodName(prefix, arg, errors);
         checkValue(prefix, arg, errors);
@@ -39,46 +39,46 @@ public class ConfigurationItemElementValidator {
         return errors;
     }
 
-    private static void checkMethodName(String prefix, ConfigurationItemElement arg, Collection<String> errors) {
+    private static void checkMethodName(String prefix, ConfigurationItemElement arg, Map<String, String> errors) {
         if (arg.getMethodName() == null) {
-            errors.add(prefix + msg.get("method.name.null"));
+            errors.put(prefix + "methodName", "is null");
         }
         if (arg.getMethodName() != null && StringUtils.isEmpty(arg.getMethodName())) {
-            errors.add(prefix + msg.get("method.name.empty"));
+            errors.put(prefix + "methodName", "is empty");
         }
     }
 
-    private static void checkValue(String prefix, ConfigurationItemElement arg, Collection<String> errors) {
+    private static void checkValue(String prefix, ConfigurationItemElement arg, Map<String, String> errors) {
         if (arg.getValue() == null) {
-            errors.add(prefix + msg.get("error.value"));
+            errors.put(prefix + "@ConfigurationItem", msg.get("error.value"));
         }
         if (arg.getValue() != null && StringUtils.isEmpty(arg.getValue())) {
-            errors.add(prefix + msg.get("error.value"));
+            errors.put(prefix + "@ConfigurationItem", msg.get("error.value"));
         }
     }
 
-    private static void checkAdapter(String prefix, ConfigurationItemElement arg, Collection<String> errors) {
+    private static void checkAdapter(String prefix, ConfigurationItemElement arg, Map<String, String> errors) {
         if (arg.getAdapter() == null) {
-            errors.add(prefix + msg.get("adapter.null"));
+            errors.put(prefix + "@ConfigurationItem", msg.get("adapter.null"));
         }
     }
 
-    private static void checkMethod(String prefix, ConfigurationItemElement arg, Collection<String> errors) {
+    private static void checkMethod(String prefix, ConfigurationItemElement arg, Map<String, String> errors) {
         if (arg.getMethod() == null) {
-            errors.add(prefix + msg.get("method.null"));
+            errors.put(prefix + "method", "is null");
         }
     }
 
-    private static void checkUpdateFrequency(String prefix, ConfigurationItemElement arg, Collection<String> errors) {
+    private static void checkUpdateFrequency(String prefix, ConfigurationItemElement arg, Map<String, String> errors) {
         if (arg.getUpdateFrequency() != null) {
             Collection<String> updateFreqErrors = UpdateFrequencyElementValidator.validate(arg.getUpdateFrequency());
             for (String error : updateFreqErrors) {
-                errors.add(prefix + error);
+                errors.put(prefix + "@UpdateFrequency" , error);
             }
         }
     }
 
     private static String getPrefix(int pos) {
-        return ConfigurationItemElement.class.getSimpleName() + "[" + pos + "] ";
+        return "ConfigurationItem[" + pos + "].";
     }
 }

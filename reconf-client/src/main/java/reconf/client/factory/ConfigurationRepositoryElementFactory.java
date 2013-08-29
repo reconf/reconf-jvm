@@ -15,9 +15,14 @@
  */
 package reconf.client.factory;
 
+import java.util.*;
+import java.util.Map.Entry;
+import org.apache.commons.collections.*;
+import org.apache.commons.lang.*;
 import reconf.client.annotations.*;
 import reconf.client.elements.*;
 import reconf.client.setup.*;
+import reconf.client.validation.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 import reconf.infra.system.*;
@@ -102,15 +107,17 @@ public class ConfigurationRepositoryElementFactory {
             throw new ReConfInitializationError(msg.get("error.internal"));
         }
 
-//        Set<ConstraintViolation<ConfigurationRepositoryElement>> violations = ClassValidatorFactory.create(ConfigurationRepositoryElement.class).validate(arg);
-//        if (CollectionUtils.isEmpty(violations)) {
-//            return;
-//        }
-//        List<String> errors = new ArrayList<String>();
-//        int i = 1;
-//        for (ConstraintViolation<ConfigurationRepositoryElement> violation : violations) {
-//            errors.add(i++ + " - " + violation.getMessage() + " @ " + arg.getInterfaceClass() + "." + violation.getPropertyPath());
-//        }
-//        throw new ReConfInitializationError(msg.format("error.factory", LineSeparator.value(), StringUtils.join(errors, ", ")));
+        Map<String, String> violations = ConfigurationRepositoryElementValidator.validate(arg);
+        if (MapUtils.isEmpty(violations)) {
+            return;
+        }
+
+        List<String> errors = new ArrayList<String>();
+        int i = 1;
+        for (Entry<String, String> violation : violations.entrySet()) {
+            errors.add(i++ + " - " + violation.getValue() + " @ " + StringUtils.replace(arg.getInterfaceClass().toString(), "interface ", "") + "." + violation.getKey());
+        }
+
+        throw new ReConfInitializationError(msg.format("error.factory", LineSeparator.value(), StringUtils.join(errors, LineSeparator.value()))+LineSeparator.value());
     }
 }

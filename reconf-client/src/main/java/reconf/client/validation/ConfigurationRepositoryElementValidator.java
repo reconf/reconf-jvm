@@ -24,12 +24,12 @@ public class ConfigurationRepositoryElementValidator {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationRepositoryElement.class);
 
-    public static Set<String> validate(ConfigurationRepositoryElement arg) {
+    public static Map<String, String> validate(ConfigurationRepositoryElement arg) {
         if (arg == null) {
-            return Collections.EMPTY_SET;
+            return Collections.EMPTY_MAP;
         }
 
-        Set<String> errors = new LinkedHashSet<String>();
+        Map<String, String> errors = new LinkedHashMap<String, String>();
 
         checkConnectionSettings(arg, errors);
         checkComponent(arg, errors);
@@ -40,40 +40,45 @@ public class ConfigurationRepositoryElementValidator {
         return errors;
     }
 
-    private static void checkConnectionSettings(ConfigurationRepositoryElement arg, Set<String> errors) {
-        errors.addAll(ConnectionSettingsValidator.validate(arg.getConnectionSettings()));
+    private static void checkConnectionSettings(ConfigurationRepositoryElement arg, Map<String, String> errors) {
+        for (String error : ConnectionSettingsValidator.validate(arg.getConnectionSettings())) {
+            errors.put("connectionSettings", error);
+        }
     }
 
-    private static void checkComponent(ConfigurationRepositoryElement arg, Collection<String> errors) {
+    private static void checkComponent(ConfigurationRepositoryElement arg, Map<String, String> errors) {
         if (StringUtils.isEmpty(arg.getComponent())) {
-            errors.add(msg.get("error.component"));
+            errors.put("@ConfigurationRepository", msg.get("error.component"));
         }
     }
 
-    private static void checkProduct(ConfigurationRepositoryElement arg, Collection<String> errors) {
+    private static void checkProduct(ConfigurationRepositoryElement arg, Map<String, String> errors) {
         if (StringUtils.isEmpty(arg.getProduct())) {
-            errors.add(msg.get("error.product"));
+            errors.put("@ConfigurationRepository", msg.get("error.product"));
         }
     }
 
-    private static void checkUpdateFrequency(ConfigurationRepositoryElement arg, Collection<String> errors) {
-        if (arg.getUpdateFrequency() != null) {
-            errors.addAll(UpdateFrequencyElementValidator.validate(arg.getUpdateFrequency()));
+    private static void checkUpdateFrequency(ConfigurationRepositoryElement arg, Map<String, String> errors) {
+        if (arg.getUpdateFrequency() == null) {
+            return;
+        }
+        for (String error : UpdateFrequencyElementValidator.validate(arg.getUpdateFrequency())) {
+            errors.put("@UpdateFrequency", error);
         }
     }
 
-    private static void checkInterfaceClass(ConfigurationRepositoryElement arg, Collection<String> errors) {
+    private static void checkInterfaceClass(ConfigurationRepositoryElement arg, Map<String, String> errors) {
         if (arg.getInterfaceClass() == null) {
-            errors.add("[internal error] interfaceClass is null");
+            errors.put("interfaceClass", "is null");
         }
     }
 
-    private static void checkConfigurationItemElements(ConfigurationRepositoryElement arg, Collection<String> errors) {
+    private static void checkConfigurationItemElements(ConfigurationRepositoryElement arg, Map<String, String> errors) {
         if (arg.getConfigurationItems() == null) {
             return;
         }
         for (int i = 0; i < arg.getConfigurationItems().size(); i++) {
-            errors.addAll(ConfigurationItemElementValidator.validate(i, arg.getConfigurationItems().get(i)));
+            errors.putAll(ConfigurationItemElementValidator.validate(i, arg.getConfigurationItems().get(i)));
         }
     }
 }
