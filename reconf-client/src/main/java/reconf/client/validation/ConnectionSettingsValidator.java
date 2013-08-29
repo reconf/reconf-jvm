@@ -29,7 +29,7 @@ public class ConnectionSettingsValidator {
     public static Set<String> validate(ConnectionSettings arg) {
         Set<String> errors = new LinkedHashSet<String>();
         if (arg == null) {
-            errors.add("server is null");
+            errors.add(msg.get("null"));
             return errors;
         }
 

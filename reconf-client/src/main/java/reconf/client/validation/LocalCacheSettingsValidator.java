@@ -26,7 +26,7 @@ public class LocalCacheSettingsValidator {
     public static Set<String> validate(LocalCacheSettings arg) {
         Set<String> errors = new LinkedHashSet<String>();
         if (arg == null) {
-            errors.add("local-cache not found");
+            errors.add(msg.get("null"));
             return errors;
         }
 
