@@ -17,6 +17,7 @@ package reconf.client.validation;
 
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
 import org.apache.commons.lang.*;
 import reconf.client.setup.*;
 import reconf.infra.i18n.*;
@@ -28,7 +29,7 @@ public class ConnectionSettingsValidator {
     public static Set<String> validate(ConnectionSettings arg) {
         Set<String> errors = new LinkedHashSet<String>();
         if (arg == null) {
-            errors.add("[internal error] connectionSettings is null");
+            errors.add("server is null");
             return errors;
         }
 
@@ -52,7 +53,6 @@ public class ConnectionSettingsValidator {
         } catch (MalformedURLException e) {
             errors.add(getDefaultUrlError());
         }
-
     }
 
     private static String getDefaultUrlError() {
@@ -67,6 +67,10 @@ public class ConnectionSettingsValidator {
 
     private static void checkTimeUnit(ConnectionSettings arg, Collection<String> errors) {
         if (arg.getTimeUnit() == null) {
+            errors.add(msg.get("timeUnit.null"));
+            return;
+        }
+        if (!EnumSet.of(TimeUnit.SECONDS,TimeUnit.MINUTES,TimeUnit.HOURS,TimeUnit.DAYS).contains(arg.getTimeUnit())) {
             errors.add(msg.get("timeUnit.null"));
         }
     }

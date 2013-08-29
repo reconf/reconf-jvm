@@ -16,17 +16,13 @@
 package reconf.client.setup;
 
 import java.util.concurrent.*;
-import javax.validation.constraints.*;
 import org.apache.commons.lang.builder.*;
-import reconf.infra.validation.*;
 
 public class GlobalUpdateFrequencySettings {
 
     private Integer interval;
     private TimeUnit timeUnit;
 
-    @NotNull(message="{setup.GlobalUpdateFrequencySettings.interval.error}")
-    @Min(value=1,message="{setup.GlobalUpdateFrequencySettings.interval.error}")
     public Integer getInterval() {
         return interval;
     }
@@ -34,8 +30,6 @@ public class GlobalUpdateFrequencySettings {
         this.interval = interval;
     }
 
-    @NotNull(message="{setup.GlobalUpdateFrequencySettings.timeUnit.null}")
-    @TimeUnitSet(allowed={TimeUnit.SECONDS,TimeUnit.MINUTES,TimeUnit.HOURS,TimeUnit.DAYS}, message="{setup.ConnectionSettings.timeUnit.null}")
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }

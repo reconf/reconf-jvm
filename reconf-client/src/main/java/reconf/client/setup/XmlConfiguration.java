@@ -15,8 +15,6 @@
  */
 package reconf.client.setup;
 
-import javax.validation.*;
-import javax.validation.constraints.*;
 import org.apache.commons.lang.builder.*;
 
 public class XmlConfiguration {
@@ -26,7 +24,6 @@ public class XmlConfiguration {
     private GlobalUpdateFrequencySettings annotationOverride;
     private boolean experimentalFeatures;
 
-    @Valid @NotNull
     public LocalCacheSettings getLocalCacheSettings() {
         return localCacheSettings;
     }
@@ -34,7 +31,6 @@ public class XmlConfiguration {
         this.localCacheSettings = localCacheSettings;
     }
 
-    @Valid @NotNull
     public ConnectionSettings getConnectionSettings() {
         return connectionSettings;
     }
@@ -42,7 +38,6 @@ public class XmlConfiguration {
         this.connectionSettings = connectionSettings;
     }
 
-    @Valid
     public GlobalUpdateFrequencySettings getAnnotationOverride() {
         return annotationOverride;
     }

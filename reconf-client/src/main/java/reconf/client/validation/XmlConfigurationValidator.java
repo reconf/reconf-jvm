@@ -17,22 +17,29 @@ package reconf.client.validation;
 
 import java.util.*;
 import reconf.client.setup.*;
-import reconf.infra.i18n.*;
 
 public class XmlConfigurationValidator {
-
-    private static final MessagesBundle msg = MessagesBundle.getBundle(XmlConfiguration.class);
 
     public static Set<String> validate(XmlConfiguration arg) {
         Set<String> errors = new LinkedHashSet<String>();
 
+        checkLocalCacheSettings(arg, errors);
+        checkConnectionSettings(arg, errors);
+        checkAnnotationOverride(arg, errors);
         return errors;
     }
 
     private static void checkLocalCacheSettings(XmlConfiguration arg, Collection<String> errors) {
-        if (arg.getLocalCacheSettings() == null) {
-            errors.add("local-cache is null");
-            return;
+        errors.addAll(LocalCacheSettingsValidator.validate(arg.getLocalCacheSettings()));
+    }
+
+    private static void checkConnectionSettings(XmlConfiguration arg, Collection<String> errors) {
+        errors.addAll(ConnectionSettingsValidator.validate(arg.getConnectionSettings()));
+    }
+
+    private static void checkAnnotationOverride(XmlConfiguration arg, Collection<String> errors) {
+        if (arg.getAnnotationOverride() != null) {
+            errors.addAll(GlobalUpdateFrequencySettingsValidator.validate(arg.getAnnotationOverride()));
         }
     }
 }

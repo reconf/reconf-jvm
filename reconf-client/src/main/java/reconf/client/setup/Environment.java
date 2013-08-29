@@ -17,11 +17,11 @@ package reconf.client.setup;
 
 import java.io.*;
 import java.util.*;
-import javax.validation.*;
 import org.apache.commons.collections.*;
 import org.apache.commons.lang.*;
 import reconf.client.experimental.*;
 import reconf.client.factory.*;
+import reconf.client.validation.*;
 import reconf.infra.http.*;
 import reconf.infra.i18n.*;
 import reconf.infra.io.*;
@@ -102,14 +102,14 @@ public class Environment {
         if (xmlConfig == null) {
             throw new ReConfInitializationError(msg.get("error.internal"));
         }
-        Set<ConstraintViolation<XmlConfiguration>> violations = ClassValidatorFactory.create(Environment.class).validate(xmlConfig);
+        Set<String> violations = XmlConfigurationValidator.validate(xmlConfig);
         if (CollectionUtils.isEmpty(violations)) {
             return;
         }
         List<String> errors = new ArrayList<String>();
         int i = 1;
-        for (ConstraintViolation<XmlConfiguration> violation : violations) {
-            errors.add(i++ + " - " + violation.getMessage());
+        for (String violation : violations) {
+            errors.add(i++ + " - " + violation);
         }
         throw new ReConfInitializationError(msg.format("error.xml", LineSeparator.value(), StringUtils.join(errors, LineSeparator.value())));
     }

@@ -15,6 +15,36 @@
  */
 package reconf.client.validation;
 
+import java.util.*;
+import reconf.client.setup.*;
+import reconf.infra.i18n.*;
+
 public class LocalCacheSettingsValidator {
 
+    private static final MessagesBundle msg = MessagesBundle.getBundle(LocalCacheSettings.class);
+
+    public static Set<String> validate(LocalCacheSettings arg) {
+        Set<String> errors = new LinkedHashSet<String>();
+        if (arg == null) {
+            errors.add("local-cache not found");
+            return errors;
+        }
+
+        checkMaxLogFileSize(arg, errors);
+        checkBackupLocation(arg, errors);
+
+        return errors;
+    }
+
+    private static void checkMaxLogFileSize(LocalCacheSettings arg, Collection<String> errors) {
+        if (arg.getMaxLogFileSize() < 1 || arg.getMaxLogFileSize() > 50) {
+            errors.add(msg.get("backup.max.log.error"));
+        }
+    }
+
+    private static void checkBackupLocation(LocalCacheSettings arg, Collection<String> errors) {
+        if (arg.getBackupLocation() == null) {
+            errors.add(msg.get("backup.location.error.null"));
+        }
+    }
 }
