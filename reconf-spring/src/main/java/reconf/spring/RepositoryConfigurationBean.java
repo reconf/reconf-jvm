@@ -22,7 +22,7 @@ import reconf.client.proxy.*;
 public class RepositoryConfigurationBean implements FactoryBean {
 
     private Class<?> configInterface;
-    private Customization customization = Customization.EMPTY;
+    private Customization customization = new Customization();
 
     public Object getObject() throws Exception {
         return ConfigurationRepositoryFactory.get(getConfigInterface(), getCustomization());
