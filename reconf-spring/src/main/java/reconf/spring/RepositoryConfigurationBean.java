@@ -63,4 +63,12 @@ public class RepositoryConfigurationBean implements FactoryBean {
     public void setComponentItemSuffix(String nameSuffix) {
         this.customization.setComponentItemSuffix(nameSuffix);
     }
+
+    public void setProductPrefix(String productPrefix) {
+        this.customization.setProductPrefix(productPrefix);
+    }
+
+    public void setProductSuffix(String productSuffix) {
+        this.customization.setProductSuffix(productSuffix);
+    }
 }

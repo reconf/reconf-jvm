@@ -23,10 +23,26 @@ public class Customization {
 
     public static final Customization EMPTY = new Customization();
 
+    private String productPrefix;
+    private String productSuffix;
     private String componentPrefix;
     private String componentSuffix;
     private String namePrefix;
     private String nameSuffix;
+
+    public String getProductPrefix() {
+        return productPrefix;
+    }
+    public void setProductPrefix(String productPrefix) {
+        this.productPrefix = productPrefix;
+    }
+
+    public String getProductSuffix() {
+        return productSuffix;
+    }
+    public void setProductSuffix(String productSuffix) {
+        this.productSuffix = productSuffix;
+    }
 
     public String getComponentPrefix() {
         return componentPrefix;
@@ -67,7 +83,9 @@ public class Customization {
     }
 
     public boolean isValid() {
-        return StringUtils.isNotBlank(componentPrefix) ||
+        return StringUtils.isNotBlank(productPrefix) ||
+            StringUtils.isNotBlank(productSuffix) ||
+            StringUtils.isNotBlank(componentPrefix) ||
             StringUtils.isNotBlank(componentSuffix) ||
             StringUtils.isNotBlank(namePrefix) ||
             StringUtils.isNotBlank(nameSuffix);
@@ -75,11 +93,30 @@ public class Customization {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("componentPrefix [").append(StringUtils.defaultString(componentPrefix)).append("] ")
+        return new StringBuilder().append("productPrefix[").append(StringUtils.defaultString(productPrefix)).append("] ")
+            .append("productSuffix[").append(StringUtils.defaultString(productSuffix)).append("] ")
+            .append("componentPrefix [").append(StringUtils.defaultString(componentPrefix)).append("] ")
             .append("componentSuffix [").append(StringUtils.defaultString(componentSuffix)).append("] ")
             .append("keyPrefix [").append(StringUtils.defaultString(namePrefix)).append("] ")
             .append("keySuffix [").append(StringUtils.defaultString(nameSuffix)).append("]")
             .toString();
+    }
+
+    public String getCustomProduct(String originalProduct) {
+        if (StringUtils.isBlank(originalProduct) || (StringUtils.isBlank(getProductPrefix()) && StringUtils.isBlank(getProductSuffix()))) {
+            return originalProduct;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        if (StringUtils.isNotBlank(getProductPrefix())) {
+            builder.append(getProductPrefix());
+        }
+        builder.append(originalProduct);
+        if (StringUtils.isNotBlank(getProductSuffix())) {
+            builder.append(getProductSuffix());
+        }
+        return builder.toString();
+
     }
 
     public String getCustomComponent(String originalComponent) {
