@@ -94,20 +94,12 @@ public class Customization {
 
     @Override
     public String toString() {
-        List<String> listenerNames = new ArrayList<String>();
-
-        for (CallbackListener listener : listeners) {
-            listenerNames.add(listener.toString());
-        }
-        Collections.sort(listenerNames);
-
         return new StringBuilder().append("productPrefix[").append(StringUtils.defaultString(productPrefix)).append("] ")
             .append("productSuffix[").append(StringUtils.defaultString(productSuffix)).append("] ")
             .append("componentPrefix [").append(StringUtils.defaultString(componentPrefix)).append("] ")
             .append("componentSuffix [").append(StringUtils.defaultString(componentSuffix)).append("] ")
             .append("keyPrefix [").append(StringUtils.defaultString(namePrefix)).append("] ")
             .append("keySuffix [").append(StringUtils.defaultString(nameSuffix)).append("]")
-            .append("listeners").append(listenerNames.toString())
             .toString();
     }
 
