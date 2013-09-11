@@ -132,10 +132,10 @@
 
 <p>Add these lines to the <code>pom.xml</code> file</p>
 
-<div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>br.com.uol.reconf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>reconf-client<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.5.9<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.5.10<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div>
 
@@ -148,7 +148,7 @@
 
 <p>The file below is an example of a very simple configuration file. There is an XSD file available at <a href="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd">https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd</a>. </p>
 
-<div class="highlight"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd"</span><span class="nt">&gt;</span>
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;local-cache&gt;</span>
         <span class="nt">&lt;location&gt;</span>/export/application/local-cache<span class="nt">&lt;/location&gt;</span>
     <span class="nt">&lt;/local-cache&gt;</span>
@@ -169,7 +169,7 @@
 
 <p>The example below provides a very simple configuration repository where each <code>@ConfigurationItem</code> will update itself every 10 seconds.</p>
 
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
+<div class="highlight highlight-java"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
 
@@ -192,7 +192,7 @@
 
 <p>Configuration repositories are easily obtained via <code>get</code> method provided by the reconf.client.proxy.ConfigurationRepositoryFactory class. Because creating a proxy is an expensive operation, this operation caches its result; meaning that calling it one or more times will return the same instance when the same arguments are provided.</p>
 
-<div class="highlight"><pre>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight highlight-java"><pre>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">WelcomeConfiguration</span> <span class="n">welcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">welcome</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
     <span class="o">}</span>
@@ -520,7 +520,7 @@
 
 <p>In the example below, "currency.code" belongs to another component, named "goodbye-component". The fourth item, "minimum.age" is part of the "general-configuration" component, which belongs to "all-products" product. The other two items, "promotional.price", and "welcome.text" belong to "hello-application" which is under "my-product". Finally, all items will update on a ten-second basis.</p>
 
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
+<div class="highlight highlight-java"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
 
@@ -547,7 +547,7 @@
 
 <p>This example depicts a mixed repository in which the items "welcome.text" and "promotional.price" are updated on a ten-second basis. The <code>@DoNotUpdate</code> annotation causes the "currency.code" item to remain with its original value, obtained as soon as the repository is created. When applied to an item, the <code>@UpdateFrequency</code> annotation causes the item to be updated in a specific frequency, different than the one inherited. In the example below, the value of "minimum.age" will be updated once a day.</p>
 
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
+<div class="highlight highlight-java"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
 
@@ -577,7 +577,7 @@
 
 <p>There's a way to force an update operation of every <code>@ConfigurationItem</code> of a <code>@ConfigurationRepository</code>, regardless the presence of <code>@UpdateFrequency</code> or <code>@DoNotUpdate</code> annotations. To enable it, add a <strong>void</strong> method to the interface and annotate it with <code>@UpdateConfigurationRepository</code>. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime <code>UpdateConfigurationRepositoryException</code> is thrown to notify the application that a problem has occurred.</p>
 
-<div class="highlight"><pre><span class="kn">package</span> <span class="n">examples</span><span class="o">;</span>
+<div class="highlight highlight-java"><pre><span class="kn">package</span> <span class="n">examples</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">java.util.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
@@ -602,7 +602,7 @@
 
 <p>Customizations are a feature that allows the developer to solve the following problem: "Can I create two instances of the same ConfigurationRepository containing different configuration values?". In order to do that, we introduce the concept of Customizations. This feature provides a way to slightly change a configuration repository by adding prefixes and/or suffixes for components and/or configuration item names.</p>
 
-<div class="highlight"><pre>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight highlight-java"><pre>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">Customization</span> <span class="n">cust</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Customization</span><span class="o">();</span>
         <span class="n">cust</span><span class="o">.</span><span class="na">setComponentPrefix</span><span class="o">(</span><span class="s">"cp-"</span><span class="o">);</span>
         <span class="n">cust</span><span class="o">.</span><span class="na">setComponentSuffix</span><span class="o">(</span><span class="s">"-cs"</span><span class="o">);</span>
@@ -625,7 +625,7 @@
 
 <p>If you use slf4j (if you don't there are <a href="http://logback.qos.ch/reasonsToSwitch.html">a lot of reasons</a> to do it), you can declare a new logger and append it to the appender of your preference. The example sets the level to DEBUG but I don't recommend doing it in production environment since it's very verbose. The INFO level will do just fine.</p>
 
-<div class="highlight"><pre><span class="nt">&lt;logger</span> <span class="na">name=</span><span class="s">"ReConf"</span> <span class="na">additivity=</span><span class="s">"false"</span> <span class="na">level=</span><span class="s">"DEBUG"</span><span class="nt">&gt;</span>
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;logger</span> <span class="na">name=</span><span class="s">"ReConf"</span> <span class="na">additivity=</span><span class="s">"false"</span> <span class="na">level=</span><span class="s">"DEBUG"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;appender-ref</span> <span class="na">ref=</span><span class="s">"A1"</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;/logger&gt;</span>
 </pre></div>
@@ -637,7 +637,7 @@
 
 <p>To activate localized log messages, add the tag <code>locale</code> in the reconf.xml file. The locale must comply with the <a href="http://www.oracle.com/technetwork/java/javase/locales-137662.html">JDK 6 and JRE 6 Supported Locales</a>. Besides the default locale (en_US) the library also provides an additional one, Portuguese Brazil (pt_BR).</p>
 
-<div class="highlight"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd"</span><span class="nt">&gt;</span>
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;locale&gt;</span>pt_BR<span class="nt">&lt;/locale&gt;</span>
     <span class="nt">&lt;local-cache&gt;</span>
         <span class="nt">&lt;location&gt;</span>/export/application/local-cache<span class="nt">&lt;/location&gt;</span>
@@ -655,7 +655,7 @@
 
 <p>It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a <code>configuration-repository-update-frequency</code> tag in the reconf.xml file will cause it to override the <code>@UpdateFrequency</code> settings of every configuration repository. It is important to notice that it won't affect items annotated with <code>@DoNotUpdate</code> or <code>@UpdateFrequency</code>.</p>
 
-<div class="highlight"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd"</span><span class="nt">&gt;</span>
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;local-cache&gt;</span>
         <span class="nt">&lt;location&gt;</span>/export/application/local-cache<span class="nt">&lt;/location&gt;</span>
     <span class="nt">&lt;/local-cache&gt;</span>
@@ -683,10 +683,10 @@
 
 <p>The package <code>reconf-spring</code> provides a class for easy integration with Spring, including the use of <a href="https://github.com/Autowired" class="user-mention">@Autowired</a> annotation. Add the following dependency to the <code>pom.xml</code> file.</p>
 
-<div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>br.com.uol.reconf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>reconf-spring<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.5.9<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.5.10<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div>
 
@@ -694,7 +694,7 @@
 
 <p>Assuming that we are using the interface below.</p>
 
-<div class="highlight"><pre><span class="kn">package</span> <span class="n">example</span><span class="o">;</span>
+<div class="highlight highlight-java"><pre><span class="kn">package</span> <span class="n">example</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
@@ -710,7 +710,7 @@
 
 <p>The xml should look like this.</p>
 
-<div class="highlight"><pre><span class="nt">&lt;bean</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;bean</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configInterface"</span> <span class="na">value=</span><span class="s">"example.WelcomeConfiguration"</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;/bean&gt;</span>
 </pre></div>
@@ -722,7 +722,7 @@
 
 <p>The xml excerpt below creates two beans, a regular "welcome" and a custom "customWelcome" detailed in <a href="#configurationrepository-reuse-through-customizations">ConfigurationRepository reuse through Customizations</a>.</p>
 
-<div class="highlight"><pre><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">"customWelcome"</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">"customWelcome"</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configInterface"</span> <span class="na">value=</span><span class="s">"example.WelcomeConfiguration"</span><span class="nt">/&gt;</span>
     <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"componentPrefix"</span> <span class="na">value=</span><span class="s">"cp-"</span><span class="nt">/&gt;</span>
     <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"componentSuffix"</span> <span class="na">value=</span><span class="s">"-cs"</span><span class="nt">/&gt;</span>
