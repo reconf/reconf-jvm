@@ -52,10 +52,11 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         cfgRepository = elem;
         setName(elem.getInterfaceClass().getName() + "_updater" + new Object().toString().replace("java.lang.Object", ""));
         data = new ConfigurationRepositoryData(elem, locator);
+        listeners = elem.getListeners();
+
         load();
         scheduleIndependent();
         updateLastExecution();
-        listeners = elem.getListeners();
         factory.setUpdater(this);
     }
 

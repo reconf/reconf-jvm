@@ -60,6 +60,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
             customization = Customization.EMPTY;
         }
 
+        repo.setListeners(customization.getCallbackListeners());
         repo.setComponent(customization.getCustomComponent(repo.getComponent()));
         repo.setProduct(customization.getCustomProduct(repo.getProduct()));
 
