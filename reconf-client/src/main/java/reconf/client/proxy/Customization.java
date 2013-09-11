@@ -94,11 +94,12 @@ public class Customization {
 
     @Override
     public String toString() {
-        Set<String> listenerNames = new TreeSet<String>();
+        List<String> listenerNames = new ArrayList<String>();
 
         for (CallbackListener listener : listeners) {
             listenerNames.add(listener.toString());
         }
+        Collections.sort(listenerNames);
 
         return new StringBuilder().append("productPrefix[").append(StringUtils.defaultString(productPrefix)).append("] ")
             .append("productSuffix[").append(StringUtils.defaultString(productSuffix)).append("] ")
