@@ -19,8 +19,10 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
 import org.apache.commons.lang.*;
+import reconf.client.callback.*;
 import reconf.client.config.source.*;
 import reconf.client.constructors.*;
+import reconf.client.elements.*;
 import reconf.client.experimental.*;
 import reconf.client.factory.*;
 import reconf.client.proxy.*;
@@ -34,7 +36,7 @@ public class ConfigurationUpdater extends ObservableThread {
     protected final Map<Method, Object> methodValue;
     protected final MethodConfiguration methodCfg;
     protected final CountDownLatch latch;
-    protected Object lastResult = null;
+    private Notification lastResult = null;
 
     public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
         this(toUpdate, target, new CountDownLatch(0));
@@ -59,6 +61,12 @@ public class ConfigurationUpdater extends ObservableThread {
     public void run() {
         lastResult = null;
         update();
+    }
+
+    public void lastResult(Object object) {
+        ConfigurationItemElement elem = methodCfg.getConfigurationItemElement();
+        Notification notification = new Notification(elem.getProduct(), elem.getComponent(), elem.getValue(), object);
+        this.lastResult = notification;
     }
 
     protected boolean update() {
@@ -90,7 +98,7 @@ public class ConfigurationUpdater extends ObservableThread {
             if (value != null && obtained != null) {
                 Object result = updateMap(value, obtained);
                 if (newValue) {
-                    lastResult = result;
+                    lastResult(result);
                 }
                 LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
             }
@@ -159,5 +167,9 @@ public class ConfigurationUpdater extends ObservableThread {
             Thread.currentThread().interrupt();
         } catch (Exception ignored) {
         }
+    }
+
+    public Notification getNotification() {
+        return lastResult;
     }
 }

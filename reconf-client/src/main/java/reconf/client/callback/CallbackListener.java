@@ -17,5 +17,5 @@ package reconf.client.callback;
 
 public interface CallbackListener {
 
-    void onChange(Notification event) throws Exception;
+    void onChange(Notification event);
 }

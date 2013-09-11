@@ -18,6 +18,7 @@ package reconf.client.factory;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
+import reconf.client.callback.*;
 import reconf.client.config.update.*;
 import reconf.client.proxy.*;
 
@@ -25,8 +26,8 @@ import reconf.client.proxy.*;
 public class ConfigurationUpdaterFactoryImpl implements ConfigurationUpdaterFactory {
 
     @Override
-    public ConfigurationUpdater independent(Map<Method, Object> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit) {
-        return new IndependentConfigurationUpdater(toUpdate, target, reloadInterval, reloadTimeUnit);
+    public ConfigurationUpdater independent(Map<Method, Object> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners) {
+        return new IndependentConfigurationUpdater(toUpdate, target, reloadInterval, reloadTimeUnit, listeners);
     }
 
     @Override

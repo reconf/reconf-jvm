@@ -31,7 +31,7 @@ public class Customization {
     private String componentSuffix;
     private String namePrefix;
     private String nameSuffix;
-    private List<CallbackListener> listeners = new ArrayList<CallbackListener>();
+    private Collection<CallbackListener> listeners = new ArrayList<CallbackListener>();
 
     public String getProductPrefix() {
         return productPrefix;
@@ -102,6 +102,7 @@ public class Customization {
             .append("componentSuffix [").append(StringUtils.defaultString(componentSuffix)).append("] ")
             .append("keyPrefix [").append(StringUtils.defaultString(namePrefix)).append("] ")
             .append("keySuffix [").append(StringUtils.defaultString(nameSuffix)).append("]")
+            .append("listeners").append(listeners.toString())
             .toString();
     }
 
@@ -155,17 +156,17 @@ public class Customization {
         return builder.toString();
     }
 
-    public List<CallbackListener> getListeners() {
+    public Collection<CallbackListener> getCallbackListeners() {
         return listeners;
     }
 
-    public void setListeners(List<CallbackListener> listeners) {
+    public void setCallbackListeners(Collection<CallbackListener> listeners) {
         if (listeners != null) {
             this.listeners = listeners;
         }
     }
 
-    public void addListener(CallbackListener listener) {
+    public void addCallbackListener(CallbackListener listener) {
         if (listener != null) {
             this.listeners.add(listener);
         }

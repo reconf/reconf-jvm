@@ -18,17 +18,23 @@ package reconf.client.config.update;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
+import reconf.client.callback.*;
 import reconf.client.proxy.*;
+import reconf.infra.log.*;
 
 public class IndependentConfigurationUpdater extends ConfigurationUpdater {
 
     private final int reloadInterval;
     private final TimeUnit timeUnit;
+    private Collection<CallbackListener> listeners = new ArrayList<CallbackListener>();
 
-    public IndependentConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit) {
+    public IndependentConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners) {
         super(toUpdate, target);
         this.timeUnit = reloadTimeUnit;
         this.reloadInterval = reloadInterval;
+        if (listeners != null) {
+            this.listeners = listeners;
+        }
     }
 
     protected String getUpdaterType() {
@@ -42,6 +48,16 @@ public class IndependentConfigurationUpdater extends ConfigurationUpdater {
                 timeUnit.sleep(reloadInterval);
                 updateLastExecution();
                 update();
+                Notification event = getNotification();
+                if (event != null) {
+                    for (CallbackListener listener : listeners) {
+                        try {
+                            listener.onChange(event);
+                        } catch (Throwable t) {
+                            LoggerHolder.getLog().error(msg.format("error.notify", getName()), t);
+                        }
+                    }
+                }
             }
         } catch (InterruptedException e) {
             logInterruptedThread();
@@ -61,6 +77,6 @@ public class IndependentConfigurationUpdater extends ConfigurationUpdater {
 
     @Override
     public Object clone() {
-        return new IndependentConfigurationUpdater(methodValue, methodCfg, reloadInterval, timeUnit);
+        return new IndependentConfigurationUpdater(methodValue, methodCfg, reloadInterval, timeUnit, listeners);
     }
 }

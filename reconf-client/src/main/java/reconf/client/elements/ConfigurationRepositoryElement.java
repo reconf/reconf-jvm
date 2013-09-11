@@ -18,6 +18,7 @@ package reconf.client.elements;
 import java.util.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.lang.builder.*;
+import reconf.client.callback.*;
 import reconf.client.setup.*;
 import reconf.infra.system.*;
 
@@ -31,6 +32,7 @@ public class ConfigurationRepositoryElement {
     private UpdateFrequencyElement updateFrequency;
     private Class<?> interfaceClass;
     private List<ConfigurationItemElement> configurationItems = new ArrayList<ConfigurationItemElement>();
+    private Collection<CallbackListener> listeners = new ArrayList<CallbackListener>();
 
     public ConnectionSettings getConnectionSettings() {
         return connectionSettings;
@@ -103,12 +105,22 @@ public class ConfigurationRepositoryElement {
         this.configurationItems = configurationItems;
     }
 
+    public Collection<CallbackListener> getListeners() {
+        return listeners;
+    }
+    public void setListeners(Collection<CallbackListener> listeners) {
+        if (listeners != null) {
+            this.listeners = listeners;
+        }
+    }
+
     @Override
     public String toString() {
         ToStringBuilder result = new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
         .append("class", getInterfaceClass())
         .append("product", getProduct())
         .append("component", getComponent())
+        .append("callback-listeners", getListeners().size())
         .append("@DoNotUpdate", null == doNotUpdate ? "not found" : "found");
         if (getUpdateFrequency() == null) {
             result.append("@UpdateFrequency", "not found");

@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 import org.apache.commons.lang.*;
+import reconf.client.callback.*;
 import reconf.client.elements.*;
 import reconf.client.experimental.*;
 import reconf.client.locator.*;
@@ -42,6 +43,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     private final ConfigurationRepositoryFactory factory;
     private ServiceLocator locator;
     private List<ObservableThread> independentReload = new ArrayList<ObservableThread>();
+    private Collection<CallbackListener> listeners = new ArrayList<CallbackListener>();
 
     public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ServiceLocator locator, ConfigurationRepositoryFactory factory) {
         setDaemon(true);
@@ -53,6 +55,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         load();
         scheduleIndependent();
         updateLastExecution();
+        listeners = elem.getListeners();
         factory.setUpdater(this);
     }
 
@@ -78,7 +81,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     private void load() {
         CountDownLatch latch = new CountDownLatch(data.getAll().size() + data.getAtomicReload().size());
-        List<Thread> toExecute = new ArrayList<Thread>();
+        List<ConfigurationUpdater> toExecute = new ArrayList<ConfigurationUpdater>();
 
         Map<Method, Object> remote = new ConcurrentHashMap<Method, Object>();
         Map<Method, Object> local = new ConcurrentHashMap<Method, Object>();
@@ -92,7 +95,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
                     toExecute.add(locator.configurationUpdaterFactory().local(local, config, latch));
                 }
             }
-            for (Thread thread : toExecute) {
+            for (ConfigurationUpdater thread : toExecute) {
                 thread.start();
             }
             waitFor(latch);
@@ -114,6 +117,23 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             }
         }
         validateLoadResult();
+        notifyListeners(toExecute);
+    }
+
+    private void notifyListeners(List<ConfigurationUpdater> toExecute) {
+        for (CallbackListener listener : listeners) {
+            for (ConfigurationUpdater updater : toExecute) {
+                Notification event = updater.getNotification();
+                if (event == null) {
+                    continue;
+                }
+                try {
+                    listener.onChange(event);
+                } catch (Throwable t) {
+                    LoggerHolder.getLog().error(msg.format("error.notify", getName()), t);
+                }
+            }
+        }
     }
 
     private void waitFor(CountDownLatch latch) {
@@ -141,7 +161,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     private void scheduleIndependent() {
         for (MethodConfiguration config : data.getIndependentReload()) {
-            ObservableThread thread = locator.configurationUpdaterFactory().independent(independentMethodValue, config, config.getReloadInterval(), config.getReloadTimeUnit());
+            ObservableThread thread = locator.configurationUpdaterFactory().independent(independentMethodValue, config, config.getReloadInterval(), config.getReloadTimeUnit(), listeners);
             thread.start();
             Environment.addThreadToCheck(thread);
             independentReload.add(thread);
@@ -153,18 +173,19 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             return;
         }
 
-        List<Thread> toExecute = new ArrayList<Thread>(data.getAtomicReload().size());
+        List<ConfigurationUpdater> toExecute = new ArrayList<ConfigurationUpdater>(data.getAtomicReload().size());
         CountDownLatch latch = new CountDownLatch(data.getAtomicReload().size());
         Map<Method, Object> updated = new ConcurrentHashMap<Method, Object>();
 
         try {
             for (MethodConfiguration config : data.getAtomicReload()) {
-                Thread t = locator.configurationUpdaterFactory().remote(updated, config, latch);
+                ConfigurationUpdater t = locator.configurationUpdaterFactory().remote(updated, config, latch);
                 toExecute.add(t);
                 t.start();
             }
             waitFor(latch);
             atomicMethodValue = mergeAtomicMethodObjectWith(updated);
+            notifyListeners(toExecute);
 
         } catch (Exception ignored) {
             LoggerHolder.getLog().error(msg.format("error.load", getName()));
@@ -213,7 +234,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     private void sync(Class<? extends RuntimeException> cls) {
         LoggerHolder.getLog().info(msg.format("sync.start", getName()));
-        List<Thread> toExecute = new ArrayList<Thread>();
+        List<ConfigurationUpdater> toExecute = new ArrayList<ConfigurationUpdater>();
         CountDownLatch latch = new CountDownLatch(data.getAll().size());
         Map<Method, Object> updateAtomic = new ConcurrentHashMap<Method, Object>();
         Map<Method, Object> updateIndependent = new ConcurrentHashMap<Method, Object>();
@@ -257,6 +278,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             }
         }
         finishSync(updateAtomic, updateIndependent);
+        notifyListeners(toExecute);
         LoggerHolder.getLog().info(msg.format("sync.end", getName()));
     }
 

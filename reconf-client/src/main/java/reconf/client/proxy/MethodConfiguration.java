@@ -40,6 +40,7 @@ public class MethodConfiguration {
     private final ServerStub stub;
     private final ServiceLocator locator;
 
+
     public MethodConfiguration(ConfigurationRepositoryElement cfgRepository, ConfigurationItemElement itemConfiguration, ServiceLocator locator) {
         this.cfgRepository = cfgRepository;
         this.remoteItem = itemConfiguration;
@@ -117,5 +118,9 @@ public class MethodConfiguration {
 
     public ServerStub getServerStub() {
         return stub;
+    }
+
+    public ConfigurationItemElement getConfigurationItemElement() {
+        return remoteItem;
     }
 }
