@@ -32,7 +32,7 @@ public class ConfigurationRepositoryElement {
     private UpdateFrequencyElement updateFrequency;
     private Class<?> interfaceClass;
     private List<ConfigurationItemElement> configurationItems = new ArrayList<ConfigurationItemElement>();
-    private Collection<CallbackListener> listeners = new ArrayList<CallbackListener>();
+    private Collection<CallbackListener> listeners = Collections.EMPTY_LIST;
 
     public ConnectionSettings getConnectionSettings() {
         return connectionSettings;

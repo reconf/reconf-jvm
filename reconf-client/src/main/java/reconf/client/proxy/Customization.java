@@ -23,8 +23,6 @@ import reconf.client.callback.*;
 
 public class Customization {
 
-    public static final Customization EMPTY = new Customization();
-
     private String productPrefix;
     private String productSuffix;
     private String componentPrefix;
@@ -96,13 +94,19 @@ public class Customization {
 
     @Override
     public String toString() {
+        Set<String> listenerNames = new TreeSet<String>();
+
+        for (CallbackListener listener : listeners) {
+            listenerNames.add(listener.toString());
+        }
+
         return new StringBuilder().append("productPrefix[").append(StringUtils.defaultString(productPrefix)).append("] ")
             .append("productSuffix[").append(StringUtils.defaultString(productSuffix)).append("] ")
             .append("componentPrefix [").append(StringUtils.defaultString(componentPrefix)).append("] ")
             .append("componentSuffix [").append(StringUtils.defaultString(componentSuffix)).append("] ")
             .append("keyPrefix [").append(StringUtils.defaultString(namePrefix)).append("] ")
             .append("keySuffix [").append(StringUtils.defaultString(nameSuffix)).append("]")
-            .append("listeners").append(listeners.toString())
+            .append("listeners").append(listenerNames.toString())
             .toString();
     }
 

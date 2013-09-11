@@ -26,7 +26,7 @@ public class IndependentConfigurationUpdater extends ConfigurationUpdater {
 
     private final int reloadInterval;
     private final TimeUnit timeUnit;
-    private Collection<CallbackListener> listeners = new ArrayList<CallbackListener>();
+    private Collection<CallbackListener> listeners = Collections.EMPTY_LIST;
 
     public IndependentConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners) {
         super(toUpdate, target);

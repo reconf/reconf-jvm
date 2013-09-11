@@ -57,7 +57,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
 
         ConfigurationRepositoryElement repo = Environment.getFactory().create(arg);
         if (customization == null) {
-            customization = Customization.EMPTY;
+            customization = new Customization();
         }
 
         repo.setListeners(customization.getCallbackListeners());

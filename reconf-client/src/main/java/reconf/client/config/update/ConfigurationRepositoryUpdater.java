@@ -43,7 +43,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     private final ConfigurationRepositoryFactory factory;
     private ServiceLocator locator;
     private List<ObservableThread> independentReload = new ArrayList<ObservableThread>();
-    private Collection<CallbackListener> listeners = new ArrayList<CallbackListener>();
+    private Collection<CallbackListener> listeners = Collections.EMPTY_LIST;
 
     public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ServiceLocator locator, ConfigurationRepositoryFactory factory) {
         setDaemon(true);
