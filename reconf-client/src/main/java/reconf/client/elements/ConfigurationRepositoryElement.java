@@ -120,7 +120,6 @@ public class ConfigurationRepositoryElement {
         .append("class", getInterfaceClass())
         .append("product", getProduct())
         .append("component", getComponent())
-        .append("callback-listeners", getListeners().size())
         .append("@DoNotUpdate", null == doNotUpdate ? "not found" : "found");
         if (getUpdateFrequency() == null) {
             result.append("@UpdateFrequency", "not found");

@@ -47,6 +47,8 @@ public class IndependentConfigurationUpdater extends ConfigurationUpdater {
             while (!Thread.currentThread().isInterrupted()) {
                 timeUnit.sleep(reloadInterval);
                 updateLastExecution();
+
+                clearLastResult();
                 update();
                 Notification event = getNotification();
                 if (event != null) {

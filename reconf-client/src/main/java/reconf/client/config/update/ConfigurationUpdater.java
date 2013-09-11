@@ -59,14 +59,18 @@ public class ConfigurationUpdater extends ObservableThread {
     }
 
     public void run() {
-        lastResult = null;
+        clearLastResult();
         update();
     }
 
-    public void lastResult(Object object) {
+    protected void lastResult(Object object) {
         ConfigurationItemElement elem = methodCfg.getConfigurationItemElement();
         Notification notification = new Notification(elem.getProduct(), elem.getComponent(), elem.getValue(), object);
         this.lastResult = notification;
+    }
+
+    protected void clearLastResult() {
+        this.lastResult = null;
     }
 
     protected boolean update() {
