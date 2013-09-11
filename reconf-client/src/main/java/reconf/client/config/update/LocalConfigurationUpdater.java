@@ -37,7 +37,7 @@ public class LocalConfigurationUpdater extends ConfigurationUpdater {
         return "local";
     }
 
-    protected void update() {
+    protected boolean update() {
 
         String value = null;
         ConfigurationSource obtained = null;
@@ -46,7 +46,7 @@ public class LocalConfigurationUpdater extends ConfigurationUpdater {
             if (Thread.currentThread().isInterrupted()) {
                 releaseLatch();
                 logInterruptedThread();
-                return;
+                return false;
             }
 
             LoggerHolder.getLog().debug(msg.format("method.reload", getName(), methodCfg.getMethod().getName()));
@@ -67,5 +67,7 @@ public class LocalConfigurationUpdater extends ConfigurationUpdater {
         } finally {
             releaseLatch();
         }
+
+        return false;
     }
 }

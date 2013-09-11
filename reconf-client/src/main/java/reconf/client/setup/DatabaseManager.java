@@ -36,9 +36,10 @@ public class DatabaseManager implements ShutdownBean {
 
     private final String DEFINITIVE_INSERT = "INSERT INTO PUBLIC.CLS_METHOD_PROP_VALUE_V2 (NAM_CLASS, NAM_METHOD, FULL_PROP, VALUE, UPDATED) VALUES (?,?,?,?,?)";
     private final String TEMPORARY_INSERT = "INSERT INTO PUBLIC.CLS_METHOD_PROP_VALUE_V2 (NAM_CLASS, NAM_METHOD, FULL_PROP, NEW_VALUE, UPDATED) VALUES (?,?,?,?,?)";
-    private final String DEFINITIVE_UPDATE = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET VALUE = ?, UPDATED = ? WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ?";
-    private final String TEMPORARY_UPDATE = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET NEW_VALUE = ?, UPDATED = ? WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ?";
+    private final String DEFINITIVE_UPDATE = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET VALUE = ?, UPDATED = ? WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ? AND (UPDATED IS NULL OR VALUE <> ?)";
+    private final String TEMPORARY_UPDATE = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET NEW_VALUE = ?, UPDATED = ? WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ? AND (UPDATED IS NULL OR VALUE <> ?)";
     private final String COMMIT_TEMP_CHANGES = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET VALUE = NEW_VALUE, NEW_VALUE = NULL, UPDATED = ? WHERE FULL_PROP IN (%s) AND NAM_CLASS = ? AND NEW_VALUE IS NOT NULL";
+    private final String CLEAN_OLD_TEMP = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET NEW_VALUE = NULL, UPDATED = NULL";
 
     public DatabaseManager(LocalCacheSettings config) {
         new ShutdownInterceptor(this).register();
@@ -62,6 +63,8 @@ public class DatabaseManager implements ShutdownBean {
             dataSource = createDataSource(url);
             if (!tableExists()) {
                 createTable();
+            } else {
+                cleanTable();
             }
 
         } catch (Throwable t) {
@@ -188,18 +191,18 @@ public class DatabaseManager implements ShutdownBean {
         return result;
     }
 
-    public void upsert(String fullProperty, Method method, String value) {
-        innerUpsert(fullProperty, method, value, true);
+    public boolean upsert(String fullProperty, Method method, String value) {
+        return innerUpsert(fullProperty, method, value, true);
     }
 
-    public void temporaryUpsert(String fullProperty, Method method, String value) {
-        innerUpsert(fullProperty, method, value, false);
+    public boolean temporaryUpsert(String fullProperty, Method method, String value) {
+        return innerUpsert(fullProperty, method, value, false);
     }
 
-    private void innerUpsert(String fullProperty, Method method, String value, boolean definitive) {
+    private boolean innerUpsert(String fullProperty, Method method, String value, boolean definitive) {
         synchronized (dataSource) {
             if (dataSource.isClosed()) {
-                return;
+                return false;
             }
         }
         Connection conn = null;
@@ -223,11 +226,11 @@ public class DatabaseManager implements ShutdownBean {
                 stmt.setString(3, StringUtils.upperCase(fullProperty));
                 stmt.setString(4, method.getDeclaringClass().getName());
                 stmt.setString(5, method.getName());
+                stmt.setString(6, value);
             }
 
-            if (0 == stmt.executeUpdate()) {
-                throw new IllegalStateException(msg.get("error.db.update.zero"));
-            }
+            boolean result = 0 != stmt.executeUpdate();
+            return result;
 
         } catch (Exception e) {
             LoggerHolder.getLog().warn(msg.format("error.db", (definitive ? "upsert" : "temporaryUpsert")), e);
@@ -320,6 +323,30 @@ public class DatabaseManager implements ShutdownBean {
                     " NEW_VALUE LONGVARCHAR,                          " +
                     " UPDATED TIMESTAMP,                              " +
                     " PRIMARY KEY (NAM_CLASS, NAM_METHOD, FULL_PROP)) ");
+    }
+
+    private void cleanTable() throws Exception {
+        synchronized (dataSource) {
+            if (dataSource.isClosed()) {
+                return;
+            }
+        }
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(CLEAN_OLD_TEMP);
+            stmt.executeUpdate();
+
+        } catch (Exception e) {
+            LoggerHolder.getLog().warn(msg.format("error.db", "cleanTable"), e);
+            throw new RuntimeException(e);
+
+        } finally {
+            close(stmt);
+            close(conn);
+        }
     }
 
     private synchronized void execute(String cmd) throws Exception {

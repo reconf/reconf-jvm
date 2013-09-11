@@ -63,23 +63,25 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
         return null;
     }
 
-    public void update(String value) {
+    public boolean update(String value) {
         try {
             DatabaseManager manager = locator.databaseManagerLocator().find();
-            manager.upsert(fullProperty, method, value);
+            return manager.upsert(fullProperty, method, value);
 
         } catch (Throwable t) {
             LoggerHolder.getLog().error(msg.get("error.save"), t);
+            return false;
         }
     }
 
-    public void temporaryUpdate(String value) {
+    public boolean temporaryUpdate(String value) {
         try {
             DatabaseManager manager = locator.databaseManagerLocator().find();
-            manager.temporaryUpsert(fullProperty, method, value);
+            return manager.temporaryUpsert(fullProperty, method, value);
 
         } catch (Throwable t) {
             LoggerHolder.getLog().error(msg.get("error.save"), t);
+            return false;
         }
     }
 

@@ -37,16 +37,17 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
         return "remote";
     }
 
-    protected void update() {
+    protected boolean update() {
 
         String value = null;
         ConfigurationSource obtained = null;
+        boolean newValue = false;
 
         try {
             if (Thread.currentThread().isInterrupted()) {
                 releaseLatch();
                 logInterruptedThread();
-                return;
+                return false;
             }
 
             LoggerHolder.getLog().debug(msg.format("method.reload", getName(), methodCfg.getMethod().getName()));
@@ -54,11 +55,14 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
             value = holder.getRemote().get();
             if (null != value) {
                 obtained = holder.getRemote();
-                holder.getDb().temporaryUpdate(value);
+                newValue = holder.getDb().temporaryUpdate(value);
             }
 
             if (value != null && obtained != null) {
-                updateMap(value, obtained);
+                Object result = updateMap(value, obtained);
+                if (newValue) {
+                    lastResult = result;
+                }
                 LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
             }
 
@@ -68,5 +72,7 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
         } finally {
             releaseLatch();
         }
+
+        return newValue;
     }
 }

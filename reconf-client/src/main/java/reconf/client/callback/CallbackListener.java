@@ -13,14 +13,9 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.config.source;
+package reconf.client.callback;
 
-import reconf.client.adapters.*;
+public interface CallbackListener {
 
-
-public interface ConfigurationSource {
-    String get();
-    boolean update(String value);
-    boolean temporaryUpdate(String value);
-    ConfigurationAdapter getAdapter();
+    void onChange(Notification event) throws Exception;
 }

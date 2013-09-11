@@ -15,8 +15,10 @@
  */
 package reconf.client.proxy;
 
+import java.util.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.lang.builder.*;
+import reconf.client.callback.*;
 
 
 public class Customization {
@@ -29,6 +31,7 @@ public class Customization {
     private String componentSuffix;
     private String namePrefix;
     private String nameSuffix;
+    private List<CallbackListener> listeners = new ArrayList<CallbackListener>();
 
     public String getProductPrefix() {
         return productPrefix;
@@ -150,5 +153,21 @@ public class Customization {
             builder.append(getComponentItemSuffix());
         }
         return builder.toString();
+    }
+
+    public List<CallbackListener> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<CallbackListener> listeners) {
+        if (listeners != null) {
+            this.listeners = listeners;
+        }
+    }
+
+    public void addListener(CallbackListener listener) {
+        if (listener != null) {
+            this.listeners.add(listener);
+        }
     }
 }

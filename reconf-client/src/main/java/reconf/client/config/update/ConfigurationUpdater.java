@@ -34,6 +34,7 @@ public class ConfigurationUpdater extends ObservableThread {
     protected final Map<Method, Object> methodValue;
     protected final MethodConfiguration methodCfg;
     protected final CountDownLatch latch;
+    protected Object lastResult = null;
 
     public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
         this(toUpdate, target, new CountDownLatch(0));
@@ -56,19 +57,21 @@ public class ConfigurationUpdater extends ObservableThread {
     }
 
     public void run() {
+        lastResult = null;
         update();
     }
 
-    protected void update() {
+    protected boolean update() {
 
         String value = null;
         ConfigurationSource obtained = null;
+        boolean newValue = false;
 
         try {
             if (Thread.currentThread().isInterrupted()) {
                 releaseLatch();
                 logInterruptedThread();
-                return;
+                return false;
             }
 
             LoggerHolder.getLog().debug(msg.format("method.reload", getName(), methodCfg.getMethod().getName()));
@@ -76,7 +79,7 @@ public class ConfigurationUpdater extends ObservableThread {
             value = holder.getRemote().get();
             if (null != value) {
                 obtained = holder.getRemote();
-                holder.getDb().update(value);
+                newValue = holder.getDb().update(value);
 
             } else {
                 value = holder.getDb().get();
@@ -85,9 +88,13 @@ public class ConfigurationUpdater extends ObservableThread {
                 }
             }
             if (value != null && obtained != null) {
-                updateMap(value, obtained);
+                Object result = updateMap(value, obtained);
+                if (newValue) {
+                    lastResult = result;
+                }
                 LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
             }
+
 
         } catch (Throwable t) {
             LoggerHolder.getLog().error(msg.format("error.load", getName()), t);
@@ -95,9 +102,10 @@ public class ConfigurationUpdater extends ObservableThread {
         } finally {
             releaseLatch();
         }
+        return newValue;
     }
 
-    protected void updateMap(String value, ConfigurationSource obtained) throws Throwable {
+    protected Object updateMap(String value, ConfigurationSource obtained) throws Throwable {
         Class<?> clazz = methodCfg.getMethod().getReturnType();
         MethodData data = null;
         if (clazz.isArray()) {
@@ -112,6 +120,7 @@ public class ConfigurationUpdater extends ObservableThread {
 
         Object result = ObjectConstructorFactory.get(clazz).construct(data);
         methodValue.put(methodCfg.getMethod(), result);
+        return result;
     }
 
     protected void releaseLatch() {

@@ -58,11 +58,11 @@ public class RemoteConfigurationSource implements ConfigurationSource {
         return adapter;
     }
 
-    public void update(String value) {
+    public boolean update(String value) {
         throw new UnsupportedOperationException();
     }
 
-    public void temporaryUpdate(String value) {
+    public boolean temporaryUpdate(String value) {
         throw new UnsupportedOperationException();
     }
 }
