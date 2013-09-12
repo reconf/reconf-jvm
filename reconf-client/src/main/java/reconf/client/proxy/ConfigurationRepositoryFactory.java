@@ -36,16 +36,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
     private static ConcurrentMap<String, Customization> customCache = new ConcurrentHashMap<String, Customization>();
 
     public static synchronized <T> T get(Class<T> arg) {
-        setUpIfNeeded();
-
-        String key = arg.getName();
-        if (cache.containsKey(key)) {
-            return (T) cache.get(key);
-        }
-
-        Object result = newInstance(arg, Environment.getFactory().create(arg));
-        cache.putIfAbsent(key, result);
-        return (T) result;
+        return get(arg, null);
     }
 
     public static synchronized <T> T get(Class<T> arg, Customization customization) {
