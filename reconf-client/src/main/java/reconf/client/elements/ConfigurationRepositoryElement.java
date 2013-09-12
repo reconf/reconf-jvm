@@ -19,6 +19,7 @@ import java.util.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.lang.builder.*;
 import reconf.client.callback.*;
+import reconf.client.proxy.*;
 import reconf.client.setup.*;
 import reconf.infra.system.*;
 
@@ -32,7 +33,7 @@ public class ConfigurationRepositoryElement {
     private UpdateFrequencyElement updateFrequency;
     private Class<?> interfaceClass;
     private List<ConfigurationItemElement> configurationItems = new ArrayList<ConfigurationItemElement>();
-    private Collection<CallbackListener> listeners = Collections.EMPTY_LIST;
+    private Customization customization;
 
     public ConnectionSettings getConnectionSettings() {
         return connectionSettings;
@@ -106,12 +107,14 @@ public class ConfigurationRepositoryElement {
     }
 
     public Collection<CallbackListener> getListeners() {
-        return listeners;
+        return customization.getCallbackListeners();
     }
-    public void setListeners(Collection<CallbackListener> listeners) {
-        if (listeners != null) {
-            this.listeners = listeners;
-        }
+
+    public Customization getCustomization() {
+        return customization;
+    }
+    public void setCustomization(Customization customization) {
+        this.customization = customization;
     }
 
     @Override

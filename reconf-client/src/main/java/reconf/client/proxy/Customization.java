@@ -17,7 +17,6 @@ package reconf.client.proxy;
 
 import java.util.*;
 import org.apache.commons.lang.*;
-import org.apache.commons.lang.builder.*;
 import reconf.client.callback.*;
 
 
@@ -75,12 +74,18 @@ public class Customization {
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return this.toString().hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Customization)) {
+            return false;
+        }
+        return this.toString().equals(obj.toString());
     }
 
     public boolean isValid() {
@@ -101,6 +106,16 @@ public class Customization {
             .append("keyPrefix [").append(StringUtils.defaultString(namePrefix)).append("] ")
             .append("keySuffix [").append(StringUtils.defaultString(nameSuffix)).append("]")
             .toString();
+    }
+
+    public String toCompare() {
+        Set<String> listenerNames = new TreeSet<String>();
+        for (CallbackListener listener : listeners) {
+            listenerNames.add(listener.toString());
+        }
+
+        String partial = this.toString();
+        return partial += "listeners " + listenerNames.toString();
     }
 
     public String getCustomProduct(String originalProduct) {

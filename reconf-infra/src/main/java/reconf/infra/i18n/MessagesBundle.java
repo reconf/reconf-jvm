@@ -22,11 +22,12 @@ public class MessagesBundle {
 
     private ResourceBundle bundle;
     private final BundleSettings settings;
+    private Locale locale;
 
     private MessagesBundle(Class<?> cls) {
-        Locale locale = LocaleHolder.value();
-        settings = new BundleSettings(cls);
-        bundle = ResourceBundle.getBundle(settings.getBundleResourceName(), locale);
+        this.locale = LocaleHolder.value();
+        this.settings = new BundleSettings(cls);
+        this.bundle = ResourceBundle.getBundle(settings.getBundleResourceName(), locale);
     }
 
     public static MessagesBundle getBundle(Class<?> cls) {
@@ -34,14 +35,24 @@ public class MessagesBundle {
     }
 
     public String get(String key) {
+        updateBundleIfNeeded();
         return bundle.getString(getPath(key));
     }
 
     public String format(String key, Object...args) {
+        updateBundleIfNeeded();
         return String.format(bundle.getString(getPath(key)), args);
     }
 
     private String getPath(String key) {
+        updateBundleIfNeeded();
         return settings.getTailPackageName() + "." + settings.getClassName() + "." + key;
+    }
+
+    private void updateBundleIfNeeded() {
+        if (LocaleHolder.value() != null && !LocaleHolder.value().equals(this.locale)) {
+            this.locale = LocaleHolder.value();
+            this.bundle = ResourceBundle.getBundle(settings.getBundleResourceName(), locale);
+        }
     }
 }

@@ -15,17 +15,21 @@
  */
 package reconf.client.callback;
 
+import java.lang.reflect.*;
+
 public final class Notification {
 
     private final String product;
     private final String component;
     private final String item;
+    private final Method method;
     private final Object value;
 
-    public Notification(String product, String component, String item, Object value) {
+    public Notification(String product, String component, String item, Method method, Object value) {
         this.product = product;
         this.component = component;
         this.item = item;
+        this.method = method;
         this.value = value;
     }
 
@@ -43,5 +47,9 @@ public final class Notification {
 
     public Object getValue() {
         return value;
+    }
+
+    public Method getMethod() {
+        return method;
     }
 }

@@ -33,6 +33,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
     private static ConfigurationRepositoryElementFactory factory;
     private static final ReentrantLock lock = new ReentrantLock();
     private static ConcurrentMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
+    private static ConcurrentMap<String, Customization> customCache = new ConcurrentHashMap<String, Customization>();
 
     public static synchronized <T> T get(Class<T> arg) {
         setUpIfNeeded();
@@ -52,6 +53,13 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
 
         String key = arg.getName() + (customization == null ? "" : customization);
         if (cache.containsKey(key)) {
+            Customization cachedCustomization = customCache.get(key);
+            if (cachedCustomization != null) {
+                if (cachedCustomization.equals(customization) && !cachedCustomization.toCompare().equals(customization)) {
+                    throw new IllegalArgumentException(msg.format("error.customization", customization.toString()));
+                }
+            }
+
             return (T) cache.get(key);
         }
 
@@ -60,7 +68,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
             customization = new Customization();
         }
 
-        repo.setListeners(customization.getCallbackListeners());
+        repo.setCustomization(customization);
         repo.setComponent(customization.getCustomComponent(repo.getComponent()));
         repo.setProduct(customization.getCustomProduct(repo.getProduct()));
 
@@ -71,7 +79,9 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         }
 
         Object result = newInstance(arg, repo);
-        cache.putIfAbsent(key, result);
+        cache.put(key, result);
+        customCache.put(key, customization);
+
         return (T) result;
     }
 

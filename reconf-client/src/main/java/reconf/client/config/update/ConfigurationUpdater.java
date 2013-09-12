@@ -65,7 +65,7 @@ public class ConfigurationUpdater extends ObservableThread {
 
     protected void lastResult(Object object) {
         ConfigurationItemElement elem = methodCfg.getConfigurationItemElement();
-        Notification notification = new Notification(elem.getProduct(), elem.getComponent(), elem.getValue(), object);
+        Notification notification = new Notification(elem.getProduct(), elem.getComponent(), elem.getValue(), methodCfg.getMethod(), object);
         this.lastResult = notification;
     }
 
