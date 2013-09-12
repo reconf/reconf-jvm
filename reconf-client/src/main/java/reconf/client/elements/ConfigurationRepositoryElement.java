@@ -18,7 +18,6 @@ package reconf.client.elements;
 import java.util.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.lang.builder.*;
-import reconf.client.callback.*;
 import reconf.client.proxy.*;
 import reconf.client.setup.*;
 import reconf.infra.system.*;
@@ -104,10 +103,6 @@ public class ConfigurationRepositoryElement {
     }
     public void setConfigurationItems(List<ConfigurationItemElement> configurationItems) {
         this.configurationItems = configurationItems;
-    }
-
-    public Collection<CallbackListener> getListeners() {
-        return customization.getCallbackListeners();
     }
 
     public Customization getCustomization() {
