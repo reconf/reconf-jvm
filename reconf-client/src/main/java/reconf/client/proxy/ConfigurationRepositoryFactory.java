@@ -42,7 +42,11 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
     public static synchronized <T> T get(Class<T> arg, Customization customization) {
         setUpIfNeeded();
 
-        String key = arg.getName() + (customization == null ? "" : customization);
+        if (customization == null) {
+            customization = new Customization();
+        }
+
+        String key = arg.getName() + customization;
         if (cache.containsKey(key)) {
             Customization cachedCustomization = customCache.get(key);
             if (cachedCustomization != null) {
@@ -55,9 +59,6 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         }
 
         ConfigurationRepositoryElement repo = Environment.getFactory().create(arg);
-        if (customization == null) {
-            customization = new Customization();
-        }
 
         repo.setCustomization(customization);
         repo.setComponent(customization.getCustomComponent(repo.getComponent()));

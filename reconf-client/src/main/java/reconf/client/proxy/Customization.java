@@ -104,7 +104,7 @@ public class Customization {
             .append("componentPrefix [").append(StringUtils.defaultString(componentPrefix)).append("] ")
             .append("componentSuffix [").append(StringUtils.defaultString(componentSuffix)).append("] ")
             .append("keyPrefix [").append(StringUtils.defaultString(namePrefix)).append("] ")
-            .append("keySuffix [").append(StringUtils.defaultString(nameSuffix)).append("]")
+            .append("keySuffix [").append(StringUtils.defaultString(nameSuffix)).append("] ")
             .toString();
     }
 

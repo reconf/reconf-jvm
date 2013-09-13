@@ -52,9 +52,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         cfgRepository = elem;
         setName(elem.getInterfaceClass().getName() + "_updater" + new Object().toString().replace("java.lang.Object", ""));
         data = new ConfigurationRepositoryData(elem, locator);
-        if (elem.getCustomization() != null && elem.getCustomization().getCallbackListeners() != null) {
-            listeners = elem.getCustomization().getCallbackListeners();
-        }
+        listeners = elem.getCustomization().getCallbackListeners();
 
         load();
         scheduleIndependent();
