@@ -50,7 +50,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         if (cache.containsKey(key)) {
             Customization cachedCustomization = customCache.get(key);
             if (cachedCustomization != null) {
-                if (cachedCustomization.equals(customization) && !cachedCustomization.toCompare().equals(customization)) {
+                if (cachedCustomization.equals(customization) && !cachedCustomization.toCompare().equals(customization.toCompare())) {
                     throw new IllegalArgumentException(msg.format("error.customization", customization.toString()));
                 }
             }
