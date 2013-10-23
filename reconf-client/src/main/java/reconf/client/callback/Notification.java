@@ -23,14 +23,12 @@ public final class Notification {
     private final String component;
     private final String item;
     private final Method method;
-    private final Object value;
 
-    public Notification(String product, String component, String item, Method method, Object value) {
+    public Notification(String product, String component, String item, Method method) {
         this.product = product;
         this.component = component;
         this.item = item;
         this.method = method;
-        this.value = value;
     }
 
     public String getProduct() {
@@ -43,10 +41,6 @@ public final class Notification {
 
     public String getItem() {
         return item;
-    }
-
-    public Object getValue() {
-        return value;
     }
 
     public Method getMethod() {

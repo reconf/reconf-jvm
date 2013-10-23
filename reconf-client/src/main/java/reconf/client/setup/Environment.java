@@ -19,7 +19,7 @@ import java.io.*;
 import java.util.*;
 import org.apache.commons.collections.*;
 import org.apache.commons.lang.*;
-import reconf.client.experimental.*;
+import reconf.client.check.*;
 import reconf.client.factory.*;
 import reconf.client.validation.*;
 import reconf.infra.http.*;
@@ -78,10 +78,10 @@ public class Environment {
             mgr = new DatabaseManager(config.getLocalCacheSettings());
 
             LoggerHolder.getLog().info(msg.format("instance.name", LocalHostname.getName()));
+            checker = new ObserverThread();
+            checker.start();
 
             if (config.isExperimentalFeatures()) {
-                checker = new ObserverThread();
-                checker.start();
             }
 
         } catch (ReConfInitializationError e) {

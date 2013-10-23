@@ -20,10 +20,10 @@ import java.util.*;
 import java.util.concurrent.*;
 import org.apache.commons.lang.*;
 import reconf.client.callback.*;
+import reconf.client.check.*;
 import reconf.client.config.source.*;
 import reconf.client.constructors.*;
 import reconf.client.elements.*;
-import reconf.client.experimental.*;
 import reconf.client.factory.*;
 import reconf.client.proxy.*;
 import reconf.infra.i18n.*;
@@ -63,9 +63,9 @@ public class ConfigurationUpdater extends ObservableThread {
         update();
     }
 
-    protected void lastResult(Object object) {
+    protected void createNotification() {
         ConfigurationItemElement elem = methodCfg.getConfigurationItemElement();
-        Notification notification = new Notification(elem.getProduct(), elem.getComponent(), elem.getValue(), methodCfg.getMethod(), object);
+        Notification notification = new Notification(elem.getProduct(), elem.getComponent(), elem.getValue(), methodCfg.getMethod());
         this.lastResult = notification;
     }
 
@@ -100,9 +100,9 @@ public class ConfigurationUpdater extends ObservableThread {
                 }
             }
             if (value != null && obtained != null) {
-                Object result = updateMap(value, obtained);
+                updateMap(value, obtained);
                 if (newValue) {
-                    lastResult(result);
+                    createNotification();
                 }
                 LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
             }

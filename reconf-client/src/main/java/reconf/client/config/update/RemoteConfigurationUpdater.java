@@ -59,9 +59,9 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
             }
 
             if (value != null && obtained != null) {
-                Object result = updateMap(value, obtained);
+                updateMap(value, obtained);
                 if (newValue) {
-                    lastResult(result);
+                    createNotification();
                 }
                 LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
             }
