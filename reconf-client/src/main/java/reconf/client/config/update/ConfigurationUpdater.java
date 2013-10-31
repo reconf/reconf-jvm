@@ -33,20 +33,22 @@ import reconf.infra.log.*;
 public class ConfigurationUpdater extends ObservableThread {
 
     protected final static MessagesBundle msg = MessagesBundle.getBundle(ConfigurationUpdater.class);
-    protected final Map<Method, Object> methodValue;
+    protected final Map<Method, UpdateResult> methodValue;
     protected final MethodConfiguration methodCfg;
     protected final CountDownLatch latch;
-    private Notification lastResult = null;
+    protected UpdateResult lastResult = null;
+    protected boolean isSync = false;
 
-    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
-        this(toUpdate, target, new CountDownLatch(0));
+    public ConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync) {
+        this(toUpdate, target, sync, new CountDownLatch(0));
     }
 
-    public ConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+    public ConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync, CountDownLatch latch) {
         setDaemon(true);
         methodValue = toUpdate;
         methodCfg = target;
         this.latch = latch;
+        this.isSync = sync;
         setUpdaterName();
     }
 
@@ -63,27 +65,29 @@ public class ConfigurationUpdater extends ObservableThread {
         update();
     }
 
-    protected void createNotification() {
-        ConfigurationItemElement elem = methodCfg.getConfigurationItemElement();
-        Notification notification = new Notification(elem.getProduct(), elem.getComponent(), elem.getValue(), methodCfg.getMethod());
-        this.lastResult = notification;
+    protected Notification createNotification() {
+        if (lastResult == null || !lastResult.isChange() || !lastResult.isSuccess()) {
+            return null;
+        }
+        return new Notification(lastResult.getProduct(), lastResult.getComponent(), lastResult.getItem(), lastResult.getMethod(), lastResult.getObject(), lastResult.getCast());
     }
 
     protected void clearLastResult() {
         this.lastResult = null;
     }
 
-    protected boolean update() {
+    protected void update() {
 
         String value = null;
         ConfigurationSource obtained = null;
         boolean newValue = false;
+        boolean success = false;
 
         try {
             if (Thread.currentThread().isInterrupted()) {
                 releaseLatch();
                 logInterruptedThread();
-                return false;
+                return;
             }
 
             LoggerHolder.getLog().debug(msg.format("method.reload", getName(), methodCfg.getMethod().getName()));
@@ -92,6 +96,7 @@ public class ConfigurationUpdater extends ObservableThread {
             if (null != value) {
                 obtained = holder.getRemote();
                 newValue = holder.getDb().update(value);
+                success = true;
 
             } else {
                 value = holder.getDb().get();
@@ -100,10 +105,7 @@ public class ConfigurationUpdater extends ObservableThread {
                 }
             }
             if (value != null && obtained != null) {
-                updateMap(value, obtained);
-                if (newValue) {
-                    createNotification();
-                }
+                lastResult = updateMap(value, newValue, success, obtained);
                 LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
             }
 
@@ -114,10 +116,9 @@ public class ConfigurationUpdater extends ObservableThread {
         } finally {
             releaseLatch();
         }
-        return newValue;
     }
 
-    protected Object updateMap(String value, ConfigurationSource obtained) throws Throwable {
+    protected UpdateResult updateMap(String value, boolean newValue, boolean success, ConfigurationSource obtained) throws Throwable {
         Class<?> clazz = methodCfg.getMethod().getReturnType();
         MethodData data = null;
         if (clazz.isArray()) {
@@ -130,9 +131,17 @@ public class ConfigurationUpdater extends ObservableThread {
             data = new MethodData(methodCfg.getMethod(), clazz, value, obtained.getAdapter());
         }
 
-        Object result = ObjectConstructorFactory.get(clazz).construct(data);
-        methodValue.put(methodCfg.getMethod(), result);
-        return result;
+        Object result;
+        if (newValue || isSync) {
+            result = ObjectConstructorFactory.get(clazz).construct(data);
+        } else {
+            result = null;
+        }
+
+        ConfigurationItemElement elem = methodCfg.getConfigurationItemElement();
+        UpdateResult updateResult = new UpdateResult(result, methodCfg.getMethod().getReturnType(), success, newValue, elem.getProduct(), elem.getComponent(), elem.getValue(), methodCfg.getMethod());
+        methodValue.put(methodCfg.getMethod(), updateResult);
+        return updateResult;
     }
 
     protected void releaseLatch() {
@@ -174,6 +183,6 @@ public class ConfigurationUpdater extends ObservableThread {
     }
 
     public Notification getNotification() {
-        return lastResult;
+        return createNotification();
     }
 }

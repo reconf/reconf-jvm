@@ -26,32 +26,63 @@ import reconf.client.proxy.*;
 public class ConfigurationUpdaterFactoryImpl implements ConfigurationUpdaterFactory {
 
     @Override
-    public ConfigurationUpdater independent(Map<Method, Object> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners) {
-        return new IndependentConfigurationUpdater(toUpdate, target, reloadInterval, reloadTimeUnit, listeners);
+    public ConfigurationUpdater independent(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners) {
+        return new IndependentConfigurationUpdater(toUpdate, target, false, reloadInterval, reloadTimeUnit, listeners);
     }
 
     @Override
-    public ConfigurationUpdater standard(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
-        return new ConfigurationUpdater(toUpdate, target, latch);
+    public ConfigurationUpdater syncIndependent(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners) {
+        return new IndependentConfigurationUpdater(toUpdate, target, true, reloadInterval, reloadTimeUnit, listeners);
     }
 
     @Override
-    public ConfigurationUpdater remote(Map<Method, Object> toUpdate, MethodConfiguration target) {
-        return new RemoteConfigurationUpdater(toUpdate, target);
+    public ConfigurationUpdater standard(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+        return new ConfigurationUpdater(toUpdate, target, false, latch);
     }
 
     @Override
-    public ConfigurationUpdater remote(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
-        return new RemoteConfigurationUpdater(toUpdate, target, latch);
+    public ConfigurationUpdater syncStandard(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+        return new ConfigurationUpdater(toUpdate, target, true, latch);
+    }
+
+
+    @Override
+    public ConfigurationUpdater remote(Map<Method, UpdateResult> toUpdate, MethodConfiguration target) {
+        return new RemoteConfigurationUpdater(toUpdate, target, false);
     }
 
     @Override
-    public ConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target) {
-        return new LocalConfigurationUpdater(toUpdate, target);
+    public ConfigurationUpdater syncRemote(Map<Method, UpdateResult> toUpdate, MethodConfiguration target) {
+        return new RemoteConfigurationUpdater(toUpdate, target, true);
     }
 
     @Override
-    public ConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
-        return new LocalConfigurationUpdater(toUpdate, target, latch);
+    public ConfigurationUpdater remote(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+        return new RemoteConfigurationUpdater(toUpdate, target, false, latch);
+    }
+
+    @Override
+    public ConfigurationUpdater syncRemote(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+        return new RemoteConfigurationUpdater(toUpdate, target, true, latch);
+    }
+
+    @Override
+    public ConfigurationUpdater local(Map<Method, UpdateResult> toUpdate, MethodConfiguration target) {
+        return new LocalConfigurationUpdater(toUpdate, target, false);
+    }
+
+    @Override
+    public ConfigurationUpdater syncLocal(Map<Method, UpdateResult> toUpdate, MethodConfiguration target) {
+        return new LocalConfigurationUpdater(toUpdate, target, true);
+    }
+
+    @Override
+    public ConfigurationUpdater local(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+        return new LocalConfigurationUpdater(toUpdate, target, false, latch);
+    }
+
+    @Override
+    public ConfigurationUpdater syncLocal(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch) {
+        return new LocalConfigurationUpdater(toUpdate, target, true, latch);
     }
 }

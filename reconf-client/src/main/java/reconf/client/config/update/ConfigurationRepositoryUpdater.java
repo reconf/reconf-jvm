@@ -38,7 +38,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationRepositoryUpdater.class);
     private final ConfigurationRepositoryElement cfgRepository;
     private final ConfigurationRepositoryData data;
-    private Map<Method, Object> independentMethodValue = new ConcurrentHashMap<Method, Object>();
+    private Map<Method, UpdateResult> independentMethodValue = new ConcurrentHashMap<Method, UpdateResult>();
     private Map<Method, Object> atomicMethodValue = new ConcurrentHashMap<Method, Object>();
     private final ConfigurationRepositoryFactory factory;
     private ServiceLocator locator;
@@ -84,8 +84,8 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         CountDownLatch latch = new CountDownLatch(data.getAll().size() + data.getAtomicReload().size());
         List<ConfigurationUpdater> toExecute = new ArrayList<ConfigurationUpdater>();
 
-        Map<Method, Object> remote = new ConcurrentHashMap<Method, Object>();
-        Map<Method, Object> local = new ConcurrentHashMap<Method, Object>();
+        Map<Method, UpdateResult> remote = new ConcurrentHashMap<Method, UpdateResult>();
+        Map<Method, UpdateResult> local = new ConcurrentHashMap<Method, UpdateResult>();
 
         try {
             for (MethodConfiguration config : data.getAll()) {
@@ -109,12 +109,16 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         }
 
         if (remote.size() < local.size()) {
-            for (Entry<Method, Object> each : local.entrySet()) {
-                atomicMethodValue.put(each.getKey(), each.getValue());
+            for (Entry<Method, UpdateResult> each : local.entrySet()) {
+                if (each.getValue().isChange() && each.getValue().isSuccess()) {
+                    atomicMethodValue.put(each.getKey(), each.getValue().getObject());
+                }
             }
         } else {
-            for (Entry<Method, Object> each : remote.entrySet()) {
-                atomicMethodValue.put(each.getKey(), each.getValue());
+            for (Entry<Method, UpdateResult> each : remote.entrySet()) {
+                if (each.getValue().isChange() && each.getValue().isSuccess()) {
+                    atomicMethodValue.put(each.getKey(), each.getValue().getObject());
+                }
             }
         }
         validateLoadResult();
@@ -176,7 +180,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
         List<ConfigurationUpdater> toExecute = new ArrayList<ConfigurationUpdater>(data.getAtomicReload().size());
         CountDownLatch latch = new CountDownLatch(data.getAtomicReload().size());
-        Map<Method, Object> updated = new ConcurrentHashMap<Method, Object>();
+        Map<Method, UpdateResult> updated = new ConcurrentHashMap<Method, UpdateResult>();
 
         try {
             for (MethodConfiguration config : data.getAtomicReload()) {
@@ -204,20 +208,25 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         }
     }
 
-    private Map<Method,Object> mergeAtomicMethodObjectWith(Map<Method, Object> updated) {
+    private Map<Method,Object> mergeAtomicMethodObjectWith(Map<Method, UpdateResult> updated) {
         if (!shouldMerge(updated)) {
             return atomicMethodValue;
         }
 
         Map<Method,Object> result = new ConcurrentHashMap<Method, Object>();
         for (Entry<Method, Object> each : atomicMethodValue.entrySet()) {
-            result.put(each.getKey(), (!updated.containsKey(each.getKey()) ? each.getValue() : updated.get(each.getKey())));
+            UpdateResult updateResult = updated.get(each.getKey());
+            if (updateResult == null || !updateResult.isChange() || !updateResult.isSuccess()) {
+                result.put(each.getKey(), each.getValue());
+            } else {
+                result.put(each.getKey(), updateResult.getObject());
+            }
         }
         commitTemporaryDatabaseChanges();
         return result;
     }
 
-    private boolean shouldMerge(Map<Method, Object> updated) {
+    private boolean shouldMerge(Map<Method, UpdateResult> updated) {
         List<String> notFound = new ArrayList<String>();
         for (Entry<Method, Object> each : atomicMethodValue.entrySet()) {
             if (updated.get(each.getKey()) == null) {
@@ -237,15 +246,15 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         LoggerHolder.getLog().info(msg.format("sync.start", getName()));
         List<ConfigurationUpdater> toExecute = new ArrayList<ConfigurationUpdater>();
         CountDownLatch latch = new CountDownLatch(data.getAll().size());
-        Map<Method, Object> updateAtomic = new ConcurrentHashMap<Method, Object>();
-        Map<Method, Object> updateIndependent = new ConcurrentHashMap<Method, Object>();
+        Map<Method, UpdateResult> updateAtomic = new ConcurrentHashMap<Method, UpdateResult>();
+        Map<Method, UpdateResult> updateIndependent = new ConcurrentHashMap<Method, UpdateResult>();
 
         try {
             for (MethodConfiguration config : data.getAll()) {
                 if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
-                    toExecute.add(locator.configurationUpdaterFactory().remote(updateIndependent, config, latch));
+                    toExecute.add(locator.configurationUpdaterFactory().syncRemote(updateIndependent, config, latch));
                 } else {
-                    toExecute.add(locator.configurationUpdaterFactory().remote(updateAtomic, config, latch));
+                    toExecute.add(locator.configurationUpdaterFactory().syncRemote(updateAtomic, config, latch));
                 }
             }
             for (Thread thread : toExecute) {
@@ -283,14 +292,14 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         LoggerHolder.getLog().info(msg.format("sync.end", getName()));
     }
 
-    private void finishSync(Map<Method, Object> updateAtomic, Map<Method, Object> updateIndependent) {
+    private void finishSync(Map<Method, UpdateResult> updateAtomic, Map<Method, UpdateResult> updateIndependent) {
         Map<Method,Object> mergedAtomic = new ConcurrentHashMap<Method, Object>();
         for (Entry<Method, Object> each : atomicMethodValue.entrySet()) {
-            mergedAtomic.put(each.getKey(), (!updateAtomic.containsKey(each.getKey()) ? each.getValue() : updateAtomic.get(each.getKey())));
+            mergedAtomic.put(each.getKey(), (!updateAtomic.containsKey(each.getKey()) ? each.getValue() : updateAtomic.get(each.getKey()).getObject()));
         }
 
-        Map<Method,Object> mergedIndependent = new ConcurrentHashMap<Method, Object>();
-        for (Entry<Method, Object> each : independentMethodValue.entrySet()) {
+        Map<Method,UpdateResult> mergedIndependent = new ConcurrentHashMap<Method, UpdateResult>();
+        for (Entry<Method, UpdateResult> each : independentMethodValue.entrySet()) {
             mergedIndependent.put(each.getKey(), (!updateIndependent.containsKey(each.getKey()) ? each.getValue() : updateIndependent.get(each.getKey())));
         }
         this.atomicMethodValue = mergedAtomic;
@@ -318,7 +327,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     }
 
     public Object getValueOf(Method m) {
-        return atomicMethodValue.containsKey(m) ? atomicMethodValue.get(m) : independentMethodValue.containsKey(m) ? independentMethodValue.get(m) : null;
+        return atomicMethodValue.containsKey(m) ? atomicMethodValue.get(m) : independentMethodValue.containsKey(m) ? independentMethodValue.get(m).getObject() : null;
     }
 
     public boolean shouldReload() {

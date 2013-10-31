@@ -27,12 +27,21 @@ public interface ConfigurationUpdaterFactory {
 
     ConfigurationUpdaterFactory defaultImplementation = new ConfigurationUpdaterFactoryImpl();
 
-    ConfigurationUpdater independent(Map<Method, Object> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners);
-    ConfigurationUpdater standard(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch);
+    ConfigurationUpdater independent(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners);
+    ConfigurationUpdater syncIndependent(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners);
 
-    ConfigurationUpdater remote(Map<Method, Object> toUpdate, MethodConfiguration target);
-    ConfigurationUpdater remote(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch);
+    ConfigurationUpdater standard(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
+    ConfigurationUpdater syncStandard(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
 
-    ConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target);
-    ConfigurationUpdater local(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch);
+    ConfigurationUpdater remote(Map<Method, UpdateResult> toUpdate, MethodConfiguration target);
+    ConfigurationUpdater syncRemote(Map<Method, UpdateResult> toUpdate, MethodConfiguration target);
+
+    ConfigurationUpdater remote(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
+    ConfigurationUpdater syncRemote(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
+
+    ConfigurationUpdater local(Map<Method, UpdateResult> toUpdate, MethodConfiguration target);
+    ConfigurationUpdater syncLocal(Map<Method, UpdateResult> toUpdate, MethodConfiguration target);
+
+    ConfigurationUpdater local(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
+    ConfigurationUpdater syncLocal(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
 }

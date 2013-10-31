@@ -38,6 +38,5 @@ public class EqualsTest {
         System.out.println(customIface1 == customIface2);
         System.out.println(iface1 == customIface2);
         System.out.println(iface2 == customIface2);
-        System.exit(0);
     }
 }

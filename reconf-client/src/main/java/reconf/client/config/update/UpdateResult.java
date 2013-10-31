@@ -13,26 +13,42 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.callback;
+package reconf.client.config.update;
 
 import java.lang.reflect.*;
 
-public final class Notification {
+public class UpdateResult {
 
+    private final boolean success;
+    private final boolean change;
+    private final Object object;
     private final String product;
     private final String component;
     private final String item;
     private final Method method;
     private final Class<?> cast;
-    private final Object result;
 
-    public Notification(String product, String component, String item, Method method, Object object, Class<?> cast) {
+    public UpdateResult(Object object, Class<?> cast, boolean success, boolean change, String product, String component, String item, Method method) {
+        this.object = object;
+        this.success = success;
+        this.change = change;
         this.product = product;
         this.component = component;
         this.item = item;
         this.method = method;
         this.cast = cast;
-        this.result = object;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public boolean isChange() {
+        return change;
+    }
+
+    public Object getObject() {
+        return object;
     }
 
     public String getProduct() {
@@ -51,7 +67,7 @@ public final class Notification {
         return method;
     }
 
-    public <T> T getValue() {
-        return (T) cast.cast(result);
+    public Class<?> getCast() {
+        return cast;
     }
 }

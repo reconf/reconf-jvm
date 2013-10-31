@@ -28,8 +28,8 @@ public class IndependentConfigurationUpdater extends ConfigurationUpdater {
     private final TimeUnit timeUnit;
     private Collection<CallbackListener> listeners = Collections.EMPTY_LIST;
 
-    public IndependentConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners) {
-        super(toUpdate, target);
+    public IndependentConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners) {
+        super(toUpdate, target, sync);
         this.timeUnit = reloadTimeUnit;
         this.reloadInterval = reloadInterval;
         if (listeners != null) {
@@ -79,6 +79,6 @@ public class IndependentConfigurationUpdater extends ConfigurationUpdater {
 
     @Override
     public Object clone() {
-        return new IndependentConfigurationUpdater(methodValue, methodCfg, reloadInterval, timeUnit, listeners);
+        return new IndependentConfigurationUpdater(methodValue, methodCfg, isSync, reloadInterval, timeUnit, listeners);
     }
 }

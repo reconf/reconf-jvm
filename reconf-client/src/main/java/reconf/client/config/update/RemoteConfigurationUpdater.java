@@ -25,19 +25,19 @@ import reconf.infra.log.*;
 
 public class RemoteConfigurationUpdater extends ConfigurationUpdater {
 
-    public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target) {
-        super(toUpdate, target);
+    public RemoteConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync) {
+        super(toUpdate, target, sync);
     }
 
-    public RemoteConfigurationUpdater(Map<Method, Object> toUpdate, MethodConfiguration target, CountDownLatch latch) {
-        super(toUpdate, target, latch);
+    public RemoteConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync, CountDownLatch latch) {
+        super(toUpdate, target, sync, latch);
     }
 
     protected String getUpdaterType() {
         return "remote";
     }
 
-    protected boolean update() {
+    protected void update() {
 
         String value = null;
         ConfigurationSource obtained = null;
@@ -47,7 +47,6 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
             if (Thread.currentThread().isInterrupted()) {
                 releaseLatch();
                 logInterruptedThread();
-                return false;
             }
 
             LoggerHolder.getLog().debug(msg.format("method.reload", getName(), methodCfg.getMethod().getName()));
@@ -59,10 +58,7 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
             }
 
             if (value != null && obtained != null) {
-                updateMap(value, obtained);
-                if (newValue) {
-                    createNotification();
-                }
+                lastResult = updateMap(value, newValue, true, obtained);
                 LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
             }
 
@@ -72,7 +68,5 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
         } finally {
             releaseLatch();
         }
-
-        return newValue;
     }
 }
