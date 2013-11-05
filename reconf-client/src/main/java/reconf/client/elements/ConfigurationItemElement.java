@@ -65,7 +65,7 @@ public class ConfigurationItemElement {
             }
             resultItem.setMethod(method);
             defineUpdateStrategy(repository, resultItem, ann);
-            defineItemProductComponenetOverride(resultItem, ann);
+            defineItemProductComponentOverride(repository, resultItem, ann);
             result.add(resultItem);
         }
         return result;
@@ -92,13 +92,17 @@ public class ConfigurationItemElement {
         }
     }
 
-    private static void defineItemProductComponenetOverride(ConfigurationItemElement resultItem, ConfigurationItem annItem) {
+    private static void defineItemProductComponentOverride(ConfigurationRepositoryElement repo, ConfigurationItemElement resultItem, ConfigurationItem annItem) {
         if (StringUtils.isBlank(resultItem.getProduct()) && StringUtils.isNotBlank(annItem.product())) {
             resultItem.setProduct(annItem.product());
+        } else {
+            resultItem.setProduct(repo.getProduct());
         }
 
         if (StringUtils.isBlank(resultItem.getComponent()) && StringUtils.isNotBlank(annItem.component())) {
             resultItem.setComponent(annItem.component());
+        } else {
+            resultItem.setComponent(repo.getComponent());
         }
     }
 
