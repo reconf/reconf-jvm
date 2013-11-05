@@ -51,7 +51,11 @@ public final class Notification {
         return method;
     }
 
-    public <T> T getValue() {
-        return (T) cast.cast(result);
+    public Object getValue() {
+        return result;
+    }
+
+    public Class<?> getValueClass() {
+        return cast;
     }
 }
