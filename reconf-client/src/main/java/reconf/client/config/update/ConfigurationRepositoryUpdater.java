@@ -92,8 +92,8 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
                 if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
                     toExecute.add(locator.configurationUpdaterFactory().standard(independentMethodValue, config, latch));
                 } else {
-                    toExecute.add(locator.configurationUpdaterFactory().remote(remote, config, latch));
-                    toExecute.add(locator.configurationUpdaterFactory().local(local, config, latch));
+                    toExecute.add(locator.configurationUpdaterFactory().syncRemote(remote, config, latch));
+                    toExecute.add(locator.configurationUpdaterFactory().syncLocal(local, config, latch));
                 }
             }
             for (ConfigurationUpdater thread : toExecute) {
@@ -110,13 +110,13 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
         if (remote.size() < local.size()) {
             for (Entry<Method, UpdateResult> each : local.entrySet()) {
-                if (each.getValue().isChange() && each.getValue().isSuccess()) {
+                if (each.getValue().isSuccess()) {
                     atomicMethodValue.put(each.getKey(), each.getValue().getObject());
                 }
             }
         } else {
             for (Entry<Method, UpdateResult> each : remote.entrySet()) {
-                if (each.getValue().isChange() && each.getValue().isSuccess()) {
+                if (each.getValue().isSuccess()) {
                     atomicMethodValue.put(each.getKey(), each.getValue().getObject());
                 }
             }
