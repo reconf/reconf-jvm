@@ -33,6 +33,7 @@ public class DatabaseManager implements ShutdownBean {
     private static final MessagesBundle msg = MessagesBundle.getBundle(DatabaseManager.class);
     private final File directory;
     private final BasicDataSource dataSource;
+    private boolean init;
 
     private final String DEFINITIVE_INSERT = "INSERT INTO PUBLIC.CLS_METHOD_PROP_VALUE_V2 (NAM_CLASS, NAM_METHOD, FULL_PROP, VALUE, UPDATED) VALUES (?,?,?,?,?)";
     private final String TEMPORARY_INSERT = "INSERT INTO PUBLIC.CLS_METHOD_PROP_VALUE_V2 (NAM_CLASS, NAM_METHOD, FULL_PROP, NEW_VALUE, UPDATED) VALUES (?,?,?,?,?)";
@@ -67,6 +68,7 @@ public class DatabaseManager implements ShutdownBean {
                 cleanTable();
             }
 
+            init = true;
         } catch (Throwable t) {
             throw new ReConfInitializationError(t);
         }
@@ -403,6 +405,9 @@ public class DatabaseManager implements ShutdownBean {
     }
 
     public synchronized void shutdown() {
+        if (!init) {
+            return;
+        }
         try {
             LoggerHolder.getLog().info(msg.get("db.stopping"));
             execute("SHUTDOWN");
