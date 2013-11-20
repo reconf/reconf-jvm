@@ -390,7 +390,13 @@ public class DatabaseManager implements ShutdownBean {
     }
 
     private synchronized Connection getConnection() throws SQLException {
+        if (dataSource == null) {
+            throw new RuntimeException(msg.get("error.datasource.null"));
+        }
         Connection conn = dataSource.getConnection();
+        if (conn == null) {
+            throw new RuntimeException(msg.get("error.connection.null"));
+        }
         conn.setAutoCommit(true);
         return conn;
     }
@@ -410,8 +416,8 @@ public class DatabaseManager implements ShutdownBean {
         }
         try {
             LoggerHolder.getLog().info(msg.get("db.stopping"));
-            execute("SHUTDOWN");
             if (dataSource != null) {
+                execute("SHUTDOWN");
                 dataSource.close();
             }
             LoggerHolder.getLog().info(msg.get("db.stopped"));
