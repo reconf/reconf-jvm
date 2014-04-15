@@ -28,7 +28,8 @@ public class Customization {
     private String componentSuffix;
     private String namePrefix;
     private String nameSuffix;
-    private Collection<CallbackListener> listeners = new ArrayList<CallbackListener>();
+    private Collection<UpdateListener> updateListeners = new ArrayList<UpdateListener>();
+    private Collection<ErrorListener> errorListeners = new ArrayList<ErrorListener>();
 
     public String getProductPrefix() {
         return productPrefix;
@@ -110,7 +111,10 @@ public class Customization {
 
     public String toCompare() {
         Set<String> listenerNames = new TreeSet<String>();
-        for (CallbackListener listener : listeners) {
+        for (UpdateListener listener : updateListeners) {
+            listenerNames.add(listener.toString());
+        }
+        for (ErrorListener listener : errorListeners) {
             listenerNames.add(listener.toString());
         }
 
@@ -168,19 +172,35 @@ public class Customization {
         return builder.toString();
     }
 
-    public Collection<CallbackListener> getCallbackListeners() {
-        return listeners;
+    public Collection<UpdateListener> getUpdateListeners() {
+        return updateListeners;
     }
 
-    public void setCallbackListeners(Collection<CallbackListener> listeners) {
-        if (listeners != null) {
-            this.listeners = listeners;
+    public void setUpdateListeners(Collection<UpdateListener> updateListeners) {
+        if (updateListeners != null) {
+            this.updateListeners = updateListeners;
         }
     }
 
-    public void addCallbackListener(CallbackListener listener) {
-        if (listener != null) {
-            this.listeners.add(listener);
+    public void addUpdateListener(UpdateListener updateListener) {
+        if (updateListener != null) {
+            this.updateListeners.add(updateListener);
+        }
+    }
+
+    public void setErrorListeners(Collection<ErrorListener> errorListeners) {
+        if (errorListeners != null) {
+            this.errorListeners = errorListeners;
+        }
+    }
+
+    public Collection<ErrorListener> getErrorListeners() {
+        return errorListeners;
+    }
+
+    public void addErrorListener(ErrorListener errorListener) {
+        if (errorListener != null) {
+            this.errorListeners.add(errorListener);
         }
     }
 }

@@ -15,7 +15,7 @@
  */
 package reconf.client.callback;
 
-public interface CallbackListener {
+public interface UpdateListener {
 
-    void onChange(Notification event);
+    void onEvent(UpdateNotification event);
 }

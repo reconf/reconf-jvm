@@ -65,11 +65,11 @@ public class ConfigurationUpdater extends ObservableThread {
         update();
     }
 
-    protected Notification createNotification() {
+    protected UpdateNotification createNotification() {
         if (lastResult == null || !lastResult.isChange() || !lastResult.isSuccess()) {
             return null;
         }
-        return new Notification(lastResult.getProduct(), lastResult.getComponent(), lastResult.getItem(), lastResult.getMethod(), lastResult.getObject(), lastResult.getCast());
+        return new UpdateNotification(lastResult.getProduct(), lastResult.getComponent(), lastResult.getItem(), lastResult.getMethod(), lastResult.getObject(), lastResult.getCast());
     }
 
     protected void clearLastResult() {
@@ -182,7 +182,7 @@ public class ConfigurationUpdater extends ObservableThread {
         }
     }
 
-    public Notification getNotification() {
+    public UpdateNotification getNotification() {
         return createNotification();
     }
 }

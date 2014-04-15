@@ -74,7 +74,11 @@ public class RepositoryConfigurationBean implements FactoryBean {
         this.customization.setProductSuffix(productSuffix);
     }
 
-    public void setCallbackListeners(Collection<CallbackListener> listeners) {
-        this.customization.setCallbackListeners(listeners);
+    public void setUpdateListeners(Collection<UpdateListener> updateListeners) {
+        this.customization.setUpdateListeners(updateListeners);
+    }
+
+    public void setErrorListeners(Collection<ErrorListener> errorListeners) {
+        this.customization.setErrorListeners(errorListeners);
     }
 }

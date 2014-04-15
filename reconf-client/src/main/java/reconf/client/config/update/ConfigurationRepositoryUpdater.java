@@ -43,7 +43,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     private final ConfigurationRepositoryFactory factory;
     private ServiceLocator locator;
     private List<ObservableThread> independentReload = new ArrayList<ObservableThread>();
-    private Collection<CallbackListener> listeners = Collections.EMPTY_LIST;
+    private Collection<UpdateListener> listeners = Collections.EMPTY_LIST;
 
     public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ServiceLocator locator, ConfigurationRepositoryFactory factory) {
         setDaemon(true);
@@ -52,7 +52,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         cfgRepository = elem;
         setName(elem.getInterfaceClass().getName() + "_updater" + new Object().toString().replace("java.lang.Object", ""));
         data = new ConfigurationRepositoryData(elem, locator);
-        listeners = elem.getCustomization().getCallbackListeners();
+        listeners = elem.getCustomization().getUpdateListeners();
 
         load();
         scheduleIndependent();
@@ -126,14 +126,14 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     }
 
     private void notifyListeners(List<ConfigurationUpdater> toExecute) {
-        for (CallbackListener listener : listeners) {
+        for (UpdateListener listener : listeners) {
             for (ConfigurationUpdater updater : toExecute) {
-                Notification event = updater.getNotification();
+                UpdateNotification event = updater.getNotification();
                 if (event == null) {
                     continue;
                 }
                 try {
-                    listener.onChange(event);
+                    listener.onEvent(event);
                 } catch (Throwable t) {
                     LoggerHolder.getLog().error(msg.format("error.notify", getName()), t);
                 }

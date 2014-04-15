@@ -26,12 +26,12 @@ import reconf.client.proxy.*;
 public class ConfigurationUpdaterFactoryImpl implements ConfigurationUpdaterFactory {
 
     @Override
-    public ConfigurationUpdater independent(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners) {
+    public ConfigurationUpdater independent(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<UpdateListener> listeners) {
         return new IndependentConfigurationUpdater(toUpdate, target, false, reloadInterval, reloadTimeUnit, listeners);
     }
 
     @Override
-    public ConfigurationUpdater syncIndependent(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners) {
+    public ConfigurationUpdater syncIndependent(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, int reloadInterval, TimeUnit reloadTimeUnit, Collection<UpdateListener> listeners) {
         return new IndependentConfigurationUpdater(toUpdate, target, true, reloadInterval, reloadTimeUnit, listeners);
     }
 

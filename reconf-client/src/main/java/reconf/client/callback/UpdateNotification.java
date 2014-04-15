@@ -17,7 +17,7 @@ package reconf.client.callback;
 
 import java.lang.reflect.*;
 
-public final class Notification {
+public final class UpdateNotification {
 
     private final String product;
     private final String component;
@@ -26,7 +26,7 @@ public final class Notification {
     private final Class<?> cast;
     private final Object result;
 
-    public Notification(String product, String component, String item, Method method, Object object, Class<?> cast) {
+    public UpdateNotification(String product, String component, String item, Method method, Object object, Class<?> cast) {
         this.product = product;
         this.component = component;
         this.item = item;

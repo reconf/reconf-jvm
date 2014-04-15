@@ -1,0 +1,114 @@
+[INFO] Scanning for projects...
+[INFO] Reactor build order: 
+[INFO]   ReConf JVM Parent
+[INFO]   ReConf Infrastructure
+[INFO]   ReConf Client
+[INFO]   ReConf Spring Integration
+[INFO] Searching repository for plugin with prefix: 'dependency'.
+[INFO] ------------------------------------------------------------------------
+[INFO] Building ReConf JVM Parent
+[INFO]    task-segment: [dependency:tree]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:tree {execution: default-cli}]
+[INFO] br.com.uol.reconf:reconf-parent:pom:1.6.10-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] Building ReConf Infrastructure
+[INFO]    task-segment: [dependency:tree]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:tree {execution: default-cli}]
+[INFO] br.com.uol.reconf:reconf-infra:jar:1.6.10-SNAPSHOT
+[INFO] +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] +- commons-io:commons-io:jar:2.4:compile
+[INFO] +- org.apache.httpcomponents:httpclient:jar:4.2.5:compile
+[INFO] |  +- commons-logging:commons-logging:jar:1.1.1:compile
+[INFO] |  \- commons-codec:commons-codec:jar:1.6:compile
+[INFO] +- org.apache.httpcomponents:httpcore:jar:4.2.4:compile
+[INFO] \- org.slf4j:slf4j-api:jar:1.6.6:compile
+[INFO] ------------------------------------------------------------------------
+[INFO] Building ReConf Client
+[INFO]    task-segment: [dependency:tree]
+[INFO] ------------------------------------------------------------------------
+[INFO] snapshot br.com.uol.reconf:reconf-infra:1.6.10-SNAPSHOT: checking for updates from UOL
+[INFO] snapshot br.com.uol.reconf:reconf-infra:1.6.10-SNAPSHOT: checking for updates from uol-upload
+[INFO] snapshot br.com.uol.reconf:reconf-infra:1.6.10-SNAPSHOT: checking for updates from ibiblio.org
+[INFO] snapshot br.com.uol.reconf:reconf-infra:1.6.10-SNAPSHOT: checking for updates from jboss
+[WARNING] repository metadata for: 'snapshot br.com.uol.reconf:reconf-infra:1.6.10-SNAPSHOT' could not be retrieved from repository: jboss due to an error: Authorization failed: Access denied to: http://repository.jboss.org/maven2/br/com/uol/reconf/reconf-infra/1.6.10-SNAPSHOT/maven-metadata.xml
+[INFO] Repository 'jboss' will be blacklisted
+[INFO] snapshot br.com.uol.reconf:reconf-infra:1.6.10-SNAPSHOT: checking for updates from UOL Publicidade - Releases
+[WARNING] repository metadata for: 'snapshot br.com.uol.reconf:reconf-infra:1.6.10-SNAPSHOT' could not be retrieved from repository: UOL Publicidade - Releases due to an error: Error transferring file: Server returned HTTP response code: 503 for URL: http://a1-linksf-q-prt1:8070/nexus/content/repositories/releases/br/com/uol/reconf/reconf-infra/1.6.10-SNAPSHOT/maven-metadata.xml
+[INFO] Repository 'UOL Publicidade - Releases' will be blacklisted
+[INFO] snapshot br.com.uol.reconf:reconf-infra:1.6.10-SNAPSHOT: checking for updates from UOL Publicidade - Snapshots
+[WARNING] repository metadata for: 'snapshot br.com.uol.reconf:reconf-infra:1.6.10-SNAPSHOT' could not be retrieved from repository: UOL Publicidade - Snapshots due to an error: Error transferring file: Server returned HTTP response code: 503 for URL: http://a1-linksf-q-prt1:8070/nexus/content/repositories/snapshots/br/com/uol/reconf/reconf-infra/1.6.10-SNAPSHOT/maven-metadata.xml
+[INFO] Repository 'UOL Publicidade - Snapshots' will be blacklisted
+[INFO] snapshot br.com.uol.reconf:reconf-infra:1.6.10-SNAPSHOT: checking for updates from sonatype-nexus-snapshots
+[INFO] [dependency:tree {execution: default-cli}]
+[INFO] br.com.uol.reconf:reconf-client:jar:1.6.10-SNAPSHOT
+[INFO] +- br.com.uol.reconf:reconf-infra:jar:1.6.10-SNAPSHOT:compile
+[INFO] +- commons-collections:commons-collections:jar:3.2.1:compile
+[INFO] +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] +- commons-codec:commons-codec:jar:1.6:compile
+[INFO] +- commons-io:commons-io:jar:2.4:compile
+[INFO] +- commons-dbcp:commons-dbcp:jar:1.4:compile
+[INFO] |  \- commons-pool:commons-pool:jar:1.5.4:compile
+[INFO] +- org.hsqldb:hsqldb:jar:2.3.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.6.6:compile
+[INFO] +- org.apache.httpcomponents:httpclient:jar:4.2.5:compile
+[INFO] |  \- commons-logging:commons-logging:jar:1.1.1:compile
+[INFO] +- org.apache.httpcomponents:httpcore:jar:4.2.4:compile
+[INFO] +- junit:junit:jar:4.8:test
+[INFO] \- org.slf4j:slf4j-simple:jar:1.6.4:test
+[INFO] ------------------------------------------------------------------------
+[INFO] Building ReConf Spring Integration
+[INFO]    task-segment: [dependency:tree]
+[INFO] ------------------------------------------------------------------------
+[INFO] artifact org.springframework:spring-beans: checking for updates from UOL
+[INFO] artifact org.springframework:spring-beans: checking for updates from uol-upload
+[INFO] artifact org.springframework:spring-beans: checking for updates from ibiblio.org
+[INFO] artifact org.springframework:spring-beans: checking for updates from jboss
+[WARNING] repository metadata for: 'artifact org.springframework:spring-beans' could not be retrieved from repository: jboss due to an error: Authorization failed: Access denied to: http://repository.jboss.org/maven2/org/springframework/spring-beans/maven-metadata.xml
+[INFO] Repository 'jboss' will be blacklisted
+[INFO] artifact org.springframework:spring-beans: checking for updates from UOL Publicidade - Releases
+[WARNING] repository metadata for: 'artifact org.springframework:spring-beans' could not be retrieved from repository: UOL Publicidade - Releases due to an error: Error transferring file: Server returned HTTP response code: 503 for URL: http://a1-linksf-q-prt1:8070/nexus/content/repositories/releases/org/springframework/spring-beans/maven-metadata.xml
+[INFO] Repository 'UOL Publicidade - Releases' will be blacklisted
+[INFO] artifact org.springframework:spring-beans: checking for updates from UOL Publicidade - Snapshots
+[WARNING] repository metadata for: 'artifact org.springframework:spring-beans' could not be retrieved from repository: UOL Publicidade - Snapshots due to an error: Error transferring file: Server returned HTTP response code: 503 for URL: http://a1-linksf-q-prt1:8070/nexus/content/repositories/snapshots/org/springframework/spring-beans/maven-metadata.xml
+[INFO] Repository 'UOL Publicidade - Snapshots' will be blacklisted
+[INFO] artifact org.springframework:spring-beans: checking for updates from central
+[INFO] snapshot br.com.uol.reconf:reconf-client:1.6.10-SNAPSHOT: checking for updates from UOL
+[INFO] snapshot br.com.uol.reconf:reconf-client:1.6.10-SNAPSHOT: checking for updates from uol-upload
+[INFO] snapshot br.com.uol.reconf:reconf-client:1.6.10-SNAPSHOT: checking for updates from ibiblio.org
+[INFO] snapshot br.com.uol.reconf:reconf-client:1.6.10-SNAPSHOT: checking for updates from sonatype-nexus-snapshots
+[INFO] [dependency:tree {execution: default-cli}]
+[INFO] br.com.uol.reconf:reconf-spring:jar:1.6.10-SNAPSHOT
+[INFO] +- br.com.uol.reconf:reconf-client:jar:1.6.10-SNAPSHOT:compile
+[INFO] |  +- br.com.uol.reconf:reconf-infra:jar:1.6.10-SNAPSHOT:compile
+[INFO] |  +- commons-collections:commons-collections:jar:3.2.1:compile
+[INFO] |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  +- commons-codec:commons-codec:jar:1.6:compile
+[INFO] |  +- commons-io:commons-io:jar:2.4:compile
+[INFO] |  +- commons-dbcp:commons-dbcp:jar:1.4:compile
+[INFO] |  |  \- commons-pool:commons-pool:jar:1.5.4:compile
+[INFO] |  +- org.hsqldb:hsqldb:jar:2.3.0:compile
+[INFO] |  +- org.slf4j:slf4j-api:jar:1.6.6:compile
+[INFO] |  +- org.apache.httpcomponents:httpclient:jar:4.2.5:compile
+[INFO] |  |  \- commons-logging:commons-logging:jar:1.1.1:compile
+[INFO] |  \- org.apache.httpcomponents:httpcore:jar:4.2.4:compile
+[INFO] \- org.springframework:spring-beans:jar:2.5.6:provided
+[INFO]    \- org.springframework:spring-core:jar:2.5.6:provided
+[INFO] 
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] ------------------------------------------------------------------------
+[INFO] ReConf JVM Parent ..................................... SUCCESS [2.566s]
+[INFO] ReConf Infrastructure ................................. SUCCESS [0.111s]
+[INFO] ReConf Client ......................................... SUCCESS [3.270s]
+[INFO] ReConf Spring Integration ............................. SUCCESS [2.909s]
+[INFO] ------------------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 9 seconds
+[INFO] Finished at: Tue Apr 15 15:55:32 BRT 2014
+[INFO] Final Memory: 24M/347M
+[INFO] ------------------------------------------------------------------------

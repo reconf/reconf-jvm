@@ -26,9 +26,9 @@ public class IndependentConfigurationUpdater extends ConfigurationUpdater {
 
     private final int reloadInterval;
     private final TimeUnit timeUnit;
-    private Collection<CallbackListener> listeners = Collections.EMPTY_LIST;
+    private Collection<UpdateListener> listeners = Collections.EMPTY_LIST;
 
-    public IndependentConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync, int reloadInterval, TimeUnit reloadTimeUnit, Collection<CallbackListener> listeners) {
+    public IndependentConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync, int reloadInterval, TimeUnit reloadTimeUnit, Collection<UpdateListener> listeners) {
         super(toUpdate, target, sync);
         this.timeUnit = reloadTimeUnit;
         this.reloadInterval = reloadInterval;
@@ -50,11 +50,11 @@ public class IndependentConfigurationUpdater extends ConfigurationUpdater {
 
                 clearLastResult();
                 update();
-                Notification event = getNotification();
+                UpdateNotification event = getNotification();
                 if (event != null) {
-                    for (CallbackListener listener : listeners) {
+                    for (UpdateListener listener : listeners) {
                         try {
-                            listener.onChange(event);
+                            listener.onEvent(event);
                         } catch (Throwable t) {
                             LoggerHolder.getLog().error(msg.format("error.notify", getName()), t);
                         }
