@@ -31,10 +31,6 @@ public class MethodConfiguration {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(MethodConfiguration.class);
 
-    public enum ReloadStrategy {
-        NONE, ATOMIC, INDEPENDENT;
-    }
-
     private final ConfigurationRepositoryElement cfgRepository;
     private final ConfigurationItemElement remoteItem;
     private final ServerStub stub;
@@ -81,35 +77,11 @@ public class MethodConfiguration {
     }
 
     public int getReloadInterval() {
-        switch (getReloadStrategy()) {
-        case ATOMIC : return cfgRepository.getUpdateFrequency().getInterval();
-        case INDEPENDENT : return remoteItem.getUpdateFrequency().getInterval();
-        case NONE : return 0;
-        default : throw new IllegalStateException(msg.get("error.internal"));
-        }
+        return cfgRepository.getInterval();
     }
 
     public TimeUnit getReloadTimeUnit() {
-        switch (getReloadStrategy()) {
-        case ATOMIC : return cfgRepository.getUpdateFrequency().getTimeUnit();
-        case INDEPENDENT : return remoteItem.getUpdateFrequency().getTimeUnit();
-        case NONE : return TimeUnit.DAYS;
-        default : throw new IllegalStateException(msg.get("error.internal"));
-        }
-    }
-
-    public ReloadStrategy getReloadStrategy() {
-        if (remoteItem.getDoNotUpdate() != null) {
-            return ReloadStrategy.NONE;
-        }
-        if (remoteItem.getUpdateFrequency() != null) {
-            return ReloadStrategy.INDEPENDENT;
-        }
-
-        if (cfgRepository.getDoNotUpdate() != null) {
-            return ReloadStrategy.NONE;
-        }
-        return (null != cfgRepository.getUpdateFrequency()) ? ReloadStrategy.ATOMIC : ReloadStrategy.NONE;
+        return cfgRepository.getTimeUnit();
     }
 
     public Method getMethod() {

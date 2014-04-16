@@ -35,7 +35,6 @@ public class ConfigurationItemElementValidator {
         checkValue(prefix, arg, errors);
         checkAdapter(prefix, arg, errors);
         checkMethod(prefix, arg, errors);
-        checkUpdateFrequency(prefix, arg, errors);
         return errors;
     }
 
@@ -66,15 +65,6 @@ public class ConfigurationItemElementValidator {
     private static void checkMethod(String prefix, ConfigurationItemElement arg, Map<String, String> errors) {
         if (arg.getMethod() == null) {
             errors.put(prefix + "method", "is null");
-        }
-    }
-
-    private static void checkUpdateFrequency(String prefix, ConfigurationItemElement arg, Map<String, String> errors) {
-        if (arg.getUpdateFrequency() != null) {
-            Collection<String> updateFreqErrors = UpdateFrequencyElementValidator.validate(arg.getUpdateFrequency());
-            for (String error : updateFreqErrors) {
-                errors.put(prefix + "@UpdateFrequency" , error);
-            }
         }
     }
 

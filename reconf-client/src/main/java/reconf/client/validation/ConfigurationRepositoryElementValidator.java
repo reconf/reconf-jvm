@@ -16,6 +16,7 @@
 package reconf.client.validation;
 
 import java.util.*;
+import java.util.concurrent.*;
 import org.apache.commons.lang.*;
 import reconf.client.elements.*;
 import reconf.infra.i18n.*;
@@ -59,11 +60,12 @@ public class ConfigurationRepositoryElementValidator {
     }
 
     private static void checkUpdateFrequency(ConfigurationRepositoryElement arg, Map<String, String> errors) {
-        if (arg.getUpdateFrequency() == null) {
-            return;
+        if (arg.getInterval() == null || arg.getInterval() < 1) {
+            errors.put("@ConfigurationRepository", msg.get("interval.error"));
         }
-        for (String error : UpdateFrequencyElementValidator.validate(arg.getUpdateFrequency())) {
-            errors.put("@UpdateFrequency", error);
+
+        if (arg.getTimeUnit() == null || !EnumSet.of(TimeUnit.SECONDS,TimeUnit.MINUTES,TimeUnit.HOURS,TimeUnit.DAYS).contains(arg.getTimeUnit())) {
+            errors.put("@ConfigurationRepository", msg.get("timeUnit.null"));
         }
     }
 

@@ -16,6 +16,7 @@
 package reconf.client.elements;
 
 import java.util.*;
+import java.util.concurrent.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.lang.builder.*;
 import reconf.client.proxy.*;
@@ -28,8 +29,9 @@ public class ConfigurationRepositoryElement {
     private ConnectionSettings connectionSettings;
     private String product;
     private String component;
-    private DoNotUpdateElement doNotUpdate;
-    private UpdateFrequencyElement updateFrequency;
+    private Integer interval;
+    private TimeUnit timeUnit;
+
     private Class<?> interfaceClass;
     private List<ConfigurationItemElement> configurationItems = new ArrayList<ConfigurationItemElement>();
     private Customization customization;
@@ -76,21 +78,6 @@ public class ConfigurationRepositoryElement {
         this.product = product;
     }
 
-    public DoNotUpdateElement getDoNotUpdate() {
-        return doNotUpdate;
-    }
-
-    public void setDoNotUpdate(DoNotUpdateElement doNotUpdate) {
-        this.doNotUpdate = doNotUpdate;
-    }
-
-    public UpdateFrequencyElement getUpdateFrequency() {
-        return updateFrequency;
-    }
-    public void setUpdateFrequency(UpdateFrequencyElement updateFrequency) {
-        this.updateFrequency = updateFrequency;
-    }
-
     public Class<?> getInterfaceClass() {
         return interfaceClass;
     }
@@ -112,18 +99,29 @@ public class ConfigurationRepositoryElement {
         this.customization = customization;
     }
 
+    public Integer getInterval() {
+        return interval;
+    }
+    public void setInterval(Integer interval) {
+        this.interval = interval;
+    }
+
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
+    }
+    public void setTimeUnit(TimeUnit timeUnit) {
+        this.timeUnit = timeUnit;
+    }
+
     @Override
     public String toString() {
         ToStringBuilder result = new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
         .append("class", getInterfaceClass())
         .append("product", getProduct())
         .append("component", getComponent())
-        .append("@DoNotUpdate", null == doNotUpdate ? "not found" : "found");
-        if (getUpdateFrequency() == null) {
-            result.append("@UpdateFrequency", "not found");
-        } else {
-            result.append("@UpdateFrequency", getUpdateFrequency());
-        }
+        .append("interval", getInterval())
+        .append("timeUnit", getTimeUnit());
+
         result.append("@ConfigurationItems", LineSeparator.value() + getConfigurationItems());
         return result.toString();
     }

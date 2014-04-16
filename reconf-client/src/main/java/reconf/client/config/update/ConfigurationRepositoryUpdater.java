@@ -25,8 +25,6 @@ import reconf.client.check.*;
 import reconf.client.elements.*;
 import reconf.client.locator.*;
 import reconf.client.proxy.*;
-import reconf.client.proxy.MethodConfiguration.ReloadStrategy;
-import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 import reconf.infra.system.*;
@@ -38,12 +36,10 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationRepositoryUpdater.class);
     private final ConfigurationRepositoryElement cfgRepository;
     private final ConfigurationRepositoryData data;
-    private Map<Method, UpdateResult> independentMethodValue = new ConcurrentHashMap<Method, UpdateResult>();
     private Map<Method, Object> atomicMethodValue = new ConcurrentHashMap<Method, Object>();
     private final ConfigurationRepositoryFactory factory;
     private ServiceLocator locator;
-    private List<ObservableThread> independentReload = new ArrayList<ObservableThread>();
-    private Collection<UpdateListener> listeners = Collections.EMPTY_LIST;
+    private Collection<UpdateListener> updateListeners = Collections.EMPTY_LIST;
 
     public ConfigurationRepositoryUpdater(ConfigurationRepositoryElement elem, ServiceLocator locator, ConfigurationRepositoryFactory factory) {
         setDaemon(true);
@@ -52,10 +48,9 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         cfgRepository = elem;
         setName(elem.getInterfaceClass().getName() + "_updater" + new Object().toString().replace("java.lang.Object", ""));
         data = new ConfigurationRepositoryData(elem, locator);
-        listeners = elem.getCustomization().getUpdateListeners();
+        updateListeners = elem.getCustomization().getUpdateListeners();
 
         load();
-        scheduleIndependent();
         updateLastExecution();
         factory.setUpdater(this);
     }
@@ -89,12 +84,8 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
         try {
             for (MethodConfiguration config : data.getAll()) {
-                if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
-                    toExecute.add(locator.configurationUpdaterFactory().standard(independentMethodValue, config, latch));
-                } else {
-                    toExecute.add(locator.configurationUpdaterFactory().syncRemote(remote, config, latch));
-                    toExecute.add(locator.configurationUpdaterFactory().syncLocal(local, config, latch));
-                }
+                toExecute.add(locator.configurationUpdaterFactory().syncRemote(remote, config, latch));
+                toExecute.add(locator.configurationUpdaterFactory().syncLocal(local, config, latch));
             }
             for (ConfigurationUpdater thread : toExecute) {
                 thread.start();
@@ -126,7 +117,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     }
 
     private void notifyListeners(List<ConfigurationUpdater> toExecute) {
-        for (UpdateListener listener : listeners) {
+        for (UpdateListener listener : updateListeners) {
             for (ConfigurationUpdater updater : toExecute) {
                 UpdateNotification event = updater.getNotification();
                 if (event == null) {
@@ -152,7 +143,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     }
 
     private void validateLoadResult() {
-        if ((independentMethodValue.size() + atomicMethodValue.size()) != data.getAll().size()) {
+        if ((atomicMethodValue.size()) != data.getAll().size()) {
             throw new ReConfInitializationError(msg.format("error.missing.item", getName()));
         }
 
@@ -162,15 +153,6 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             }
         }
         commitTemporaryDatabaseChanges();
-    }
-
-    private void scheduleIndependent() {
-        for (MethodConfiguration config : data.getIndependentReload()) {
-            ObservableThread thread = locator.configurationUpdaterFactory().independent(independentMethodValue, config, config.getReloadInterval(), config.getReloadTimeUnit(), listeners);
-            thread.start();
-            Environment.addThreadToCheck(thread);
-            independentReload.add(thread);
-        }
     }
 
     private void update() {
@@ -251,11 +233,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
         try {
             for (MethodConfiguration config : data.getAll()) {
-                if (ReloadStrategy.INDEPENDENT == config.getReloadStrategy() || ReloadStrategy.NONE == config.getReloadStrategy()) {
-                    toExecute.add(locator.configurationUpdaterFactory().syncRemote(updateIndependent, config, latch));
-                } else {
-                    toExecute.add(locator.configurationUpdaterFactory().syncRemote(updateAtomic, config, latch));
-                }
+                toExecute.add(locator.configurationUpdaterFactory().syncRemote(updateAtomic, config, latch));
             }
             for (Thread thread : toExecute) {
                 thread.start();
@@ -298,13 +276,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             mergedAtomic.put(each.getKey(), (!updateAtomic.containsKey(each.getKey()) ? each.getValue() : updateAtomic.get(each.getKey()).getObject()));
         }
 
-        Map<Method,UpdateResult> mergedIndependent = new ConcurrentHashMap<Method, UpdateResult>();
-        for (Entry<Method, UpdateResult> each : independentMethodValue.entrySet()) {
-            mergedIndependent.put(each.getKey(), (!updateIndependent.containsKey(each.getKey()) ? each.getValue() : updateIndependent.get(each.getKey())));
-        }
         this.atomicMethodValue = mergedAtomic;
-        this.independentMethodValue = mergedIndependent;
-
         commitTemporaryDatabaseChanges();
     }
 
@@ -316,18 +288,18 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         if (!shouldReload()) {
             return 0;
         }
-        return cfgRepository.getUpdateFrequency().getInterval();
+        return cfgRepository.getInterval();
     }
 
     public TimeUnit getReloadTimeUnit() {
         if (!shouldReload()) {
             return TimeUnit.DAYS;
         }
-        return cfgRepository.getUpdateFrequency().getTimeUnit();
+        return cfgRepository.getTimeUnit();
     }
 
     public Object getValueOf(Method m) {
-        return atomicMethodValue.containsKey(m) ? atomicMethodValue.get(m) : independentMethodValue.containsKey(m) ? independentMethodValue.get(m).getObject() : null;
+        return atomicMethodValue.containsKey(m) ? atomicMethodValue.get(m) : null;
     }
 
     public boolean shouldReload() {
@@ -336,7 +308,6 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     @Override
     public void stopIt() {
-        interruptAll(independentReload);
         try {
             super.interrupt();
         } catch (Exception ignored) { }
@@ -349,6 +320,6 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     @Override
     public List<ObservableThread> getChildren() {
-        return independentReload;
+        return Collections.EMPTY_LIST;
     }
 }

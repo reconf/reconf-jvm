@@ -24,9 +24,7 @@ import reconf.client.proxy.*;
 public class ConfigurationRepositoryData {
 
     private final ConfigurationRepositoryElement cfgRepository;
-    private final List<MethodConfiguration> independentReload = new ArrayList<MethodConfiguration>();
     private final List<MethodConfiguration> atomicReload = new ArrayList<MethodConfiguration>();
-    private final List<MethodConfiguration> doNotReload = new ArrayList<MethodConfiguration>();
     private final List<MethodConfiguration> all = new ArrayList<MethodConfiguration>();
     private final ServiceLocator locator;
 
@@ -40,24 +38,12 @@ public class ConfigurationRepositoryData {
         for (ConfigurationItemElement item : cfgRepository.getConfigurationItems()) {
             MethodConfiguration methodCfg = new MethodConfiguration(cfgRepository, item, locator);
             all.add(methodCfg);
-            switch (methodCfg.getReloadStrategy()) {
-                case ATOMIC : atomicReload.add(methodCfg); break;
-                case INDEPENDENT : independentReload.add(methodCfg); break;
-                case NONE : doNotReload.add(methodCfg); break;
-            }
+            atomicReload.add(methodCfg);
         }
-    }
-
-    public List<MethodConfiguration> getIndependentReload() {
-        return new ArrayList<MethodConfiguration>(independentReload);
     }
 
     public List<MethodConfiguration> getAtomicReload() {
         return new ArrayList<MethodConfiguration>(atomicReload);
-    }
-
-    public List<MethodConfiguration> getDoNotReload() {
-        return new ArrayList<MethodConfiguration>(doNotReload);
     }
 
     public List<MethodConfiguration> getAll() {

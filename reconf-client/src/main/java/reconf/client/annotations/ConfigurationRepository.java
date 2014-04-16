@@ -18,10 +18,13 @@ package reconf.client.annotations;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.*;
 import java.lang.annotation.*;
+import java.util.concurrent.*;
 
 @Target(TYPE)
 @Retention(RUNTIME)
 public @interface ConfigurationRepository {
     String product();
     String component();
+    int interval();
+    TimeUnit timeUnit();
 }

@@ -61,6 +61,8 @@ public class ConfigurationRepositoryElementFactory {
         result.setComponent(ann.component());
         result.setConnectionSettings(configuration.getConnectionSettings());
         result.setInterfaceClass(arg);
+        result.setInterval(ann.interval());
+        result.setTimeUnit(ann.timeUnit());
         result.setConfigurationItems(ConfigurationItemElement.from(result));
         LoggerHolder.getLog().info(msg.format("new", LineSeparator.value(), result.toString()));
 
@@ -68,38 +70,12 @@ public class ConfigurationRepositoryElementFactory {
     }
 
     private void defineReloadStrategy(Class<?> arg, ConfigurationRepositoryElement result) {
-        if (!arg.isAnnotationPresent(UpdateFrequency.class) && !arg.isAnnotationPresent(DoNotUpdate.class)) {
-            LoggerHolder.getLog().warn(msg.format("reload.policy.missing", arg));
+        if (configuration.getAnnotationOverride() == null) {
             return;
         }
-
-        if (arg.isAnnotationPresent(UpdateFrequency.class) && arg.isAnnotationPresent(DoNotUpdate.class)) {
-            LoggerHolder.getLog().warn(msg.format("error.conflict.reload.policy", arg));
-        }
-
-        if (arg.isAnnotationPresent(UpdateFrequency.class)) {
-            if (configuration.getAnnotationOverride() != null) {
-                UpdateFrequencyElement overrideFrequency = new UpdateFrequencyElement();
-                overrideFrequency.setInterval(configuration.getAnnotationOverride().getInterval());
-                overrideFrequency.setTimeUnit(configuration.getAnnotationOverride().getTimeUnit());
-                result.setUpdateFrequency(overrideFrequency);
-                LoggerHolder.getLog().info(msg.format("global.reload.policy.override", arg));
-                return;
-            }
-
-            UpdateFrequency reloadAnn = arg.getAnnotation(UpdateFrequency.class);
-            UpdateFrequencyElement reloadPolicy = new UpdateFrequencyElement();
-            reloadPolicy.setInterval(reloadAnn.interval());
-            reloadPolicy.setTimeUnit(reloadAnn.timeUnit());
-            result.setUpdateFrequency(reloadPolicy);
-            return;
-        }
-
-        if (arg.isAnnotationPresent(DoNotUpdate.class)) {
-            result.setDoNotUpdate(new DoNotUpdateElement());
-            LoggerHolder.getLog().warn(msg.format("do.not.reload", arg));
-            return;
-        }
+        result.setInterval(configuration.getAnnotationOverride().getInterval());
+        result.setTimeUnit(configuration.getAnnotationOverride().getTimeUnit());
+        LoggerHolder.getLog().info(msg.format("global.reload.policy.override", arg));
     }
 
     private void validate(ConfigurationRepositoryElement arg) {

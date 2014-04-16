@@ -54,11 +54,12 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
             value = holder.getRemote().get();
             if (null != value) {
                 obtained = holder.getRemote();
-                newValue = holder.getDb().temporaryUpdate(value);
+                newValue = holder.getDb().isNew(value);
             }
 
             if (value != null && obtained != null) {
                 lastResult = updateMap(value, newValue, true, obtained);
+                holder.getDb().temporaryUpdate(value);
                 LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
             }
 

@@ -22,7 +22,6 @@ import org.apache.commons.lang.builder.*;
 import reconf.client.adapters.*;
 import reconf.client.annotations.*;
 import reconf.infra.i18n.*;
-import reconf.infra.log.*;
 import reconf.infra.throwables.*;
 
 
@@ -34,8 +33,6 @@ public class ConfigurationItemElement {
     private String value;
     private String component;
     private String product;
-    private DoNotUpdateElement doNotUpdate;
-    private UpdateFrequencyElement updateFrequency;
     private Class<? extends ConfigurationAdapter> adapter;
 
     public static List<ConfigurationItemElement> from(ConfigurationRepositoryElement repository) {
@@ -62,34 +59,13 @@ public class ConfigurationItemElement {
                 resultItem = new ConfigurationItemElement();
                 resultItem.setMethod(method.getName());
                 resultItem.setAdapter(ann.adapter());
+                resultItem.setValue(ann.value());
             }
             resultItem.setMethod(method);
-            defineUpdateStrategy(repository, resultItem, ann);
             defineItemProductComponentOverride(repository, resultItem, ann);
             result.add(resultItem);
         }
         return result;
-    }
-
-    private static void defineUpdateStrategy(ConfigurationRepositoryElement repository, ConfigurationItemElement resultItem, ConfigurationItem annItem) {
-        resultItem.setValue(annItem.value());
-
-        if (resultItem.getMethod().isAnnotationPresent(UpdateFrequency.class)) {
-            UpdateFrequency frequencyAnn = resultItem.getMethod().getAnnotation(UpdateFrequency.class);
-            UpdateFrequencyElement frequencyElement = new UpdateFrequencyElement();
-            frequencyElement.setInterval(frequencyAnn.interval());
-            frequencyElement.setTimeUnit(frequencyAnn.timeUnit());
-            resultItem.setUpdateFrequency(frequencyElement);
-        }
-
-        if (resultItem.getMethod().isAnnotationPresent(DoNotUpdate.class) && resultItem.getMethod().isAnnotationPresent(UpdateFrequency.class)) {
-            LoggerHolder.getLog().warn(msg.format("error.conflict.reload.policy" , resultItem.getMethod(), repository.getClass()));
-            return;
-        }
-
-        if (resultItem.getMethod().isAnnotationPresent(DoNotUpdate.class)) {
-            resultItem.setDoNotUpdate(new DoNotUpdateElement());
-        }
     }
 
     private static void defineItemProductComponentOverride(ConfigurationRepositoryElement repo, ConfigurationItemElement resultItem, ConfigurationItem annItem) {
@@ -148,32 +124,12 @@ public class ConfigurationItemElement {
         this.product = product;
     }
 
-    public DoNotUpdateElement getDoNotUpdate() {
-        return doNotUpdate;
-    }
-    public void setDoNotUpdate(DoNotUpdateElement doNotUpdate) {
-        this.doNotUpdate = doNotUpdate;
-    }
-
-    public UpdateFrequencyElement getUpdateFrequency() {
-        return updateFrequency;
-    }
-    public void setUpdateFrequency(UpdateFrequencyElement updateFrequency) {
-        this.updateFrequency = updateFrequency;
-    }
-
     @Override
     public String toString() {
         ToStringBuilder result = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("method", getMethod());
         addToString(result, "product", getProduct());
         addToString(result, "component", getComponent());
         result.append("value", getValue());
-        result.append("@DoNotUpdate", null == doNotUpdate ? "not found" : "found");
-        if (getUpdateFrequency() == null) {
-            result.append("specific @UpdateFrequency", "not found");
-        } else {
-            result.append("specific @UpdateFrequency", getUpdateFrequency());
-        }
         return result.toString();
     }
 

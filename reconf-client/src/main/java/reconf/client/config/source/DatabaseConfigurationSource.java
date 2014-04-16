@@ -58,30 +58,29 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
             return proxy.get(fullProperty, method);
 
         } catch (Throwable t) {
-            LoggerHolder.getLog().error(msg.format("error.load", getClass().getName()), t);
+            LoggerHolder.getLog().error(msg.format("error.read", getClass().getName()), t);
         }
         return null;
     }
 
-    public boolean update(String value) {
+    public boolean isNew(String value) {
         try {
             DatabaseManager manager = locator.databaseManagerLocator().find();
-            return manager.upsert(fullProperty, method, value);
+            return manager.isNew(fullProperty, method, value);
 
         } catch (Throwable t) {
-            LoggerHolder.getLog().error(msg.get("error.save"), t);
-            return false;
+            LoggerHolder.getLog().error(msg.format("error.read", getClass().getName()), t);
         }
+        return false;
     }
 
-    public boolean temporaryUpdate(String value) {
+    public void temporaryUpdate(String value) {
         try {
             DatabaseManager manager = locator.databaseManagerLocator().find();
-            return manager.temporaryUpsert(fullProperty, method, value);
+            manager.temporaryUpsert(fullProperty, method, value);
 
         } catch (Throwable t) {
             LoggerHolder.getLog().error(msg.get("error.save"), t);
-            return false;
         }
     }
 

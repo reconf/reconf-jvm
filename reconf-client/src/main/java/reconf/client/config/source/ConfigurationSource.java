@@ -19,8 +19,9 @@ import reconf.client.adapters.*;
 
 
 public interface ConfigurationSource {
+
     String get();
-    boolean update(String value);
-    boolean temporaryUpdate(String value);
+    void temporaryUpdate(String value);
+    boolean isNew(String value);
     ConfigurationAdapter getAdapter();
 }

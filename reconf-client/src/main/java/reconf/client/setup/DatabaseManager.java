@@ -35,12 +35,11 @@ public class DatabaseManager implements ShutdownBean {
     private final BasicDataSource dataSource;
     private boolean init;
 
-    private final String DEFINITIVE_INSERT = "INSERT INTO PUBLIC.CLS_METHOD_PROP_VALUE_V2 (NAM_CLASS, NAM_METHOD, FULL_PROP, VALUE, UPDATED) VALUES (?,?,?,?,?)";
     private final String TEMPORARY_INSERT = "INSERT INTO PUBLIC.CLS_METHOD_PROP_VALUE_V2 (NAM_CLASS, NAM_METHOD, FULL_PROP, NEW_VALUE, UPDATED) VALUES (?,?,?,?,?)";
-    private final String DEFINITIVE_UPDATE = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET VALUE = ?, UPDATED = ? WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ? AND (UPDATED IS NULL OR VALUE <> ?)";
     private final String TEMPORARY_UPDATE = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET NEW_VALUE = ?, UPDATED = ? WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ? AND (UPDATED IS NULL OR VALUE <> ?)";
     private final String COMMIT_TEMP_CHANGES = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET VALUE = NEW_VALUE, NEW_VALUE = NULL, UPDATED = ? WHERE FULL_PROP IN (%s) AND NAM_CLASS = ? AND NEW_VALUE IS NOT NULL";
     private final String CLEAN_OLD_TEMP = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET NEW_VALUE = NULL, UPDATED = NULL";
+    private final String CHECK_IS_NEW = "SELECT 1 FROM PUBLIC.CLS_METHOD_PROP_VALUE_V2 WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ? AND (UPDATED IS NULL OR VALUE <> ?)";
 
     public DatabaseManager(LocalCacheSettings config) {
         new ShutdownInterceptor(this).register();
@@ -193,15 +192,7 @@ public class DatabaseManager implements ShutdownBean {
         return result;
     }
 
-    public boolean upsert(String fullProperty, Method method, String value) {
-        return innerUpsert(fullProperty, method, value, true);
-    }
-
     public boolean temporaryUpsert(String fullProperty, Method method, String value) {
-        return innerUpsert(fullProperty, method, value, false);
-    }
-
-    private boolean innerUpsert(String fullProperty, Method method, String value, boolean definitive) {
         synchronized (dataSource) {
             if (dataSource.isClosed()) {
                 return false;
@@ -214,7 +205,7 @@ public class DatabaseManager implements ShutdownBean {
             conn = getConnection();
 
             if (needToInsert(fullProperty, method)) {
-                stmt = conn.prepareStatement(definitive ? DEFINITIVE_INSERT : TEMPORARY_INSERT);
+                stmt = conn.prepareStatement(TEMPORARY_INSERT);
                 stmt.setString(1, method.getDeclaringClass().getName());
                 stmt.setString(2, method.getName());
                 stmt.setString(3, StringUtils.upperCase(fullProperty));
@@ -222,7 +213,7 @@ public class DatabaseManager implements ShutdownBean {
                 stmt.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
 
             } else {
-                stmt = conn.prepareStatement(definitive ? DEFINITIVE_UPDATE : TEMPORARY_UPDATE);
+                stmt = conn.prepareStatement(TEMPORARY_UPDATE);
                 stmt.setString(1, value);
                 stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
                 stmt.setString(3, StringUtils.upperCase(fullProperty));
@@ -235,10 +226,46 @@ public class DatabaseManager implements ShutdownBean {
             return result;
 
         } catch (Exception e) {
-            LoggerHolder.getLog().warn(msg.format("error.db", (definitive ? "upsert" : "temporaryUpsert")), e);
+            LoggerHolder.getLog().warn(msg.format("error.db", ("temporaryUpsert")), e);
             throw new RuntimeException(e);
 
         } finally {
+            close(stmt);
+            close(conn);
+        }
+    }
+
+    public boolean isNew(String fullProperty, Method method, String value) {
+        synchronized (dataSource) {
+            if (dataSource.isClosed()) {
+                return false;
+            }
+        }
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnection();
+            if (needToInsert(fullProperty, method)) {
+                return true;
+            }
+
+            stmt = conn.prepareStatement(CHECK_IS_NEW);
+            stmt.setString(1, StringUtils.upperCase(fullProperty));
+            stmt.setString(2, method.getDeclaringClass().getName());
+            stmt.setString(3, method.getName());
+            stmt.setString(4, value);
+
+            rs = stmt.executeQuery();
+            return rs.next();
+
+        } catch (Exception e) {
+            LoggerHolder.getLog().warn(msg.format("error.db", ("isNew")), e);
+            throw new RuntimeException(e);
+
+        } finally {
+            close(rs);
             close(stmt);
             close(conn);
         }
@@ -262,11 +289,7 @@ public class DatabaseManager implements ShutdownBean {
             stmt.setString(3, method.getName());
             rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                return false;
-            }
-
-            return true;
+            return rs.next() ? false : true;
 
         } catch (Exception e) {
             LoggerHolder.getLog().warn(msg.format("error.db", "needToInsert"), e);

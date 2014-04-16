@@ -27,7 +27,6 @@ import reconf.client.adapters.*;
 public @interface ConfigurationItem {
 
     String value();
-
     String component() default StringUtils.EMPTY;
     String product() default StringUtils.EMPTY;
     Class<? extends ConfigurationAdapter> adapter() default NoConfigurationAdapter.class;

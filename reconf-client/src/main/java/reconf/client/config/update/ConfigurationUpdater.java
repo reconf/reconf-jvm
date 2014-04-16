@@ -30,7 +30,7 @@ import reconf.infra.i18n.*;
 import reconf.infra.log.*;
 
 
-public class ConfigurationUpdater extends ObservableThread {
+public abstract class ConfigurationUpdater extends ObservableThread {
 
     protected final static MessagesBundle msg = MessagesBundle.getBundle(ConfigurationUpdater.class);
     protected final Map<Method, UpdateResult> methodValue;
@@ -76,47 +76,7 @@ public class ConfigurationUpdater extends ObservableThread {
         this.lastResult = null;
     }
 
-    protected void update() {
-
-        String value = null;
-        ConfigurationSource obtained = null;
-        boolean newValue = false;
-        boolean success = false;
-
-        try {
-            if (Thread.currentThread().isInterrupted()) {
-                releaseLatch();
-                logInterruptedThread();
-                return;
-            }
-
-            LoggerHolder.getLog().debug(msg.format("method.reload", getName(), methodCfg.getMethod().getName()));
-            ConfigurationSourceHolder holder = methodCfg.getConfigurationSourceHolder();
-            value = holder.getRemote().get();
-            if (null != value) {
-                obtained = holder.getRemote();
-                newValue = holder.getDb().update(value);
-                success = true;
-
-            } else {
-                value = holder.getDb().get();
-                if (value != null) {
-                    obtained = holder.getDb();
-                }
-            }
-            if (value != null && obtained != null) {
-                lastResult = updateMap(value, newValue, success, obtained);
-                LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
-            }
-
-
-        } catch (Throwable t) {
-            LoggerHolder.getLog().error(msg.format("error.load", getName()), t);
-
-        } finally {
-            releaseLatch();
-        }
-    }
+    protected abstract void update();
 
     protected UpdateResult updateMap(String value, boolean newValue, boolean success, ConfigurationSource obtained) throws Throwable {
         Class<?> clazz = methodCfg.getMethod().getReturnType();

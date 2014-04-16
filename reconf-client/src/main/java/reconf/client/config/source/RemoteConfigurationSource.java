@@ -62,7 +62,12 @@ public class RemoteConfigurationSource implements ConfigurationSource {
         throw new UnsupportedOperationException();
     }
 
-    public boolean temporaryUpdate(String value) {
+    public void temporaryUpdate(String value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isNew(String value) {
         throw new UnsupportedOperationException();
     }
 }
