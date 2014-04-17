@@ -292,9 +292,11 @@ Customizations are a feature that allows the developer to solve the following pr
         cust.setComponentItemPrefix("kp-");
         cust.setComponentItemSuffix("-ks");
 
-        WelcomeConfiguration welcome = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class);
+        WelcomeConfiguration welcome = ConfigurationRepositoryFactory
+            .get(WelcomeConfiguration.class);
 
-        WelcomeConfiguration customWelcome = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class, cust);
+        WelcomeConfiguration customWelcome = ConfigurationRepositoryFactory
+            .get(WelcomeConfiguration.class, cust);
         System.out.println(welcome.getText() + ", " + customWelcome.getText());
     }
 ```
@@ -425,7 +427,7 @@ TODO!
 
 ## License
 
- Copyright 1996-2013 UOL Inc
+ Copyright 1996-2014 UOL Inc
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
