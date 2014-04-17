@@ -107,7 +107,8 @@ import java.math.*;
 import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
-@ConfigurationRepository(product="my-product", component="hello-application", interval=10, timeUnit=TimeUnit.SECONDS)
+@ConfigurationRepository(product="my-product", component="hello-application",
+    interval=10, timeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -236,7 +237,8 @@ import java.math.*;
 import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
-@ConfigurationRepository(product="my-product", component="hello-application", interval=10, timeUnit=TimeUnit.SECONDS)
+@ConfigurationRepository(product="my-product", component="hello-application",
+    interval=10, timeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -265,7 +267,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
-@ConfigurationRepository(component="test", product="test", interval=1, timeUnit=TimeUnit.HOURS)
+@ConfigurationRepository(product="my-product", component="hello-application",
+    interval=1, timeUnit=TimeUnit.HOURS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -371,7 +374,8 @@ package example;
 import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
-@ConfigurationRepository(product="my-product", component="hello-application", interval=10, timeUnit=TimeUnit.SECONDS)
+@ConfigurationRepository(product="my-product", component="hello-application",
+    interval=10, timeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
