@@ -19,7 +19,6 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
 import org.apache.commons.lang.*;
-import reconf.client.callback.*;
 import reconf.client.check.*;
 import reconf.client.config.source.*;
 import reconf.client.constructors.*;
@@ -33,17 +32,17 @@ import reconf.infra.log.*;
 public abstract class ConfigurationUpdater extends ObservableThread {
 
     protected final static MessagesBundle msg = MessagesBundle.getBundle(ConfigurationUpdater.class);
-    protected final Map<Method, UpdateResult> methodValue;
+    protected final Map<Method, ConfigurationItemUpdateResult> methodValue;
     protected final MethodConfiguration methodCfg;
     protected final CountDownLatch latch;
-    protected UpdateResult lastResult = null;
+    protected ConfigurationItemUpdateResult lastResult = null;
     protected boolean isSync = false;
 
-    public ConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync) {
+    public ConfigurationUpdater(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target, boolean sync) {
         this(toUpdate, target, sync, new CountDownLatch(0));
     }
 
-    public ConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync, CountDownLatch latch) {
+    public ConfigurationUpdater(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target, boolean sync, CountDownLatch latch) {
         setDaemon(true);
         methodValue = toUpdate;
         methodCfg = target;
@@ -56,29 +55,24 @@ public abstract class ConfigurationUpdater extends ObservableThread {
         setName(StringUtils.replace(methodCfg.getMethod().toString(), "public abstract ", "") + "_" + getUpdaterType() + "_updater" + StringUtils.replace(new Object().toString(), "java.lang.Object", ""));
     }
 
-    protected String getUpdaterType() {
-        return "standard";
-    }
+    protected abstract String getUpdaterType();
 
     public void run() {
         clearLastResult();
         update();
     }
 
-    protected UpdateNotification createNotification() {
-        if (lastResult == null || !lastResult.isChange() || !lastResult.isSuccess()) {
-            return null;
-        }
-        return new UpdateNotification(lastResult.getProduct(), lastResult.getComponent(), lastResult.getItem(), lastResult.getMethod(), lastResult.getObject(), lastResult.getCast());
-    }
-
     protected void clearLastResult() {
         this.lastResult = null;
     }
 
+    public ConfigurationItemUpdateResult getLastResult() {
+        return this.lastResult;
+    }
+
     protected abstract void update();
 
-    protected UpdateResult updateMap(String value, boolean newValue, boolean success, ConfigurationSource obtained) throws Throwable {
+    protected boolean updateMap(String value, boolean newValue, ConfigurationSource obtained, ConfigurationItemUpdateResult.Source source) throws Throwable {
         Class<?> clazz = methodCfg.getMethod().getReturnType();
         MethodData data = null;
         if (clazz.isArray()) {
@@ -91,17 +85,31 @@ public abstract class ConfigurationUpdater extends ObservableThread {
             data = new MethodData(methodCfg.getMethod(), clazz, value, obtained.getAdapter());
         }
 
-        Object result;
-        if (newValue || isSync) {
-            result = ObjectConstructorFactory.get(clazz).construct(data);
-        } else {
-            result = null;
+        ConfigurationItemElement elem = methodCfg.getConfigurationItemElement();
+        ConfigurationItemUpdateResult.Builder builder = null;
+        try {
+            if (newValue || isSync) {
+                builder = ConfigurationItemUpdateResult.Builder.update(ObjectConstructorFactory.get(clazz).construct(data));
+
+            } else {
+                builder = ConfigurationItemUpdateResult.Builder.noChange();
+
+            }
+        } catch (Throwable t) {
+            builder = ConfigurationItemUpdateResult.Builder.error(t);
         }
 
-        ConfigurationItemElement elem = methodCfg.getConfigurationItemElement();
-        UpdateResult updateResult = new UpdateResult(result, methodCfg.getMethod().getReturnType(), success, newValue, elem.getProduct(), elem.getComponent(), elem.getValue(), methodCfg.getMethod());
-        methodValue.put(methodCfg.getMethod(), updateResult);
-        return updateResult;
+        builder.valueRead(data.getValue())
+        .product(elem.getProduct())
+        .component(elem.getComponent())
+        .item(elem.getValue())
+        .method(methodCfg.getMethod())
+        .cast(methodCfg.getMethod().getReturnType())
+        .from(source);
+
+        lastResult = builder.build();
+        methodValue.put(methodCfg.getMethod(), lastResult);
+        return lastResult.getError() == null ? true : false;
     }
 
     protected void releaseLatch() {
@@ -140,9 +148,5 @@ public abstract class ConfigurationUpdater extends ObservableThread {
             Thread.currentThread().interrupt();
         } catch (Exception ignored) {
         }
-    }
-
-    public UpdateNotification getNotification() {
-        return createNotification();
     }
 }

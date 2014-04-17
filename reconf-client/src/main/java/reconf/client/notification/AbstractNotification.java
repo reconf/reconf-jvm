@@ -13,42 +13,30 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.config.update;
+package reconf.client.notification;
 
 import java.lang.reflect.*;
+import reconf.client.config.update.*;
+import reconf.client.config.update.ConfigurationItemUpdateResult.Source;
 
-public class UpdateResult {
+public abstract class AbstractNotification {
 
-    private final boolean success;
-    private final boolean change;
-    private final Object object;
-    private final String product;
-    private final String component;
-    private final String item;
-    private final Method method;
-    private final Class<?> cast;
+    private String product;
+    private String component;
+    private String item;
+    private Method method;
+    private Class<?> cast;
+    private String rawValue;
+    private Source source;
 
-    public UpdateResult(Object object, Class<?> cast, boolean success, boolean change, String product, String component, String item, Method method) {
-        this.object = object;
-        this.success = success;
-        this.change = change;
-        this.product = product;
-        this.component = component;
-        this.item = item;
-        this.method = method;
-        this.cast = cast;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public boolean isChange() {
-        return change;
-    }
-
-    public Object getObject() {
-        return object;
+    public AbstractNotification(ConfigurationItemUpdateResult result) {
+        this.product = result.getProduct();
+        this.component = result.getComponent();
+        this.item = result.getItem();
+        this.method = result.getMethod();
+        this.cast = result.getCast();
+        this.rawValue = result.getRawValue();
+        this.source = result.getSource();
     }
 
     public String getProduct() {
@@ -69,5 +57,13 @@ public class UpdateResult {
 
     public Class<?> getCast() {
         return cast;
+    }
+
+    public String getRawValue() {
+        return rawValue;
+    }
+
+    public Source getSource() {
+        return source;
     }
 }

@@ -13,9 +13,20 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.callback;
+package reconf.client.notification;
 
-public interface UpdateListener {
+import reconf.client.config.update.*;
 
-    void onEvent(UpdateNotification event);
+public final class UpdateNotification extends AbstractNotification {
+
+    private final Object value;
+
+    public UpdateNotification(ConfigurationItemUpdateResult result) {
+        super(result);
+        this.value = result.getObject();
+    }
+
+    public Object getValue() {
+        return value;
+    }
 }

@@ -94,6 +94,10 @@ public class ConfigurationRepositoryElementFactory {
             errors.add(i++ + " - " + violation.getValue() + " @ " + StringUtils.replace(arg.getInterfaceClass().toString(), "interface ", "") + "." + violation.getKey());
         }
 
-        throw new ReConfInitializationError(msg.format("error.factory", LineSeparator.value(), StringUtils.join(errors, LineSeparator.value()))+LineSeparator.value());
+        if (!configuration.isDebug()) {
+            LoggerHolder.getLog().error(msg.format("error.factory", LineSeparator.value(), StringUtils.join(errors, LineSeparator.value()))+LineSeparator.value());
+        } else {
+            throw new ReConfInitializationError(msg.format("error.factory", LineSeparator.value(), StringUtils.join(errors, LineSeparator.value()))+LineSeparator.value());
+        }
     }
 }

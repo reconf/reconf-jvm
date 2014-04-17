@@ -16,4 +16,5 @@
         <interval>5</interval>
         <time-unit>MINUTES</time-unit>
     </configuration-repository-update-frequency>
+    <enable-debug/>
 </configuration>

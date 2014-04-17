@@ -13,9 +13,10 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.callback;
+package reconf.client.notification;
 
-public interface ErrorListener {
+public interface ConfigurationItemListener {
 
     void onEvent(ErrorNotification event);
+    void onEvent(UpdateNotification event);
 }

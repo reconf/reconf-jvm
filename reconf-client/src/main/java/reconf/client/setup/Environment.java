@@ -65,6 +65,7 @@ public class Environment {
             config.setAnnotationOverride(parser.getAnnotationOverride());
             config.setConnectionSettings(parser.getConnectionSettings());
             config.setLocalCacheSettings(parser.getLocalCacheSettings());
+            config.setDebug(parser.isDebugEnabled());
             config.setExperimentalFeatures(parser.isExperimentalFeatures());
 
             msg = MessagesBundle.getBundle(Environment.class);

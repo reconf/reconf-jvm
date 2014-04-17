@@ -1,0 +1,12 @@
+============= Consistencia do banco local
+Apaga o banco local, lê a String 'x', muda o valor para x (sem aspas). Fim
+Derruba o servidor, inicia o cliente. Deve ler do banco 'x'.
+
+============= Sobrescrita do recarregamento global
+    <configuration-repository-update-frequency>
+        <interval>5</interval>
+        <time-unit>MINUTES</time-unit>
+    </configuration-repository-update-frequency>
+
+============= Callback listeners de Erro
+============= Callback listeners de Sucesso

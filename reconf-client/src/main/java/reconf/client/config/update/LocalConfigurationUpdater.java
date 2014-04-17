@@ -25,11 +25,11 @@ import reconf.infra.log.*;
 
 public class LocalConfigurationUpdater extends ConfigurationUpdater {
 
-    public LocalConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync) {
+    public LocalConfigurationUpdater(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target, boolean sync) {
         super(toUpdate, target, sync);
     }
 
-    public LocalConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync, CountDownLatch latch) {
+    public LocalConfigurationUpdater(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target, boolean sync, CountDownLatch latch) {
         super(toUpdate, target, sync, latch);
     }
 
@@ -57,7 +57,7 @@ public class LocalConfigurationUpdater extends ConfigurationUpdater {
             }
 
             if (value != null && obtained != null) {
-                lastResult = updateMap(value, false, true, obtained);
+                updateMap(value, false, obtained, ConfigurationItemUpdateResult.Source.localCache);
                 LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
             }
 

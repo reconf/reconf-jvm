@@ -64,7 +64,7 @@ public class ConfigurationRepositoryElementValidator {
             errors.put("@ConfigurationRepository", msg.get("interval.error"));
         }
 
-        if (arg.getTimeUnit() == null || !EnumSet.of(TimeUnit.SECONDS,TimeUnit.MINUTES,TimeUnit.HOURS,TimeUnit.DAYS).contains(arg.getTimeUnit())) {
+        if (arg.getTimeUnit() == null || !EnumSet.of(TimeUnit.MINUTES,TimeUnit.HOURS,TimeUnit.DAYS).contains(arg.getTimeUnit())) {
             errors.put("@ConfigurationRepository", msg.get("timeUnit.null"));
         }
     }

@@ -26,15 +26,15 @@ public interface ConfigurationUpdaterFactory {
 
     ConfigurationUpdaterFactory defaultImplementation = new ConfigurationUpdaterFactoryImpl();
 
-    ConfigurationUpdater remote(Map<Method, UpdateResult> toUpdate, MethodConfiguration target);
-    ConfigurationUpdater syncRemote(Map<Method, UpdateResult> toUpdate, MethodConfiguration target);
+    ConfigurationUpdater remote(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target);
+    ConfigurationUpdater syncRemote(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target);
 
-    ConfigurationUpdater remote(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
-    ConfigurationUpdater syncRemote(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
+    ConfigurationUpdater remote(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
+    ConfigurationUpdater syncRemote(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
 
-    ConfigurationUpdater local(Map<Method, UpdateResult> toUpdate, MethodConfiguration target);
-    ConfigurationUpdater syncLocal(Map<Method, UpdateResult> toUpdate, MethodConfiguration target);
+    ConfigurationUpdater local(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target);
+    ConfigurationUpdater syncLocal(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target);
 
-    ConfigurationUpdater local(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
-    ConfigurationUpdater syncLocal(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
+    ConfigurationUpdater local(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
+    ConfigurationUpdater syncLocal(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target, CountDownLatch latch);
 }

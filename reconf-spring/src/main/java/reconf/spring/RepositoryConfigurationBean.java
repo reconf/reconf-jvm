@@ -17,7 +17,7 @@ package reconf.spring;
 
 import java.util.*;
 import org.springframework.beans.factory.*;
-import reconf.client.callback.*;
+import reconf.client.notification.*;
 import reconf.client.proxy.*;
 
 @SuppressWarnings("rawtypes")
@@ -74,11 +74,7 @@ public class RepositoryConfigurationBean implements FactoryBean {
         this.customization.setProductSuffix(productSuffix);
     }
 
-    public void setUpdateListeners(Collection<UpdateListener> updateListeners) {
-        this.customization.setUpdateListeners(updateListeners);
-    }
-
-    public void setErrorListeners(Collection<ErrorListener> errorListeners) {
-        this.customization.setErrorListeners(errorListeners);
+    public void setConfigurationItemListeners(Collection<ConfigurationItemListener> configurationItemListeners) {
+        this.customization.setConfigurationItemListeners(configurationItemListeners);
     }
 }

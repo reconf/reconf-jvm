@@ -25,11 +25,11 @@ import reconf.infra.log.*;
 
 public class RemoteConfigurationUpdater extends ConfigurationUpdater {
 
-    public RemoteConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync) {
+    public RemoteConfigurationUpdater(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target, boolean sync) {
         super(toUpdate, target, sync);
     }
 
-    public RemoteConfigurationUpdater(Map<Method, UpdateResult> toUpdate, MethodConfiguration target, boolean sync, CountDownLatch latch) {
+    public RemoteConfigurationUpdater(Map<Method, ConfigurationItemUpdateResult> toUpdate, MethodConfiguration target, boolean sync, CountDownLatch latch) {
         super(toUpdate, target, sync, latch);
     }
 
@@ -58,9 +58,13 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
             }
 
             if (value != null && obtained != null) {
-                lastResult = updateMap(value, newValue, true, obtained);
-                holder.getDb().temporaryUpdate(value);
-                LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
+                boolean ok = updateMap(value, newValue, obtained, ConfigurationItemUpdateResult.Source.server);
+                if (ok) {
+                    holder.getDb().temporaryUpdate(value);
+                    LoggerHolder.getLog().debug(msg.format("method.done", getName(), methodCfg.getMethod().getName()));
+                } else {
+                    LoggerHolder.getLog().error(msg.format("error.load", getName()), lastResult.getError());
+                }
             }
 
         } catch (Throwable t) {

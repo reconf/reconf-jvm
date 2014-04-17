@@ -23,6 +23,7 @@ public class XmlConfiguration {
     private ConnectionSettings connectionSettings;
     private GlobalUpdateFrequencySettings annotationOverride;
     private boolean experimentalFeatures;
+    private boolean debug;
 
     public LocalCacheSettings getLocalCacheSettings() {
         return localCacheSettings;
@@ -52,6 +53,13 @@ public class XmlConfiguration {
         this.experimentalFeatures = experimentalFeatures;
     }
 
+    public boolean isDebug() {
+        return debug;
+    }
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
     @Override
     public String toString() {
         ToStringBuilder result = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -62,6 +70,9 @@ public class XmlConfiguration {
         }
         if (experimentalFeatures) {
             result.append("experimental-features", experimentalFeatures);
+        }
+        if (debug) {
+            result.append("debug", debug);
         }
         return result.toString();
     }

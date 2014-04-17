@@ -17,7 +17,7 @@ package reconf.client.proxy;
 
 import java.util.*;
 import org.apache.commons.lang.*;
-import reconf.client.callback.*;
+import reconf.client.notification.*;
 
 
 public class Customization {
@@ -28,8 +28,7 @@ public class Customization {
     private String componentSuffix;
     private String namePrefix;
     private String nameSuffix;
-    private Collection<UpdateListener> updateListeners = new ArrayList<UpdateListener>();
-    private Collection<ErrorListener> errorListeners = new ArrayList<ErrorListener>();
+    private Collection<ConfigurationItemListener> configurationItemListeners = new ArrayList<ConfigurationItemListener>();
 
     public String getProductPrefix() {
         return productPrefix;
@@ -111,10 +110,7 @@ public class Customization {
 
     public String toCompare() {
         Set<String> listenerNames = new TreeSet<String>();
-        for (UpdateListener listener : updateListeners) {
-            listenerNames.add(listener.toString());
-        }
-        for (ErrorListener listener : errorListeners) {
+        for (ConfigurationItemListener listener : configurationItemListeners) {
             listenerNames.add(listener.toString());
         }
 
@@ -171,36 +167,19 @@ public class Customization {
         }
         return builder.toString();
     }
-
-    public Collection<UpdateListener> getUpdateListeners() {
-        return updateListeners;
+    public Collection<ConfigurationItemListener> getConfigurationItemListeners() {
+        return configurationItemListeners;
     }
 
-    public void setUpdateListeners(Collection<UpdateListener> updateListeners) {
-        if (updateListeners != null) {
-            this.updateListeners = updateListeners;
+    public void setConfigurationItemListeners(Collection<ConfigurationItemListener> configurationItemListeners) {
+        if (configurationItemListeners != null) {
+            this.configurationItemListeners = configurationItemListeners;
         }
     }
 
-    public void addUpdateListener(UpdateListener updateListener) {
-        if (updateListener != null) {
-            this.updateListeners.add(updateListener);
-        }
-    }
-
-    public void setErrorListeners(Collection<ErrorListener> errorListeners) {
-        if (errorListeners != null) {
-            this.errorListeners = errorListeners;
-        }
-    }
-
-    public Collection<ErrorListener> getErrorListeners() {
-        return errorListeners;
-    }
-
-    public void addErrorListener(ErrorListener errorListener) {
-        if (errorListener != null) {
-            this.errorListeners.add(errorListener);
+    public void addConfigurationItemListener(ConfigurationItemListener configurationItemListener) {
+        if (configurationItemListener != null) {
+            this.configurationItemListeners.add(configurationItemListener);
         }
     }
 }

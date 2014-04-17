@@ -61,6 +61,7 @@ public class XmlConfigurationParser extends DefaultHandler {
 
     private GlobalUpdateFrequencySettings annotationOverride;
     private boolean openAnnotationOverride;
+    private boolean debugEnabled;
 
     public void characters(char[] buffer, int start, int length) {
         if (!begin) {
@@ -166,6 +167,9 @@ public class XmlConfigurationParser extends DefaultHandler {
         if (StringUtils.equalsIgnoreCase("locale", qName)) {
             locale = temp;
         }
+        if (StringUtils.equalsIgnoreCase("enable-debug", qName)) {
+            debugEnabled = true;
+        }
         if (StringUtils.equalsIgnoreCase("enable-experimental-features", qName)) {
             experimentalFeatures = true;
         }
@@ -198,5 +202,9 @@ public class XmlConfigurationParser extends DefaultHandler {
 
     public boolean isExperimentalFeatures() {
         return experimentalFeatures;
+    }
+
+    public boolean isDebugEnabled() {
+        return debugEnabled;
     }
 }
