@@ -33,10 +33,10 @@ Just create a plain old Java interface, decorate it with a few custom annotation
  * [ConfigurationRepository reuse through Customizations](#configurationrepository-reuse-through-customizations)
  * [Organizing log messages](#organizing-log-messages)
  * [Localization with reconf.xml](#localization-with-reconfxml)
- * [Overriding the @UpdateFrequency annotation with reconf.xml](#overriding-the-updatefrequency-annotation-with-reconfxml)
  * [Reading from different configuration file](#reading-from-different-configuration-file)
  * [Integrating with Spring](#integrating-with-spring)
  * [Using Customizations with Spring](#using-customizations-with-spring)
+ * [Events and Listeners](#using-notifications)
 * [Troubleshooting](#troubleshooting)
 
 <a name="what-are-the-benefits-of-using-it"/>
@@ -71,7 +71,7 @@ Add these lines to the `pom.xml` file
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-client</artifactId>
-    <version>1.5.16</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -107,8 +107,7 @@ import java.math.*;
 import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
-@ConfigurationRepository(product="my-product", component="hello-application")
-@UpdateFrequency(interval=10, timeUnit=TimeUnit.SECONDS)
+@ConfigurationRepository(product="my-product", component="hello-application", interval=10, timeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -237,8 +236,7 @@ import java.math.*;
 import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
-@ConfigurationRepository(product="my-product", component="hello-application")
-@UpdateFrequency(interval=10, timeUnit=TimeUnit.SECONDS)
+@ConfigurationRepository(product="my-product", component="hello-application", interval=10, timeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -255,38 +253,10 @@ public interface WelcomeConfiguration {
 }
 ```
 
-#### Setting up a specific update frequency policy.
-
-This example depicts a mixed repository in which the items "welcome.text" and "promotional.price" are updated on a ten-second basis. The `@DoNotUpdate` annotation causes the "currency.code" item to remain with its original value, obtained as soon as the repository is created. When applied to an item, the `@UpdateFrequency` annotation causes the item to be updated in a specific frequency, different than the one inherited. In the example below, the value of "minimum.age" will be updated once a day.
-
-```java
-import java.math.*;
-import java.util.concurrent.*;
-import reconf.client.annotations.*;
-
-@ConfigurationRepository(product="my-product", component="hello-application")
-@UpdateFrequency(interval=10, timeUnit=TimeUnit.SECONDS)
-public interface WelcomeConfiguration {
-
-    @ConfigurationItem("welcome.text")
-    String getText();
-
-    @ConfigurationItem("promotional.price")
-    BigDecimal getPrice();
-
-    @ConfigurationItem("currency.code") @DoNotUpdate
-    String getCurrencyCode();
-
-    @ConfigurationItem("minimum.age")
-    @UpdateFrequency(interval=1, timeUnit=TimeUnit.DAYS)
-    int getMinimumAge();
-}
-```
-
 <a name="updating-a-configurationrepository-through-code"/>
 ### Updating a ConfigurationRepository through code
 
-There's a way to force an update operation of every `@ConfigurationItem` of a `@ConfigurationRepository`, regardless the presence of `@UpdateFrequency` or `@DoNotUpdate` annotations. To enable it, add a **void** method to the interface and annotate it with `@UpdateConfigurationRepository`. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime `UpdateConfigurationRepositoryException` is thrown to notify the application that a problem has occurred.
+There's a way to force an update operation of every `@ConfigurationItem` of a `@ConfigurationRepository`, regardless the update frequency parameters (interval and timeUnit). To enable it, add a **void** method to the interface and annotate it with `@UpdateConfigurationRepository`. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime `UpdateConfigurationRepositoryException` is thrown to notify the application that a problem has occurred.
 
 ```java
 package examples;
@@ -295,8 +265,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
-@ConfigurationRepository(component="test", product="test")
-@UpdateFrequency(interval=1, timeUnit=TimeUnit.HOURS)
+@ConfigurationRepository(component="test", product="test", interval=1, timeUnit=TimeUnit.HOURS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -358,8 +327,8 @@ To activate localized log messages, add the tag `locale` in the reconf.xml file.
 ```
 
 <a name="overriding-the-updatefrequency-annotation-with-reconfxml"/>
-### Overriding the @UpdateFrequency annotation with reconf.xml
-It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a `configuration-repository-update-frequency` tag in the reconf.xml file will cause it to override the `@UpdateFrequency` settings of every configuration repository. It is important to notice that it won't affect items annotated with `@DoNotUpdate` or `@UpdateFrequency`.
+### Overriding the update frequency parameters with reconf.xml
+It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a `configuration-repository-update-frequency` tag in the reconf.xml file will cause it to override the update frequency parameters (interval and timeUnit) of every configuration repository.
 
 ```xml
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd">
@@ -389,7 +358,7 @@ The package `reconf-spring` provides a class for easy integration with Spring, i
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-spring</artifactId>
-    <version>1.5.16</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -402,8 +371,7 @@ package example;
 import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
-@ConfigurationRepository(product="my-product", component="hello-application")
-@UpdateFrequency(interval=10, timeUnit=TimeUnit.SECONDS)
+@ConfigurationRepository(product="my-product", component="hello-application", interval=10, timeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -437,6 +405,11 @@ The xml excerpt below creates two beans, a regular "welcome" and a custom "custo
     <property name="configInterface" value="example.WelcomeConfiguration"/>
 </bean>
 ```
+
+<a name="using-notifications"/>
+### Events and Listeners
+
+TODO!
 
 <a name="troubleshooting"/>
 ## Troubleshooting
