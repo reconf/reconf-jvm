@@ -112,6 +112,9 @@ public class XmlConfigurationParser extends DefaultHandler {
         if (StringUtils.equalsIgnoreCase("max-retry", tag)) {
             connectionSettings.setMaxRetry(tempAsInteger());
         }
+        if (StringUtils.equalsIgnoreCase("ssl-verify", tag)) {
+            connectionSettings.setSslVerify(tempAsBoolean());
+        }
     }
 
     private void buildAnnotationOverride() {
@@ -137,6 +140,14 @@ public class XmlConfigurationParser extends DefaultHandler {
             timeUnit = TimeUnit.valueOf(temp);
         } catch (Exception ignored) {}
         return timeUnit;
+    }
+
+    private boolean tempAsBoolean() {
+        boolean bool = false;
+        try {
+            bool = Boolean.valueOf(temp);
+        } catch (Exception ignored) {}
+        return bool;
     }
 
     @Override

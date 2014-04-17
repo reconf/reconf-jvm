@@ -15,7 +15,6 @@
  */
 package reconf.infra.http;
 
-import java.net.*;
 import java.util.concurrent.*;
 import reconf.infra.http.layer.*;
 
@@ -24,6 +23,7 @@ public interface SimpleHttpDelegatorFactory {
 
     SimpleHttpDelegatorFactory defaultImplementation = new SimpleHttpDelegatorFactoryImpl();
 
-    SimpleHttpRequest newGetRequest(String pathBase, String... pathParam) throws URISyntaxException;
+    SimpleHttpRequest newGetRequest(String pathBase, String... pathParam) throws Exception;
     SimpleHttpResponse executeAvoidingSSL(SimpleHttpRequest request, long timeout, TimeUnit timeunit, int retries) throws Exception;
+    SimpleHttpResponse execute(SimpleHttpRequest request, long timeout, TimeUnit timeunit, int retries) throws Exception;
 }

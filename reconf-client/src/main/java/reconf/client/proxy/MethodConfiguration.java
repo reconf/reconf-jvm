@@ -70,7 +70,7 @@ public class MethodConfiguration {
 
     private ServerStub createStub() {
         ConnectionSettings settings = cfgRepository.getConnectionSettings();
-        ServerStub stub = locator.serverStubFactory().serverStub(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit(), settings.getMaxRetry());
+        ServerStub stub = locator.serverStubFactory().serverStub(settings.getUrl(), settings.getTimeout(), settings.getTimeUnit(), settings.getMaxRetry(), settings.isSslVerify());
         stub.setComponent(StringUtils.isNotBlank(remoteItem.getComponent()) ? remoteItem.getComponent() : cfgRepository.getComponent());
         stub.setProduct(StringUtils.isNotBlank(remoteItem.getProduct()) ? remoteItem.getProduct() : cfgRepository.getProduct());
         return stub;

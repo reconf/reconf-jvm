@@ -21,7 +21,7 @@ import reconf.infra.http.*;
 
 public class ServerStubFactoryImpl implements ServerStubFactory {
 
-    public ServerStub serverStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry) {
-        return new ServerStub(serviceUri, timeout, timeUnit, maxRetry);
+    public ServerStub serverStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry, boolean sslVerify) {
+        return new ServerStub(serviceUri, timeout, timeUnit, maxRetry, sslVerify);
     }
 }

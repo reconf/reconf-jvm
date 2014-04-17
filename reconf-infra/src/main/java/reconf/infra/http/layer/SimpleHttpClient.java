@@ -44,30 +44,16 @@ public class SimpleHttpClient {
         }
     });
 
-    /**
-     * Creates a new HTTP GET Request.
-     * @param pathBase The base URI path of the request
-     * @param pathParam Optional path parameters (without slashes) to be appended to the base path
-     * @return a new HTTP GET Request
-     * @throws URISyntaxException if the pathBase appended with the pathParams cannot be recognized as a URI
-     */
     public static SimpleHttpRequest newGetRequest(String pathBase, String... pathParam) throws URISyntaxException  {
         return new SimpleHttpRequest("GET", pathBase, pathParam);
     }
 
-    /**
-     * Executes a given HTTP/HTTPS request respecting a given timeout and avoiding any SSL errors.
-     * @param request The HTTP request to be executed
-     * @param timeout The given timeout of the request
-     * @param timeunit The unit of the timeout
-     * @return the HTTP response of the request execution
-     * @throws ExecutionException if the execution thread fails
-     * @throws TimeoutException if the timeout occurs
-     * @throws InterruptedException if the exection thread is interrupted
-     * @throws GeneralSecurityException if the SSL avoiding fails
-     */
     public static SimpleHttpResponse executeAvoidingSSL(SimpleHttpRequest request, long timeout, TimeUnit timeunit, int retries) throws Exception {
         return execute(newHttpClientAvoidSSL(timeout, timeunit, retries), request, timeout, timeunit);
+    }
+
+    public static SimpleHttpResponse defaultExecute(SimpleHttpRequest request, long timeout, TimeUnit timeunit, int retries) throws Exception {
+        return execute(newHttpClient(timeout, timeunit, retries), request, timeout, timeunit);
     }
 
     private static SimpleHttpResponse execute(HttpClient httpClient, SimpleHttpRequest request, long timeout, TimeUnit timeunit) throws Exception {
@@ -123,6 +109,14 @@ public class SimpleHttpClient {
         ClientConnectionManager connectionManager = new DefaultHttpClient().getConnectionManager();
         connectionManager.getSchemeRegistry().register(new Scheme("https", 443, ssf));
 
+        DefaultHttpClient httpClient = new DefaultHttpClient(connectionManager, createBasicHttpParams(timeout, timeUnit));
+        httpClient.setHttpRequestRetryHandler(new RetryHandler(retries));
+
+        return httpClient;
+    }
+
+    private static DefaultHttpClient newHttpClient(long timeout, TimeUnit timeUnit, int retries) throws GeneralSecurityException {
+        ClientConnectionManager connectionManager = new DefaultHttpClient().getConnectionManager();
         DefaultHttpClient httpClient = new DefaultHttpClient(connectionManager, createBasicHttpParams(timeout, timeUnit));
         httpClient.setHttpRequestRetryHandler(new RetryHandler(retries));
 
