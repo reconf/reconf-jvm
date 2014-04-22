@@ -108,7 +108,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    pollInterval=10, pollTimeUnit=TimeUnit.SECONDS)
+    pollingInterval=10, pollingTimeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -238,7 +238,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    pollInterval=10, pollTimeUnit=TimeUnit.SECONDS)
+    pollingInterval=10, pollingTimeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -268,7 +268,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    pollInterval=1, pollTimeUnit=TimeUnit.HOURS)
+    pollingInterval=1, pollingTimeUnit=TimeUnit.HOURS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -377,7 +377,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    pollInterval=10, pollTimeUnit=TimeUnit.SECONDS)
+    pollingInterval=10, pollingTimeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")

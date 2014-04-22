@@ -61,8 +61,8 @@ public class ConfigurationRepositoryElementFactory {
         result.setComponent(ann.component());
         result.setConnectionSettings(configuration.getConnectionSettings());
         result.setInterfaceClass(arg);
-        result.setInterval(ann.pollInterval());
-        result.setTimeUnit(ann.pollTimeUnit());
+        result.setInterval(ann.pollingInterval());
+        result.setTimeUnit(ann.pollingTimeUnit());
         result.setConfigurationItems(ConfigurationItemElement.from(result));
         LoggerHolder.getLog().info(msg.format("new", LineSeparator.value(), result.toString()));
 

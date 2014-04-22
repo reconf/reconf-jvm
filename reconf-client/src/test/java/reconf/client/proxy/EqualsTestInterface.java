@@ -18,7 +18,7 @@ package reconf.client.proxy;
 import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
-@ConfigurationRepository(component="test", product="test", pollInterval=5, pollTimeUnit=TimeUnit.MINUTES)
+@ConfigurationRepository(component="test", product="test", pollingInterval=5, pollingTimeUnit=TimeUnit.MINUTES)
 public interface EqualsTestInterface {
 
     @ConfigurationItem("value")
