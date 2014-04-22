@@ -415,7 +415,51 @@ The xml excerpt below creates two beans, a regular "welcome" and a custom "custo
 <a name="using-notifications"/>
 ### Events and Listeners
 
-TODO!
+The API fires notifications for certain kinds of events. The current version is capable of notifying clients of two significative events related to the `@ConfigurationItem` lifecycle: (1) the property is successfully updated; (2) the client is not able to build an object from the obtained value.
+
+To listen to such events, the application developer must provide an implementation of the `reconf.client.notification.ConfigurationItemListener` interface. There are two possible ways to register the listener. One is by adding it directly into the [Customization](#configurationrepository-reuse-through-customizations) object (example 1). The other is during the beanwiring set up on Spring (example 2).
+
+```java
+    // example 1
+    public static void main(String[] args) throws Exception {
+        Customization custom = new Customization();
+        custom.addConfigurationItemListener(new ConfigurationItemListener() {
+
+            public void onEvent(UpdateNotification event) {
+                System.out.println("updated value [" + event.getRawValue() + "] read from [" + event.getSource() + "]");
+            }
+
+            public void onEvent(ErrorNotification event) {
+                System.out.println("error while updating a property. obtained value [" + event.getRawValue() + "] read from [" + event.getSource() + "] exception [" + event.getError() + "]");
+            }
+        });
+        WelcomeConfiguration welcome = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class, custom);
+        System.out.println(welcome.getText());
+    }
+```
+
+```xml
+    <!-- example 2 -->
+    <bean id="welcomeConfiguration" class="reconf.spring.RepositoryConfigurationBean">
+        <property name="configInterface" value="reconf.driver.WelcomeConfiguration"/>
+        <property name="configurationItemListeners">
+            <util:list>
+                <bean class="reconf.driver.MyListener"/>
+            </util:list>
+        </property>
+    </bean>
+```
+
+The basic attributes shared by both Notification events are:
+* `java.lang.String` product
+* `java.lang.String` component
+* `java.lang.String` item
+* `java.lang.reflect.Method` method
+* `java.lang.Class` cast
+* `java.lang.String` rawValue
+* `reconf.client.config.update.ConfigurationItemUpdateResult.Source` source
+
+The `ErrorNotification` class has an additional `java.lang.Throwable` throwable field, whilst the `UpdateNotification` class has a `java.lang.Object` newValue field containing the newly created object. 
 
 <a name="troubleshooting"/>
 ## Troubleshooting
