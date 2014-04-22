@@ -24,7 +24,7 @@
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.0.1</version>
     <name>ReConf JVM Parent</name>
     <contributors>
         <contributor>
@@ -133,7 +133,7 @@
         <url>https://github.com/reconf/reconf-jvm.git</url>
         <connection>scm:git:https://github.com/reconf/reconf-jvm.git</connection>
         <developerConnection>scm:git:https://github.com/reconf/reconf-jvm.git</developerConnection>
-        <tag>reconf-parent-1.0.10</tag>
+        <tag>reconf-parent-2.0.1</tag>
     </scm>
     <issueManagement>
         <system>GitHub Issue Management</system>
