@@ -71,7 +71,7 @@ Add these lines to the `pom.xml` file
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-client</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 
@@ -108,7 +108,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    interval=10, timeUnit=TimeUnit.SECONDS)
+    pollInterval=10, pollTimeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -238,7 +238,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    interval=10, timeUnit=TimeUnit.SECONDS)
+    pollInterval=10, pollTimeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -268,7 +268,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    interval=1, timeUnit=TimeUnit.HOURS)
+    pollInterval=1, pollTimeUnit=TimeUnit.HOURS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -363,7 +363,7 @@ The package `reconf-spring` provides a class for easy integration with Spring, i
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-spring</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 
@@ -377,7 +377,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    interval=10, timeUnit=TimeUnit.SECONDS)
+    pollInterval=10, pollTimeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")

@@ -1,5 +1,5 @@
 /*
- *    Copyright 1996-2013 UOL Inc
+ *    Copyright 1996-2014 UOL Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package reconf.client.proxy;
 import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
-@ConfigurationRepository(component="test", product="test", interval=5, timeUnit=TimeUnit.MINUTES)
+@ConfigurationRepository(component="test", product="test", pollInterval=5, pollTimeUnit=TimeUnit.MINUTES)
 public interface EqualsTestInterface {
 
     @ConfigurationItem("value")

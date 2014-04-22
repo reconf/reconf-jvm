@@ -1,5 +1,5 @@
 /*
- *    Copyright 1996-2013 UOL Inc
+ *    Copyright 1996-2014 UOL Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -61,8 +61,8 @@ public class ConfigurationRepositoryElementFactory {
         result.setComponent(ann.component());
         result.setConnectionSettings(configuration.getConnectionSettings());
         result.setInterfaceClass(arg);
-        result.setInterval(ann.interval());
-        result.setTimeUnit(ann.timeUnit());
+        result.setInterval(ann.pollInterval());
+        result.setTimeUnit(ann.pollTimeUnit());
         result.setConfigurationItems(ConfigurationItemElement.from(result));
         LoggerHolder.getLog().info(msg.format("new", LineSeparator.value(), result.toString()));
 
