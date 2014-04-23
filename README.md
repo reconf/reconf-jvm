@@ -195,7 +195,7 @@ Collections of objects must be delimited by square brackets. The table below sho
 
 | returning type | configuration value | resulting collection |
 |----------------|-----------------------|------------------|
-| java.util.Collection <java.lang.String> | [ 'a', 'b', 'c' ] | "a", "b", "c" |
+| ```java java.util.Collection<java.lang.String>``` | [ 'a', 'b', 'c' ] | "a", "b", "c" |
 | java.util.Collection <java.lang.String> | [ ] | empty |
 | java.util.Collection <java.util.Collection< java.lang.String> > | [ [ ] ] | an empty collection containing an empty collection |
 | java.util.Collection <java.util.Collection< java.lang.String> > | [ [ 'a' ], [ 'b' ] ] | a collection containing two collections, one with "a" and the other with "b" |
