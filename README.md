@@ -195,15 +195,15 @@ Collections of objects must be delimited by square brackets. The table below sho
 
 | returning type | configuration value | resulting collection |
 |----------------|-----------------------|------------------|
-| java.util.Collection<java.lang.String> | [ 'a', 'b', 'c' ] | "a", "b", "c" |
-| java.util.Collection<java.lang.String> | [ ] | empty |
-| java.util.Collection<java.util.Collection<java.lang.String>> | [ [ ] ] | an empty collection containing an empty collection |
-| java.util.Collection<java.util.Collection<java.lang.String>> | [ [ 'a' ], [ 'b' ] ] | a collection containing two collections, one with "a" and the other with "b" |
-| java.util.Collection<java.lang.String> | ' ' | error! (no square brackets) |
-| java.util.Collection<java.lang.Boolean> | [ 'true', 'false' ] | true, false |
-| java.util.Collection<java.math.BigDecimal> | [ '1', '10' ] | 1, 10 |
-| java.util.Collection<java.lang.Character> | [ 'a', 'b' ] | 'a', 'b' |
-| java.util.Collection<java.lang.Float> | [ '-1', '1.01' ] | -1, 1.01 |
+| java.util.Collection <java.lang.String> | [ 'a', 'b', 'c' ] | "a", "b", "c" |
+| java.util.Collection <java.lang.String> | [ ] | empty |
+| java.util.Collection <java.util.Collection< java.lang.String> > | [ [ ] ] | an empty collection containing an empty collection |
+| java.util.Collection <java.util.Collection< java.lang.String> > | [ [ 'a' ], [ 'b' ] ] | a collection containing two collections, one with "a" and the other with "b" |
+| java.util.Collection <java.lang.String> | ' ' | error! (no square brackets) |
+| java.util.Collection <java.lang.Boolean> | [ 'true', 'false' ] | true, false |
+| java.util.Collection <java.math.BigDecimal> | [ '1', '10' ] | 1, 10 |
+| java.util.Collection <java.lang.Character> | [ 'a', 'b' ] | 'a', 'b' |
+| java.util.Collection <java.lang.Float> | [ '-1', '1.01' ] | -1, 1.01 |
 
 #### Building Maps
 A Map is different from a Collection because it contains pairs of tuples of the form Key-Value, whereas a Collection is a container of objects with no relation among themselves. For this reason, the formatting part is different, but not that much, since a Map is a complex type. Just separate a key from its value by using a colon `:` and a pair of key-values from each other using a comma `,`.
