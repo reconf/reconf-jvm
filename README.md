@@ -346,9 +346,9 @@ To activate localized log messages, add the tag `locale` in the reconf.xml file.
 </configuration>
 ```
 
-<a name="overriding-the-updatefrequency-annotation-with-reconfxml"/>
-### Overriding the update frequency parameters with reconf.xml
-It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a `configuration-repository-update-frequency` tag in the reconf.xml file will cause it to override the update frequency parameters (rate and timeUnit) of every configuration repository.
+<a name="overriding-polling-rate-with-reconfxml"/>
+### Overriding polling rate parameters with reconf.xml
+It's very common to define a reasonable polling rate for production environment and a different one during testing. Adding a `global-polling-frequency` tag in the reconf.xml file will cause it to override pollingRate and pollingTimeUnit of every configuration repository.
 
 ```xml
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd">
