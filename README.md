@@ -228,7 +228,7 @@ A Map is different from a Collection because it contains pairs of tuples of the 
 | ```j.u.Map<j.l.String,j.l.Boolean>``` | [ 'true' : 'false' ] | { "true" = false } |
 | ```j.u.Map<j.l.Integer,j.l.Integer>``` | [ '1' : '2' ] | { 1 = 2 } |
 
-> j.l = java.lang, j.u = java.util
+> j.l = java.lang; j.u = java.util
 
 <a name="advanced-features"/>
 ## Advanced Features
