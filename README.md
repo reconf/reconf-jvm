@@ -71,7 +71,7 @@ Add these lines to the `pom.xml` file
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-client</artifactId>
-    <version>2.0.1</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
@@ -100,7 +100,7 @@ The application must have the necessary permissions to read, write and delete th
 
 In order to define a configuration repository, you must create a new Java interface and decorate it with the annotations provided by the reconf-client jar.
 
-The example below provides a very simple configuration repository where each `@ConfigurationItem` will update itself every 10 seconds.
+The example below provides a very simple configuration repository where each `@ConfigurationItem` will update itself every 10 minutes.
 
 ```java
 import java.math.*;
@@ -108,7 +108,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    pollingRate=10, pollingTimeUnit=TimeUnit.SECONDS)
+    pollingRate=10, pollingTimeUnit=TimeUnit.MINUTES)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -238,7 +238,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    pollingRate=10, pollingTimeUnit=TimeUnit.SECONDS)
+    pollingRate=10, pollingTimeUnit=TimeUnit.MINUTES)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -345,7 +345,7 @@ It's very common to define a reasonable update frequency for production environm
     </server>
     <global-polling-frequency>
         <rate>1</rate>
-        <time-unit>SECONDS</time-unit>
+        <time-unit>MINUTES</time-unit>
     </global-polling-frequency>
 </configuration>
 ```
@@ -363,7 +363,7 @@ The package `reconf-spring` provides a class for easy integration with Spring, i
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-spring</artifactId>
-    <version>2.0.1</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
@@ -377,7 +377,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    pollingRate=10, pollingTimeUnit=TimeUnit.SECONDS)
+    pollingRate=10, pollingTimeUnit=TimeUnit.MINUTES)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
