@@ -76,8 +76,8 @@ public class MethodConfiguration {
         return stub;
     }
 
-    public int getReloadInterval() {
-        return cfgRepository.getInterval();
+    public int getReloadRate() {
+        return cfgRepository.getRate();
     }
 
     public TimeUnit getReloadTimeUnit() {

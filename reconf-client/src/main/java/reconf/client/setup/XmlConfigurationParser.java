@@ -59,7 +59,7 @@ public class XmlConfigurationParser extends DefaultHandler {
     private ConnectionSettings connectionSettings;
     private boolean openConnectionSettings;
 
-    private GlobalUpdateFrequencySettings annotationOverride;
+    private GlobalPollingFrequencySettings annotationOverride;
     private boolean openAnnotationOverride;
     private boolean debugEnabled;
 
@@ -164,8 +164,8 @@ public class XmlConfigurationParser extends DefaultHandler {
             connectionSettings = new ConnectionSettings();
             openConnectionSettings = true;
         }
-        if (StringUtils.equalsIgnoreCase("configuration-repository-update-frequency", qName)) {
-            annotationOverride = new GlobalUpdateFrequencySettings();
+        if (StringUtils.equalsIgnoreCase("global-polling-frequency", qName)) {
+            annotationOverride = new GlobalPollingFrequencySettings();
             openAnnotationOverride = true;
         }
     }
@@ -190,7 +190,7 @@ public class XmlConfigurationParser extends DefaultHandler {
         if (StringUtils.equalsIgnoreCase("server", qName)) {
             openConnectionSettings = false;
         }
-        if (StringUtils.equalsIgnoreCase("configuration-repository-update-frequency", qName)) {
+        if (StringUtils.equalsIgnoreCase("global-polling-frequency", qName)) {
             openAnnotationOverride = false;
         }
     }
@@ -203,7 +203,7 @@ public class XmlConfigurationParser extends DefaultHandler {
         return connectionSettings;
     }
 
-    public GlobalUpdateFrequencySettings getAnnotationOverride() {
+    public GlobalPollingFrequencySettings getAnnotationOverride() {
         return annotationOverride;
     }
 

@@ -30,7 +30,7 @@ public abstract class ObservableThread extends Thread implements Cloneable {
         return lastExecution;
     }
 
-    public abstract int getReloadInterval();
+    public abstract int getReloadRate();
 
     public abstract TimeUnit getReloadTimeUnit();
 

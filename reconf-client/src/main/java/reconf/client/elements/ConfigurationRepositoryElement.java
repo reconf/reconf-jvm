@@ -29,7 +29,7 @@ public class ConfigurationRepositoryElement {
     private ConnectionSettings connectionSettings;
     private String product;
     private String component;
-    private Integer interval;
+    private Integer rate;
     private TimeUnit timeUnit;
 
     private Class<?> interfaceClass;
@@ -99,11 +99,11 @@ public class ConfigurationRepositoryElement {
         this.customization = customization;
     }
 
-    public Integer getInterval() {
-        return interval;
+    public Integer getRate() {
+        return rate;
     }
-    public void setInterval(Integer interval) {
-        this.interval = interval;
+    public void setRate(Integer rate) {
+        this.rate = rate;
     }
 
     public TimeUnit getTimeUnit() {
@@ -119,8 +119,8 @@ public class ConfigurationRepositoryElement {
         .append("class", getInterfaceClass())
         .append("product", getProduct())
         .append("component", getComponent())
-        .append("interval", getInterval())
-        .append("timeUnit", getTimeUnit());
+        .append("pollingRate", getRate())
+        .append("pollingTimeUnit", getTimeUnit());
 
         result.append("@ConfigurationItems", LineSeparator.value() + getConfigurationItems());
         return result.toString();

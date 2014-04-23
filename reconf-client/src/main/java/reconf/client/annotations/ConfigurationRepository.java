@@ -25,6 +25,6 @@ import java.util.concurrent.*;
 public @interface ConfigurationRepository {
     String product();
     String component();
-    int pollingInterval();
+    int pollingRate();
     TimeUnit pollingTimeUnit();
 }

@@ -39,7 +39,7 @@ public class XmlConfigurationValidator {
 
     private static void checkAnnotationOverride(XmlConfiguration arg, Collection<String> errors) {
         if (arg.getAnnotationOverride() != null) {
-            errors.addAll(GlobalUpdateFrequencySettingsValidator.validate(arg.getAnnotationOverride()));
+            errors.addAll(GlobalPollingFrequencySettingsValidator.validate(arg.getAnnotationOverride()));
         }
     }
 }

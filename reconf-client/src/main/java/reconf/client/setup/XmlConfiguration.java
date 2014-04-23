@@ -21,7 +21,7 @@ public class XmlConfiguration {
 
     private LocalCacheSettings localCacheSettings;
     private ConnectionSettings connectionSettings;
-    private GlobalUpdateFrequencySettings annotationOverride;
+    private GlobalPollingFrequencySettings annotationOverride;
     private boolean experimentalFeatures;
     private boolean debug;
 
@@ -39,10 +39,10 @@ public class XmlConfiguration {
         this.connectionSettings = connectionSettings;
     }
 
-    public GlobalUpdateFrequencySettings getAnnotationOverride() {
+    public GlobalPollingFrequencySettings getAnnotationOverride() {
         return annotationOverride;
     }
-    public void setAnnotationOverride(GlobalUpdateFrequencySettings annotationOverride) {
+    public void setAnnotationOverride(GlobalPollingFrequencySettings annotationOverride) {
         this.annotationOverride = annotationOverride;
     }
 
@@ -66,7 +66,7 @@ public class XmlConfiguration {
         .append("local-cache", getLocalCacheSettings())
         .append("server", getConnectionSettings());
         if (getAnnotationOverride() != null) {
-            result.append("configuration-repository-update-frequency", getAnnotationOverride());
+            result.append("global-polling-frequency", getAnnotationOverride());
         }
         if (experimentalFeatures) {
             result.append("experimental-features", experimentalFeatures);

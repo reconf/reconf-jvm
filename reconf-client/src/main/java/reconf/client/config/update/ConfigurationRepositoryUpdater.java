@@ -36,7 +36,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     private static final MessagesBundle msg = MessagesBundle.getBundle(ConfigurationRepositoryUpdater.class);
     private final ConfigurationRepositoryElement cfgRepository;
     private final ConfigurationRepositoryData data;
-    private Map<Method, Object> atomicMethodValue = new ConcurrentHashMap<Method, Object>();
+    private Map<Method, Object> methodValue = new ConcurrentHashMap<Method, Object>();
     private final ConfigurationRepositoryFactory factory;
     private ServiceLocator locator;
     private Collection<ConfigurationItemListener> listeners = Collections.EMPTY_LIST;
@@ -62,7 +62,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     public void run() {
         try {
             while (!Thread.currentThread().isInterrupted()) {
-                getReloadTimeUnit().sleep(getReloadInterval());
+                getReloadTimeUnit().sleep(getReloadRate());
                 updateLastExecution();
                 update();
             }
@@ -102,13 +102,13 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         if (ConfigurationItemUpdateResult.countSuccess(remote.values()) < ConfigurationItemUpdateResult.countSuccess(local.values())) {
             for (Entry<Method, ConfigurationItemUpdateResult> each : local.entrySet()) {
                 if (each.getValue().isSuccess()) {
-                    atomicMethodValue.put(each.getKey(), each.getValue().getObject());
+                    methodValue.put(each.getKey(), each.getValue().getObject());
                 }
             }
         } else {
             for (Entry<Method, ConfigurationItemUpdateResult> each : remote.entrySet()) {
                 if (each.getValue().isSuccess()) {
-                    atomicMethodValue.put(each.getKey(), each.getValue().getObject());
+                    methodValue.put(each.getKey(), each.getValue().getObject());
                 }
             }
         }
@@ -127,7 +127,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     }
 
     private void validateLoadResult() {
-        if ((atomicMethodValue.size()) != data.getAll().size()) {
+        if ((methodValue.size()) != data.getAll().size()) {
             throw new ReConfInitializationError(msg.format("error.missing.item", getName()));
         }
 
@@ -140,10 +140,6 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
     }
 
     private void update() {
-        if (!shouldReload()) {
-            return;
-        }
-
         List<ConfigurationUpdater> toExecute = new ArrayList<ConfigurationUpdater>(data.getAtomicReload().size());
         CountDownLatch latch = new CountDownLatch(data.getAtomicReload().size());
         Map<Method, ConfigurationItemUpdateResult> updated = new ConcurrentHashMap<Method, ConfigurationItemUpdateResult>();
@@ -155,7 +151,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
                 t.start();
             }
             waitFor(latch);
-            atomicMethodValue = mergeAtomicMethodObjectWith(updated);
+            methodValue = mergeAtomicMethodObjectWith(updated);
             Notifier.notify(listeners, toExecute, getName());
 
         } catch (Exception ignored) {
@@ -176,11 +172,11 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     private Map<Method,Object> mergeAtomicMethodObjectWith(Map<Method, ConfigurationItemUpdateResult> updated) {
         if (!shouldMerge(updated)) {
-            return atomicMethodValue;
+            return methodValue;
         }
 
         Map<Method,Object> result = new ConcurrentHashMap<Method, Object>();
-        for (Entry<Method, Object> each : atomicMethodValue.entrySet()) {
+        for (Entry<Method, Object> each : methodValue.entrySet()) {
             ConfigurationItemUpdateResult updateResult = updated.get(each.getKey());
             if (updateResult == null || !updateResult.isSuccess() || updateResult.getType() != ConfigurationItemUpdateResult.Type.update) {
                 result.put(each.getKey(), each.getValue());
@@ -194,7 +190,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     private boolean shouldMerge(Map<Method, ConfigurationItemUpdateResult> updated) {
         List<String> notFound = new ArrayList<String>();
-        for (Entry<Method, Object> each : atomicMethodValue.entrySet()) {
+        for (Entry<Method, Object> each : methodValue.entrySet()) {
             if (updated.get(each.getKey()) == null) {
                 notFound.add(msg.format("error.retrieving.item", getName(), each.getKey()));
             }
@@ -256,11 +252,11 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     private void finishSync(Map<Method, ConfigurationItemUpdateResult> updateAtomic, Map<Method, ConfigurationItemUpdateResult> updateIndependent) {
         Map<Method,Object> mergedAtomic = new ConcurrentHashMap<Method, Object>();
-        for (Entry<Method, Object> each : atomicMethodValue.entrySet()) {
+        for (Entry<Method, Object> each : methodValue.entrySet()) {
             mergedAtomic.put(each.getKey(), (!updateAtomic.containsKey(each.getKey()) ? each.getValue() : updateAtomic.get(each.getKey()).getObject()));
         }
 
-        this.atomicMethodValue = mergedAtomic;
+        this.methodValue = mergedAtomic;
         commitTemporaryDatabaseChanges();
     }
 
@@ -268,26 +264,16 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         locator.databaseManagerLocator().find().commitTemporaryUpdate(cfgRepository.getFullProperties(), cfgRepository.getInterfaceClass());
     }
 
-    public int getReloadInterval() {
-        if (!shouldReload()) {
-            return 0;
-        }
-        return cfgRepository.getInterval();
+    public int getReloadRate() {
+        return cfgRepository.getRate();
     }
 
     public TimeUnit getReloadTimeUnit() {
-        if (!shouldReload()) {
-            return TimeUnit.DAYS;
-        }
         return cfgRepository.getTimeUnit();
     }
 
     public Object getValueOf(Method m) {
-        return atomicMethodValue.containsKey(m) ? atomicMethodValue.get(m) : null;
-    }
-
-    public boolean shouldReload() {
-        return !data.getAtomicReload().isEmpty();
+        return methodValue.containsKey(m) ? methodValue.get(m) : null;
     }
 
     @Override

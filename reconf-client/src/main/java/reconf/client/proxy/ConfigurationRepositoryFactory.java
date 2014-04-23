@@ -97,11 +97,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         ConfigurationRepositoryFactory factory = new ConfigurationRepositoryFactory();
         ConfigurationRepositoryUpdater thread = new ConfigurationRepositoryUpdater(repo, ServiceLocator.defaultImplementation, factory);
         Environment.addThreadToCheck(thread);
-
-        if (thread.shouldReload()) {
-            thread.start();
-        }
-
+        thread.start();
         return (T) Proxy.newProxyInstance(arg.getClassLoader(), new Class<?>[] {arg}, factory);
     }
 

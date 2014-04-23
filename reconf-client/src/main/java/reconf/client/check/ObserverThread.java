@@ -44,7 +44,7 @@ public class ObserverThread extends Thread {
                 List<ObservableThread> toAdd = new ArrayList<ObservableThread>();
 
                 for (ObservableThread thread : threads) {
-                    if (thread.getReloadInterval() > 0 && System.currentTimeMillis() - thread.getLastExecution() > (1.5F * thread.getReloadTimeUnit().toMillis(thread.getReloadInterval()))) {
+                    if (System.currentTimeMillis() - thread.getLastExecution() > (1.5F * thread.getReloadTimeUnit().toMillis(thread.getReloadRate()))) {
                         LoggerHolder.getLog().error(msg.format("not.running", getName(), thread.getName()));
                         toRemove.add(thread);
                         toAdd.add((ObservableThread) thread.clone());

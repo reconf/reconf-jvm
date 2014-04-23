@@ -60,8 +60,8 @@ public class ConfigurationRepositoryElementValidator {
     }
 
     private static void checkUpdateFrequency(ConfigurationRepositoryElement arg, Map<String, String> errors) {
-        if (arg.getInterval() == null || arg.getInterval() < 1) {
-            errors.put("@ConfigurationRepository", msg.get("interval.error"));
+        if (arg.getRate() == null || arg.getRate() < 1) {
+            errors.put("@ConfigurationRepository", msg.get("rate.error"));
         }
 
         if (arg.getTimeUnit() == null || !EnumSet.of(TimeUnit.MINUTES,TimeUnit.HOURS,TimeUnit.DAYS).contains(arg.getTimeUnit())) {

@@ -123,7 +123,7 @@ public abstract class ConfigurationUpdater extends ObservableThread {
     }
 
     @Override
-    public int getReloadInterval() {
+    public int getReloadRate() {
         throw new UnsupportedOperationException();
     }
 

@@ -108,7 +108,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    pollingInterval=10, pollingTimeUnit=TimeUnit.SECONDS)
+    pollingRate=10, pollingTimeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -238,7 +238,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    pollingInterval=10, pollingTimeUnit=TimeUnit.SECONDS)
+    pollingRate=10, pollingTimeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -258,7 +258,7 @@ public interface WelcomeConfiguration {
 <a name="updating-a-configurationrepository-through-code"/>
 ### Updating a ConfigurationRepository through code
 
-There's a way to force an update operation of every `@ConfigurationItem` of a `@ConfigurationRepository`, regardless the update frequency parameters (interval and timeUnit). To enable it, add a **void** method to the interface and annotate it with `@UpdateConfigurationRepository`. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime `UpdateConfigurationRepositoryException` is thrown to notify the application that a problem has occurred.
+There's a way to force an update operation of every `@ConfigurationItem` of a `@ConfigurationRepository`, regardless the update frequency parameters (rate and timeUnit). To enable it, add a **void** method to the interface and annotate it with `@UpdateConfigurationRepository`. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime `UpdateConfigurationRepositoryException` is thrown to notify the application that a problem has occurred.
 
 ```java
 package examples;
@@ -268,7 +268,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    pollingInterval=1, pollingTimeUnit=TimeUnit.HOURS)
+    pollingRate=1, pollingTimeUnit=TimeUnit.HOURS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")
@@ -333,20 +333,20 @@ To activate localized log messages, add the tag `locale` in the reconf.xml file.
 
 <a name="overriding-the-updatefrequency-annotation-with-reconfxml"/>
 ### Overriding the update frequency parameters with reconf.xml
-It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a `configuration-repository-update-frequency` tag in the reconf.xml file will cause it to override the update frequency parameters (interval and timeUnit) of every configuration repository.
+It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a `configuration-repository-update-frequency` tag in the reconf.xml file will cause it to override the update frequency parameters (rate and timeUnit) of every configuration repository.
 
 ```xml
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd">
     <local-cache>
         <location>/export/application/local-cache</location>
     </local-cache>
     <server>
         <url>http://server.reconf.intranet</url>
     </server>
-    <configuration-repository-update-frequency>
-        <interval>1</interval>
+    <global-polling-frequency>
+        <rate>1</rate>
         <time-unit>SECONDS</time-unit>
-    </configuration-repository-update-frequency>
+    </global-polling-frequency>
 </configuration>
 ```
 
@@ -377,7 +377,7 @@ import java.util.concurrent.*;
 import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
-    pollingInterval=10, pollingTimeUnit=TimeUnit.SECONDS)
+    pollingRate=10, pollingTimeUnit=TimeUnit.SECONDS)
 public interface WelcomeConfiguration {
 
     @ConfigurationItem("welcome.text")

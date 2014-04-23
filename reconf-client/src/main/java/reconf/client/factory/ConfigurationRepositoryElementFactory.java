@@ -61,7 +61,7 @@ public class ConfigurationRepositoryElementFactory {
         result.setComponent(ann.component());
         result.setConnectionSettings(configuration.getConnectionSettings());
         result.setInterfaceClass(arg);
-        result.setInterval(ann.pollingInterval());
+        result.setRate(ann.pollingRate());
         result.setTimeUnit(ann.pollingTimeUnit());
         result.setConfigurationItems(ConfigurationItemElement.from(result));
         LoggerHolder.getLog().info(msg.format("new", LineSeparator.value(), result.toString()));
@@ -73,7 +73,7 @@ public class ConfigurationRepositoryElementFactory {
         if (configuration.getAnnotationOverride() == null) {
             return;
         }
-        result.setInterval(configuration.getAnnotationOverride().getInterval());
+        result.setRate(configuration.getAnnotationOverride().getInterval());
         result.setTimeUnit(configuration.getAnnotationOverride().getTimeUnit());
         LoggerHolder.getLog().info(msg.format("global.reload.policy.override", arg));
     }

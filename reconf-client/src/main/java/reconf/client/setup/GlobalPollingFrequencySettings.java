@@ -18,7 +18,7 @@ package reconf.client.setup;
 import java.util.concurrent.*;
 import org.apache.commons.lang.builder.*;
 
-public class GlobalUpdateFrequencySettings {
+public class GlobalPollingFrequencySettings {
 
     private Integer interval;
     private TimeUnit timeUnit;

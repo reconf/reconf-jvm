@@ -20,11 +20,11 @@ import java.util.concurrent.*;
 import reconf.client.setup.*;
 import reconf.infra.i18n.*;
 
-public class GlobalUpdateFrequencySettingsValidator {
+public class GlobalPollingFrequencySettingsValidator {
 
-    private static final MessagesBundle msg = MessagesBundle.getBundle(GlobalUpdateFrequencySettings.class);
+    private static final MessagesBundle msg = MessagesBundle.getBundle(GlobalPollingFrequencySettings.class);
 
-    public static Set<String> validate(GlobalUpdateFrequencySettings arg) {
+    public static Set<String> validate(GlobalPollingFrequencySettings arg) {
         Set<String> errors = new LinkedHashSet<String>();
 
         checkInterval(arg, errors);
@@ -32,7 +32,7 @@ public class GlobalUpdateFrequencySettingsValidator {
         return errors;
     }
 
-    private static void checkInterval(GlobalUpdateFrequencySettings arg, Collection<String> errors) {
+    private static void checkInterval(GlobalPollingFrequencySettings arg, Collection<String> errors) {
         if (arg.getInterval() == null) {
             errors.add(msg.get("interval.error"));
         }
@@ -41,11 +41,11 @@ public class GlobalUpdateFrequencySettingsValidator {
         }
     }
 
-    private static void checkTimeUnit(GlobalUpdateFrequencySettings arg, Collection<String> errors) {
+    private static void checkTimeUnit(GlobalPollingFrequencySettings arg, Collection<String> errors) {
         if (arg.getTimeUnit() == null) {
             errors.add(msg.get("timeUnit.null"));
         }
-        if (!EnumSet.of(TimeUnit.SECONDS,TimeUnit.MINUTES,TimeUnit.HOURS,TimeUnit.DAYS).contains(arg.getTimeUnit())) {
+        if (!EnumSet.of(TimeUnit.MINUTES,TimeUnit.HOURS,TimeUnit.DAYS).contains(arg.getTimeUnit())) {
             errors.add(msg.get("timeUnit.null"));
         }
     }
