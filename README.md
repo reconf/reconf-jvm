@@ -160,14 +160,14 @@ An array fits the "a collection of single objects" definition and so it must be 
 
 | returning type | configuration value | resulting object |
 |----------------|-----------------------|------------------|
-| java.lang.String[ ] | [ 'a', ' b', 'c' ] | [ "a", " b", "c" ] |
-| java.lang.String[ ] | [ ] | zero-sized String array |
-| java.lang.String[ ] | " " | error! (no single quotes) |
-| boolean[ ] | [ 'true','false' ] | [ true, false ] |
-| int[ ] | [ '1' , '2' ] | [ 1, 2 ] |
-| java.math.BigDecimal[ ] | [ '1', '10' ] | [ 1, 10 ] |
-| char[ ] | [ 'a', '\n' ] | [ 'a', '\n' ] |
-| float[ ] | [ '-1.01' ] | [ -1.01 ] |
+| ```java.lang.String[ ]``` | [ 'a', ' b', 'c' ] | [ "a", " b", "c" ] |
+| ```java.lang.String[ ]``` | [ ] | zero-sized String array |
+| ```java.lang.String[ ]``` | " " | error! (no single quotes) |
+| ```boolean[ ]``` | [ 'true','false' ] | [ true, false ] |
+| ```int[ ]``` | [ '1' , '2' ] | [ 1, 2 ] |
+| ```java.math.BigDecimal[ ]``` | [ '1', '10' ] | [ 1, 10 ] |
+| ```char[ ]``` | [ 'a', '\n' ] | [ 'a', '\n' ] |
+| ```float[ ]``` | [ '-1.01' ] | [ -1.01 ] |
 
 #### Before we dive into Collections of objects
 
@@ -175,19 +175,19 @@ To group objects inside a Collection, there is no need to declare the returning 
 
 | returning type | default implementation |
 |----------------|------------------------|
-| java.util.Collection | java.util.ArrayList |
-| java.util.List | java.util.ArrayList |
-| java.util.Set | java.util.HashSet |
-| java.util.SortedSet | java.util.TreeSet |
-| java.util.NavigableSet | java.util.TreeSet |
-| java.util.Queue | java.util.LinkedList |
-| java.util.concurrent.BlockingQueue | java.util.concurrent.ArrayBlockingQueue |
-| java.util.concurrent.BlockingDeque | java.util.concurrent.LinkedBlockingDeque |
-| java.util.Map | java.util.HashMap |
-| java.util.concurrent.ConcurrentMap | java.util.concurrent.ConcurrentHashMap |
-| java.util.concurrent.ConcurrentNavigableMap | java.util.concurrent.ConcurrentSkipListMap |
-| java.util.NavigableMap | java.util.TreeMap |
-| java.util.SortedMap | java.util.TreeMap |
+| ```java.util.Collection``` | ```java.util.ArrayList``` |
+| ```java.util.List``` | ```java.util.ArrayList``` |
+| ```java.util.Set``` | ```java.util.HashSet``` |
+| ```java.util.SortedSet``` | ```java.util.TreeSet``` |
+| ```java.util.NavigableSet``` | ```java.util.TreeSet``` |
+| ```java.util.Queue``` | ```java.util.LinkedList``` |
+| ```java.util.concurrent.BlockingQueue``` | ```java.util.concurrent.ArrayBlockingQueue``` |
+| ```java.util.concurrent.BlockingDeque``` | ```java.util.concurrent.LinkedBlockingDeque``` |
+| ```java.util.Map``` | ```java.util.HashMap``` |
+| ```java.util.concurrent.ConcurrentMap``` | ```java.util.concurrent.ConcurrentHashMap``` |
+| ```java.util.concurrent.ConcurrentNavigableMap``` | ```java.util.concurrent.ConcurrentSkipListMap``` |
+| ```java.util.NavigableMap``` | ```java.util.TreeMap``` |
+| ```java.util.SortedMap``` | ```java.util.TreeMap``` |
 
 #### Building Collections of objects
 
