@@ -143,16 +143,18 @@ Simple objects can be built by the tool as long as they are either primitives (o
 
 | returning type | configuration value | resulting object |
 |----------------|-----------------------|------------------|
-| ```java.lang.String``` | 'my simple String' | "my simple String" |
-| ```java.lang.String``` | '\n' | "\n" (a java.lang.String containing the new line symbol) |
+| ```j.l.String``` | '\n' | "\n" (a j.l.String containing the new line symbol) |
 | ```boolean``` | 'tRuE' | true |
-| ```java.lang.Boolean``` | 'false' | false |
+| ```j.l.Boolean``` | 'false' | false |
 | ```char``` | 'a' | 'a' |
-| ```java.lang.Character``` | '\t' | '\t' (a java.lang.Character containing the tab symbol) |
-| ```java.lang.Character``` | 'ab' | error! |
+| ```j.l.Character``` | '\t' | '\t' (a j.l.Character containing the tab symbol) |
+| ```j.l.Character``` | 'ab' | error! |
 | ```float``` | '1.2' | 1.2 |
-| ```java.math.BigDecimal``` | '1' | 1 |
+| ```j.m.BigDecimal``` | '1' | 1 |
 | ```int``` | '10' | 10 |
+
+> j.l = java.lang
+> j.m = java.math
 
 #### Declaring arrays of objects
 
@@ -160,14 +162,18 @@ An array fits the "a collection of single objects" definition and so it must be 
 
 | returning type | configuration value | resulting object |
 |----------------|-----------------------|------------------|
-| ```java.lang.String[ ]``` | [ 'a', ' b', 'c' ] | [ "a", " b", "c" ] |
-| ```java.lang.String[ ]``` | [ ] | zero-sized String array |
-| ```java.lang.String[ ]``` | " " | error! (no single quotes) |
+| ```j.l.String``` | 'my simple String' | "my simple String" |
+| ```j.l.String[ ]``` | [ 'a', ' b', 'c' ] | [ "a", " b", "c" ] |
+| ```j.l.String[ ]``` | [ ] | zero-sized String array |
+| ```j.l.String[ ]``` | " " | error! (no single quotes) |
 | ```boolean[ ]``` | [ 'true','false' ] | [ true, false ] |
 | ```int[ ]``` | [ '1' , '2' ] | [ 1, 2 ] |
-| ```java.math.BigDecimal[ ]``` | [ '1', '10' ] | [ 1, 10 ] |
+| ```j.m.BigDecimal[ ]``` | [ '1', '10' ] | [ 1, 10 ] |
 | ```char[ ]``` | [ 'a', '\n' ] | [ 'a', '\n' ] |
 | ```float[ ]``` | [ '-1.01' ] | [ -1.01 ] |
+
+> j.l = java.lang
+> j.m = java.math
 
 #### Before we dive into Collections of objects
 
@@ -175,19 +181,21 @@ To group objects inside a Collection, there is no need to declare the returning 
 
 | returning type | default implementation |
 |----------------|------------------------|
-| ```java.util.Collection``` | ```java.util.ArrayList``` |
-| ```java.util.List``` | ```java.util.ArrayList``` |
-| ```java.util.Set``` | ```java.util.HashSet``` |
-| ```java.util.SortedSet``` | ```java.util.TreeSet``` |
-| ```java.util.NavigableSet``` | ```java.util.TreeSet``` |
-| ```java.util.Queue``` | ```java.util.LinkedList``` |
-| ```java.util.concurrent.BlockingQueue``` | ```java.util.concurrent.ArrayBlockingQueue``` |
-| ```java.util.concurrent.BlockingDeque``` | ```java.util.concurrent.LinkedBlockingDeque``` |
-| ```java.util.Map``` | ```java.util.HashMap``` |
-| ```java.util.concurrent.ConcurrentMap``` | ```java.util.concurrent.ConcurrentHashMap``` |
-| ```java.util.concurrent.ConcurrentNavigableMap``` | ```java.util.concurrent.ConcurrentSkipListMap``` |
-| ```java.util.NavigableMap``` | ```java.util.TreeMap``` |
-| ```java.util.SortedMap``` | ```java.util.TreeMap``` |
+| ```j.u.Collection``` | ```j.u.ArrayList``` |
+| ```j.u.List``` | ```j.u.ArrayList``` |
+| ```j.u.Set``` | ```j.u.HashSet``` |
+| ```j.u.SortedSet``` | ```j.u.TreeSet``` |
+| ```j.u.NavigableSet``` | ```j.u.TreeSet``` |
+| ```j.u.Queue``` | ```j.u.LinkedList``` |
+| ```j.u.concurrent.BlockingQueue``` | ```j.u.concurrent.ArrayBlockingQueue``` |
+| ```j.u.concurrent.BlockingDeque``` | ```j.u.concurrent.LinkedBlockingDeque``` |
+| ```j.u.Map``` | ```j.u.HashMap``` |
+| ```j.u.concurrent.ConcurrentMap``` | ```j.u.concurrent.ConcurrentHashMap``` |
+| ```j.u.concurrent.ConcurrentNavigableMap``` | ```j.u.concurrent.ConcurrentSkipListMap``` |
+| ```j.u.NavigableMap``` | ```j.u.TreeMap``` |
+| ```j.u.SortedMap``` | ```j.u.TreeMap``` |
+
+> j.u = java.util
 
 #### Building Collections of objects
 
@@ -195,30 +203,37 @@ Collections of objects must be delimited by square brackets. The table below sho
 
 | returning type | configuration value | resulting collection |
 |----------------|-----------------------|------------------|
-| ```java.util.Collection<java.lang.String>``` | [ 'a', 'b', 'c' ] | "a", "b", "c" |
-| ```java.util.Collection<java.lang.String>``` | [ ] | empty |
-| ```java.util.Collection<java.util.Collection<java.lang.String>>``` | [ [ ] ] | an empty collection containing an empty collection |
-| ```java.util.Collection<java.util.Collection< java.lang.String>>``` | [ [ 'a' ], [ 'b' ] ] | a collection containing two collections, one with "a" and the other with "b" |
-| ```java.util.Collection<java.lang.String>``` | ' ' | error! (no square brackets) |
-| ```java.util.Collection<java.lang.Boolean>``` | [ 'true', 'false' ] | true, false |
-| ```java.util.Collection<java.math.BigDecimal>``` | [ '1', '10' ] | 1, 10 |
-| ```java.util.Collection<java.lang.Character>``` | [ 'a', 'b' ] | 'a', 'b' |
-| ```java.util.Collection<java.lang.Float>``` | [ '-1', '1.01' ] | -1, 1.01 |
+| ```j.u.Collection<j.l.String>``` | [ 'a', 'b', 'c' ] | "a", "b", "c" |
+| ```j.u.Collection<j.l.String>``` | [ ] | empty |
+| ```j.u.Collection<j.u.Collection<j.l.String>>``` | [ [ ] ] | an empty collection containing an empty collection |
+| ```j.u.Collection<j.u.Collection< j.l.String>>``` | [ [ 'a' ], [ 'b' ] ] | a collection containing two collections, one with "a" and the other with "b" |
+| ```j.u.Collection<j.l.String>``` | ' ' | error! (no square brackets) |
+| ```j.u.Collection<j.l.Boolean>``` | [ 'true', 'false' ] | true, false |
+| ```j.u.Collection<j.m.BigDecimal>``` | [ '1', '10' ] | 1, 10 |
+| ```j.u.Collection<j.l.Character>``` | [ 'a', 'b' ] | 'a', 'b' |
+| ```j.u.Collection<j.l.Float>``` | [ '-1', '1.01' ] | -1, 1.01 |
+
+> j.l = java.lang
+> j.m = java.math
+> j.u = java.util
 
 #### Building Maps
 A Map is different from a Collection because it contains pairs of tuples of the form Key-Value, whereas a Collection is a container of objects with no relation among themselves. For this reason, the formatting part is different, but not that much, since a Map is a complex type. Just separate a key from its value by using a colon `:` and a pair of key-values from each other using a comma `,`.
 
 | returning type | configuration value | resulting map |
 |----------------|-----------------------|------------------|
-| ```java.util.Map<java.lang.String,java.lang.Character>``` | [ 'a':'b' , 'c':'d' ] | { "a" = 'b', "c" = 'd' } |
-| ```java.util.Map<java.lang.Object,java.lang.Object>``` | [ ] | empty |
-| ```java.util.Map<java.lang.String,java.util.List<java.lang.Object>>``` | [ 'k' : [ ] ] | { "k" = [ ] } (the key "k" maps to an empty collection) |
-| ```java.util.Map<java.lang.String,java.util.List<java.lang.Integer>>``` | [ 'k' : [ '1','2' ] ] | { "k" = [ 1,2 ] } |
-| ```java.util.Map<java.lang.Object,java.lang.Object>``` | ' ' | error! (no square brackets) |
-| ```java.util.Map<java.lang.String,java.lang.String>``` | [ 'x' ] | error! (a key must map to a value) |
-| ```java.util.Map<java.lang.String,java.lang.String>``` | [ 'x' : 1 ] | error! (no single quotes enclosing 1) |
-| ```java.util.Map<java.lang.String,java.lang.Boolean>``` | [ 'true' : 'false' ] | { "true" = false } |
-| ```java.util.Map<java.lang.Integer,java.lang.Integer>``` | [ '1' : '2' ] | { 1 = 2 } |
+| ```j.u.Map<j.l.String,j.l.Character>``` | [ 'a':'b' , 'c':'d' ] | { "a" = 'b', "c" = 'd' } |
+| ```j.u.Map<j.l.Object,j.l.Object>``` | [ ] | empty |
+| ```j.u.Map<j.l.String,j.u.List<j.l.Object>>``` | [ 'k' : [ ] ] | { "k" = [ ] } (the key "k" maps to an empty collection) |
+| ```j.u.Map<j.l.String,j.u.List<j.l.Integer>>``` | [ 'k' : [ '1','2' ] ] | { "k" = [ 1,2 ] } |
+| ```j.u.Map<j.l.Object,j.l.Object>``` | ' ' | error! (no square brackets) |
+| ```j.u.Map<j.l.String,j.l.String>``` | [ 'x' ] | error! (a key must map to a value) |
+| ```j.u.Map<j.l.String,j.l.String>``` | [ 'x' : 1 ] | error! (no single quotes enclosing 1) |
+| ```j.u.Map<j.l.String,j.l.Boolean>``` | [ 'true' : 'false' ] | { "true" = false } |
+| ```j.u.Map<j.l.Integer,j.l.Integer>``` | [ '1' : '2' ] | { 1 = 2 } |
+
+> j.l = java.lang
+> j.u = java.util
 
 <a name="advanced-features"/>
 ## Advanced Features
