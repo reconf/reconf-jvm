@@ -143,16 +143,16 @@ Simple objects can be built by the tool as long as they are either primitives (o
 
 | returning type | configuration value | resulting object |
 |----------------|-----------------------|------------------|
-| java.lang.String | 'my simple String' | "my simple String" |
-| java.lang.String | '\n' | "\n" (a java.lang.String containing the new line symbol) |
-| boolean | 'tRuE' | true |
-| java.lang.Boolean | 'false' | false |
-| char | 'a' | 'a' |
-| java.lang.Character | '\t' | '\t' (a java.lang.Character containing the tab symbol) |
-| java.lang.Character | 'ab' | error! |
-| float | '1.2' | 1.2 |
-| java.math.BigDecimal | '1' | 1 |
-| int | '10' | 10 |
+| ```java.lang.String``` | 'my simple String' | "my simple String" |
+| ```java.lang.String``` | '\n' | "\n" (a java.lang.String containing the new line symbol) |
+| ```boolean``` | 'tRuE' | true |
+| ```java.lang.Boolean``` | 'false' | false |
+| ```char``` | 'a' | 'a' |
+| ```java.lang.Character``` | '\t' | '\t' (a java.lang.Character containing the tab symbol) |
+| ```java.lang.Character``` | 'ab' | error! |
+| ```float``` | '1.2' | 1.2 |
+| ```java.math.BigDecimal``` | '1' | 1 |
+| ```int``` | '10' | 10 |
 
 #### Declaring arrays of objects
 
@@ -195,7 +195,7 @@ Collections of objects must be delimited by square brackets. The table below sho
 
 | returning type | configuration value | resulting collection |
 |----------------|-----------------------|------------------|
-| ```java java.util.Collection<java.lang.String>``` | [ 'a', 'b', 'c' ] | "a", "b", "c" |
+| ```java.util.Collection<java.lang.String>``` | [ 'a', 'b', 'c' ] | "a", "b", "c" |
 | java.util.Collection <java.lang.String> | [ ] | empty |
 | java.util.Collection <java.util.Collection< java.lang.String> > | [ [ ] ] | an empty collection containing an empty collection |
 | java.util.Collection <java.util.Collection< java.lang.String> > | [ [ 'a' ], [ 'b' ] ] | a collection containing two collections, one with "a" and the other with "b" |
