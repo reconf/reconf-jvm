@@ -112,7 +112,13 @@ public class Environment {
         for (String violation : violations) {
             errors.add(i++ + " - " + violation);
         }
-        throw new ReConfInitializationError(msg.format("error.xml", LineSeparator.value(), StringUtils.join(errors, LineSeparator.value())));
+
+        if (xmlConfig.isDebug()) {
+            LoggerHolder.getLog().error(msg.format("error.xml", LineSeparator.value(), StringUtils.join(errors, LineSeparator.value())));
+        } else {
+            throw new ReConfInitializationError(msg.format("error.xml", LineSeparator.value(), StringUtils.join(errors, LineSeparator.value())));
+        }
+
     }
 
     public static void setUp() {
