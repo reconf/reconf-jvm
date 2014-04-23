@@ -153,8 +153,7 @@ Simple objects can be built by the tool as long as they are either primitives (o
 | ```j.m.BigDecimal``` | '1' | 1 |
 | ```int``` | '10' | 10 |
 
-> j.l = java.lang
-> j.m = java.math
+> j.l = java.lang; j.m = java.math
 
 #### Declaring arrays of objects
 
@@ -172,8 +171,7 @@ An array fits the "a collection of single objects" definition and so it must be 
 | ```char[ ]``` | [ 'a', '\n' ] | [ 'a', '\n' ] |
 | ```float[ ]``` | [ '-1.01' ] | [ -1.01 ] |
 
-> j.l = java.lang
-> j.m = java.math
+> j.l = java.lang; j.m = java.math
 
 #### Before we dive into Collections of objects
 
@@ -213,9 +211,7 @@ Collections of objects must be delimited by square brackets. The table below sho
 | ```j.u.Collection<j.l.Character>``` | [ 'a', 'b' ] | 'a', 'b' |
 | ```j.u.Collection<j.l.Float>``` | [ '-1', '1.01' ] | -1, 1.01 |
 
-> j.l = java.lang
-> j.m = java.math
-> j.u = java.util
+> j.l = java.lang; j.m = java.math; j.u = java.util
 
 #### Building Maps
 A Map is different from a Collection because it contains pairs of tuples of the form Key-Value, whereas a Collection is a container of objects with no relation among themselves. For this reason, the formatting part is different, but not that much, since a Map is a complex type. Just separate a key from its value by using a colon `:` and a pair of key-values from each other using a comma `,`.
@@ -232,8 +228,7 @@ A Map is different from a Collection because it contains pairs of tuples of the 
 | ```j.u.Map<j.l.String,j.l.Boolean>``` | [ 'true' : 'false' ] | { "true" = false } |
 | ```j.u.Map<j.l.Integer,j.l.Integer>``` | [ '1' : '2' ] | { 1 = 2 } |
 
-> j.l = java.lang
-> j.u = java.util
+> j.l = java.lang, j.u = java.util
 
 <a name="advanced-features"/>
 ## Advanced Features
