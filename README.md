@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/reconf/reconf-jvm.svg?branch=master)](https://travis-ci.org/reconf/reconf-jvm)
+
 # ReConf JVM in 30 seconds
 
 The ReConf JVM Project is a library that provides an easy way to utilize smart configurations in a Java application.
