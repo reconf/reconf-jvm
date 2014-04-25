@@ -27,11 +27,6 @@ public class SimpleHttpDelegatorFactoryImpl implements SimpleHttpDelegatorFactor
     }
 
     @Override
-    public SimpleHttpResponse executeAvoidingSSL(SimpleHttpRequest request, long timeout, TimeUnit timeunit, int retries) throws Exception {
-        return SimpleHttpClient.executeAvoidingSSL(request, timeout, timeunit, retries);
-    }
-
-    @Override
     public SimpleHttpResponse execute(SimpleHttpRequest request, long timeout, TimeUnit timeunit, int retries) throws Exception {
         return SimpleHttpClient.defaultExecute(request, timeout, timeunit, retries);
     }

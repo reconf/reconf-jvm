@@ -28,23 +28,21 @@ public class ServerStub {
     private final long timeout;
     private final TimeUnit timeunit;
     private final int maxRetry;
-    private final boolean sslVerify;
     private String product;
     private String component;
     private String instance;
 
-    public ServerStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry, boolean sslVerify) {
-        this(serviceUri, timeout, timeUnit, maxRetry, sslVerify, SimpleHttpDelegatorFactory.defaultImplementation);
+    public ServerStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry) {
+        this(serviceUri, timeout, timeUnit, maxRetry, SimpleHttpDelegatorFactory.defaultImplementation);
     }
 
-    public ServerStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry, boolean sslVerify, SimpleHttpDelegatorFactory factory) {
+    public ServerStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry, SimpleHttpDelegatorFactory factory) {
         this.serviceUri = serviceUri;
         this.timeout = timeout;
         this.timeunit = timeUnit;
         this.instance = LocalHostname.getName();
         this.maxRetry = maxRetry;
         this.factory = factory;
-        this.sslVerify = sslVerify;
     }
 
     public String get(String property) throws Exception {
@@ -56,7 +54,7 @@ public class ServerStub {
         int status = 0;
         SimpleHttpResponse result = null;
         try {
-            result = sslVerify ? factory.execute(httpGet, timeout, timeunit, maxRetry) : factory.executeAvoidingSSL(httpGet, timeout, timeunit, maxRetry);
+            result = factory.execute(httpGet, timeout, timeunit, maxRetry);
             status = result.getStatusCode();
             if (status == 200) {
                 return result.getBodyAsString();

@@ -21,6 +21,7 @@ import org.apache.http.*;
 import org.apache.http.client.*;
 import org.apache.http.client.entity.*;
 import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
 import org.apache.http.util.*;
 import reconf.infra.system.*;
 
@@ -28,107 +29,134 @@ public class SimpleHttpResponse {
 
     public static final String CHARSET_DEFAULT = "UTF-8";
 
-    private final HttpResponse response;
-    private final HttpClient   httpClient;
+    private final CloseableHttpResponse response;
+    private final CloseableHttpClient httpClient;
     private String body;
+    private int statusCode = 0;
+    private String responseAsString;
+    private Exception exception;
 
-    SimpleHttpResponse(HttpClient httpClient, HttpUriRequest request) throws ClientProtocolException, IOException {
-        this.body = null;
+    SimpleHttpResponse(CloseableHttpClient httpClient, HttpUriRequest request) throws ClientProtocolException, IOException {
         this.httpClient = httpClient;
         this.response = httpClient.execute(request);
+        consumeResponse();
+        finalizeResponse();
     }
 
-    /**
-     * @return this HTTP status code
-     */
-    public int getStatusCode() {
-        return response.getStatusLine().getStatusCode();
+    private void consumeResponse() {
+        consumeStatusCode();
+        consumeBody();
     }
 
-    /**
-     * @return this HTTP entity content as String.
-     * @throws IOException if an error occurs while reading the input stream
-     */
-    public String getBodyAsString() throws IOException {
-        if (body == null) {
-            final HttpEntity entity = response.getEntity();
-            if (entity == null) {
-                return body = StringUtils.EMPTY;
-            }
+    private void consumeStatusCode() {
+        try {
+            this.statusCode = response.getStatusLine().getStatusCode();
+        } catch (Exception ignored) { }
+    }
 
-            final String encoding = getContentEncoding(entity);
-            final String charset = getContentCharSet(entity);
-
-            try {
-                if ("gzip".equalsIgnoreCase(encoding)) {
-                    GzipDecompressingEntity gzip = new GzipDecompressingEntity(entity);
-                    ByteArrayOutputStream output = new ByteArrayOutputStream();
-                    gzip.writeTo(output);
-
-                    body = output.toString(charset);
-                } else {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent(), charset));
-                    StringBuilder result = new StringBuilder();
-                    String line;
-
-                    while ((line = reader.readLine()) != null) {
-                        result.append(line);
-                        if (reader.ready()) {
-                            result.append(LineSeparator.value());
-                        }
-                    }
-
-                    body = result.toString();
-                }
-            } finally {
-                EntityUtils.consume(entity);
-                httpClient.getConnectionManager().shutdown();
-            }
+    private void consumeBody() {
+        if (response.getEntity() == null) {
+            body = StringUtils.EMPTY;
         }
 
+        HttpEntity entity = response.getEntity();
+        String encoding = getContentEncoding(entity);
+        String charset = getContentCharSet(entity);
+
+        try {
+            if ("gzip".equalsIgnoreCase(encoding)) {
+                GzipDecompressingEntity gzip = new GzipDecompressingEntity(entity);
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                gzip.writeTo(output);
+                body = output.toString(charset);
+
+            } else {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent(), charset));
+                StringBuilder result = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                    if (reader.ready()) {
+                        result.append(LineSeparator.value());
+                    }
+                }
+                body = result.toString();
+            }
+        } catch (Exception e) {
+            exception = e;
+
+        } finally {
+            try {
+                EntityUtils.consume(entity);
+            } catch (Exception e) {
+                exception = e;
+            }
+        }
+    }
+
+    private void finalizeResponse() {
+        if (response == null) {
+            this.responseAsString = StringUtils.EMPTY;
+            return;
+        }
+        try {
+            this.responseAsString = response.toString();
+        } catch (Exception ignored) {
+            this.responseAsString = StringUtils.EMPTY;
+        }
+        try {
+            response.close();
+        } catch (Exception ignored) { }
+
+        try {
+            httpClient.close();
+        } catch (Exception ignored) { }
+    }
+
+
+    public String getBodyAsString() throws Exception {
+        if (exception != null) {
+            throw exception;
+        }
         return body;
     }
 
-    /**
-     * @param entity The HTTP entity to get the charset
-     * @return the charset of a given HTTP entity
-     */
-    public static String getContentCharSet(HttpEntity entity) {
-        if (entity != null) {
-            Header type = entity.getContentType();
-            if (type != null) {
-                for (HeaderElement headerElement : type.getElements()) {
-                    if ("charset".equalsIgnoreCase(headerElement.getName())) {
-                        return headerElement.getValue();
-                    }
+    private static String getContentCharSet(HttpEntity entity) {
+        if (entity == null) {
+            return CHARSET_DEFAULT;
+        }
+
+        Header type = entity.getContentType();
+        if (type != null) {
+            for (HeaderElement headerElement : type.getElements()) {
+                if ("charset".equalsIgnoreCase(headerElement.getName())) {
+                    return headerElement.getValue();
                 }
             }
         }
-
         return CHARSET_DEFAULT;
     }
 
-    /**
-     * @param entity The HTTP entity to get the encoding
-     * @return the encoding of a given HTTP entity or a empty String if unknow
-     */
-    public static String getContentEncoding(HttpEntity entity) {
+    private static String getContentEncoding(HttpEntity entity) {
+        if (entity == null) {
+            return StringUtils.EMPTY;
+        }
         if (entity != null) {
             Header encoding = entity.getContentEncoding();
             if (encoding != null) {
                 return encoding.getValue();
             }
         }
-
         return StringUtils.EMPTY;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
     }
 
     @Override
     public String toString() {
-        if (response == null) {
-            return "null";
-        }
-
-        return response.toString();
+        return responseAsString;
     }
 }

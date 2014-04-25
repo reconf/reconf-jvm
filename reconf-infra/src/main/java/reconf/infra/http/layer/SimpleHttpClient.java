@@ -17,25 +17,19 @@ package reconf.infra.http.layer;
 
 import java.net.*;
 import java.security.*;
-import java.security.cert.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
-import javax.net.ssl.*;
 import org.apache.http.*;
-import org.apache.http.client.*;
-import org.apache.http.conn.*;
-import org.apache.http.conn.scheme.*;
-import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.client.config.*;
 import org.apache.http.impl.client.*;
-import org.apache.http.params.*;
 import reconf.infra.i18n.*;
 
 public class SimpleHttpClient {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(SimpleHttpClient.class);
+
     private static ExecutorService requestExecutor = Executors.newFixedThreadPool(10, new ThreadFactory() {
         private final AtomicInteger counter = new AtomicInteger();
-
         @Override
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r, "reconf-http-client-" + counter.getAndIncrement());
@@ -48,15 +42,11 @@ public class SimpleHttpClient {
         return new SimpleHttpRequest("GET", pathBase, pathParam);
     }
 
-    public static SimpleHttpResponse executeAvoidingSSL(SimpleHttpRequest request, long timeout, TimeUnit timeunit, int retries) throws Exception {
-        return execute(newHttpClientAvoidSSL(timeout, timeunit, retries), request, timeout, timeunit);
-    }
-
     public static SimpleHttpResponse defaultExecute(SimpleHttpRequest request, long timeout, TimeUnit timeunit, int retries) throws Exception {
         return execute(newHttpClient(timeout, timeunit, retries), request, timeout, timeunit);
     }
 
-    private static SimpleHttpResponse execute(HttpClient httpClient, SimpleHttpRequest request, long timeout, TimeUnit timeunit) throws Exception {
+    private static SimpleHttpResponse execute(CloseableHttpClient httpClient, SimpleHttpRequest request, long timeout, TimeUnit timeunit) throws Exception {
 
         RequestTask task = new RequestTask(httpClient, request);
         Future<SimpleHttpResponse> futureResponse = null;
@@ -66,7 +56,7 @@ public class SimpleHttpClient {
             return futureResponse.get(timeout, timeunit);
 
         } catch (TimeoutException e) {
-            httpClient.getConnectionManager().shutdown();
+            httpClient.close();
             RequestLine line = request.getRequestLine();
             String method = request.getMethod();
 
@@ -77,12 +67,8 @@ public class SimpleHttpClient {
                 throw new TimeoutException(msg.format("error", timeout, timeunit.toString().toLowerCase()));
             }
 
-        }  catch (ExecutionException e) {
-            httpClient.getConnectionManager().shutdown();
-            throw e;
-
-        } catch (InterruptedException e) {
-            httpClient.getConnectionManager().shutdown();
+        }  catch (Exception e) {
+            httpClient.close();
             throw e;
 
         } finally {
@@ -92,45 +78,21 @@ public class SimpleHttpClient {
         }
     }
 
-    private static DefaultHttpClient newHttpClientAvoidSSL(long timeout, TimeUnit timeUnit, int retries) throws GeneralSecurityException {
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, new TrustManager[]{
-            new X509TrustManager() {
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
-
-                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
-            }
-        }, null);
-        SSLSocketFactory ssf = new SSLSocketFactory(sslContext, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        ClientConnectionManager connectionManager = new DefaultHttpClient().getConnectionManager();
-        connectionManager.getSchemeRegistry().register(new Scheme("https", 443, ssf));
-
-        DefaultHttpClient httpClient = new DefaultHttpClient(connectionManager, createBasicHttpParams(timeout, timeUnit));
-        httpClient.setHttpRequestRetryHandler(new RetryHandler(retries));
-
-        return httpClient;
+    private static CloseableHttpClient newHttpClient(long timeout, TimeUnit timeUnit, int retries) throws GeneralSecurityException {
+        return HttpClientBuilder.create()
+                .setRetryHandler(new RetryHandler(retries))
+                .setDefaultRequestConfig(createBasicHttpParams(timeout, timeUnit))
+                .build();
     }
 
-    private static DefaultHttpClient newHttpClient(long timeout, TimeUnit timeUnit, int retries) throws GeneralSecurityException {
-        ClientConnectionManager connectionManager = new DefaultHttpClient().getConnectionManager();
-        DefaultHttpClient httpClient = new DefaultHttpClient(connectionManager, createBasicHttpParams(timeout, timeUnit));
-        httpClient.setHttpRequestRetryHandler(new RetryHandler(retries));
-
-        return httpClient;
-    }
-
-    private static HttpParams createBasicHttpParams(long timeout, TimeUnit timeunit) {
-        int timemillis = (int) TimeUnit.MILLISECONDS.convert(timeout, timeunit);
-        HttpParams params = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(params, timemillis);
-        HttpConnectionParams.setSoTimeout(params, timemillis);
-        HttpConnectionParams.setStaleCheckingEnabled(params, false);
-        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-
-        return params;
+    private static RequestConfig createBasicHttpParams(long timeout, TimeUnit timeUnit) {
+        int timemillis = (int) TimeUnit.MILLISECONDS.convert(timeout, timeUnit);
+        return RequestConfig.custom()
+                .setCookieSpec(CookieSpecs.IGNORE_COOKIES)
+                .setStaleConnectionCheckEnabled(false)
+                .setConnectTimeout(timemillis)
+                .setSocketTimeout(timemillis)
+                .setConnectionRequestTimeout(timemillis)
+                .build();
     }
 }

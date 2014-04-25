@@ -23,5 +23,5 @@ public interface ServerStubFactory {
 
     ServerStubFactory defaultImplementation = new ServerStubFactoryImpl();
 
-    ServerStub serverStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry, boolean sslVerify);
+    ServerStub serverStub(String serviceUri, long timeout, TimeUnit timeUnit, int maxRetry);
 }

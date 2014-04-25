@@ -24,6 +24,5 @@ public interface SimpleHttpDelegatorFactory {
     SimpleHttpDelegatorFactory defaultImplementation = new SimpleHttpDelegatorFactoryImpl();
 
     SimpleHttpRequest newGetRequest(String pathBase, String... pathParam) throws Exception;
-    SimpleHttpResponse executeAvoidingSSL(SimpleHttpRequest request, long timeout, TimeUnit timeunit, int retries) throws Exception;
     SimpleHttpResponse execute(SimpleHttpRequest request, long timeout, TimeUnit timeunit, int retries) throws Exception;
 }

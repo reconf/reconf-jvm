@@ -47,7 +47,7 @@ public class RetryHandler implements HttpRequestRetryHandler {
             // Do not retry on SSL handshake exception
             return false;
         }
-        HttpRequest request = (HttpRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
+        HttpRequest request = (HttpRequest) context.getAttribute(HttpCoreContext.HTTP_REQUEST);
         boolean idempotent = !(request instanceof HttpEntityEnclosingRequest);
         if (idempotent) {
             // Retry if the request is considered idempotent

@@ -27,7 +27,6 @@ public class ConnectionSettings {
     private int timeout = 20;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private int maxRetry = 3;
-    private boolean sslVerify = false;
 
     public String getUrl() {
         return url;
@@ -57,13 +56,6 @@ public class ConnectionSettings {
         this.maxRetry = maxRetry;
     }
 
-    public boolean isSslVerify() {
-        return sslVerify;
-    }
-    public void setSslVerify(boolean sslVerify) {
-        this.sslVerify = sslVerify;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.DEFAULT_STYLE)
@@ -71,7 +63,6 @@ public class ConnectionSettings {
         .append("timeout", getTimeout())
         .append("time-unit", getTimeUnit())
         .append("max-retry", getMaxRetry())
-        .append("ssl-verify", isSslVerify())
         .toString();
     }
 }

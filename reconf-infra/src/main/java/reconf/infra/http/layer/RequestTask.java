@@ -16,15 +16,15 @@
 package reconf.infra.http.layer;
 
 import java.util.concurrent.*;
-import org.apache.http.client.*;
 import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
 
 public class RequestTask implements Callable<SimpleHttpResponse> {
 
-    private final HttpClient httpClient;
+    private final CloseableHttpClient httpClient;
     private final HttpUriRequest request;
 
-    public RequestTask(HttpClient httpClient, HttpUriRequest request) {
+    public RequestTask(CloseableHttpClient httpClient, HttpUriRequest request) {
         this.httpClient = httpClient;
         this.request = request;
     }
