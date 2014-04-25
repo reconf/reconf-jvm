@@ -73,7 +73,7 @@ Add these lines to the `pom.xml` file
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-client</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
 </dependency>
 ```
 
@@ -82,10 +82,11 @@ Add these lines to the `pom.xml` file
 
 ReConf looks for a file named **reconf.xml** in the classpath. The bare minimum configuration must have two elements, the basic URL where the ReConf server can be found (like http://server.reconf.intranet) and a directory to store the local cache (for example /export/application/local-cache).
 
-The file below is an example of a very simple configuration file. There is an XSD file available at https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd. 
+The file below is an example of a very simple configuration file. There is an XSD file available at https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd. 
 
 ```xml
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd">
     <local-cache>
         <location>/export/application/local-cache</location>
     </local-cache>
@@ -128,7 +129,8 @@ Configuration repositories are easily obtained via `get` method provided by the 
 
 ```java
     public static void main(String[] args) {
-        WelcomeConfiguration welcome = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class);
+        WelcomeConfiguration welcome = ConfigurationRepositoryFactory
+            .get(WelcomeConfiguration.class);
         System.out.println(welcome.getText());
     }
 ```
@@ -262,7 +264,8 @@ public interface WelcomeConfiguration {
     @ConfigurationItem(value="currency.code", component="goodbye-application")
     String getCurrencyCode();
 
-    @ConfigurationItem(value="minimum.age", component="general-configuration", product="all-products")
+    @ConfigurationItem(value="minimum.age", component="general-configuration",
+        product="all-products")
     int getMinimumAge();
 }
 ```
@@ -332,7 +335,8 @@ If you use slf4j (if you don't there are [a lot of reasons](http://logback.qos.c
 To activate localized log messages, add the tag `locale` in the reconf.xml file. The locale must comply with the [JDK 6 and JRE 6 Supported Locales](http://www.oracle.com/technetwork/java/javase/locales-137662.html). Besides the default locale (en_US) the library also provides an additional one, Portuguese Brazil (pt_BR).
 
 ```xml
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd">
     <locale>pt_BR</locale>
     <local-cache>
         <location>/export/application/local-cache</location>
@@ -348,7 +352,8 @@ To activate localized log messages, add the tag `locale` in the reconf.xml file.
 It's very common to define a reasonable polling rate for production environment and a different one during testing. Adding a `global-polling-frequency` tag in the reconf.xml file will cause it to override pollingRate and pollingTimeUnit of every configuration repository.
 
 ```xml
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd">
     <local-cache>
         <location>/export/application/local-cache</location>
     </local-cache>
@@ -375,7 +380,7 @@ The package `reconf-spring` provides a class for easy integration with Spring, i
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-spring</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
 </dependency>
 ```
 
@@ -438,14 +443,18 @@ To listen to such events, the application developer must provide an implementati
         custom.addConfigurationItemListener(new ConfigurationItemListener() {
 
             public void onEvent(UpdateNotification event) {
-                System.out.println("updated value [" + event.getRawValue() + "] read from [" + event.getSource() + "]");
+                System.out.println("updated value [" + event.getRawValue() + 
+                    "] read from [" + event.getSource() + "]");
             }
 
             public void onEvent(ErrorNotification event) {
-                System.out.println("error while updating a property. obtained value [" + event.getRawValue() + "] read from [" + event.getSource() + "] exception [" + event.getError() + "]");
+                System.out.println("error while updating a property. obtained value [" +
+                    event.getRawValue() + "] read from [" + event.getSource() +
+                    "] exception [" + event.getError() + "]");
             }
         });
-        WelcomeConfiguration welcome = ConfigurationRepositoryFactory.get(WelcomeConfiguration.class, custom);
+        WelcomeConfiguration welcome = ConfigurationRepositoryFactory
+            .get(WelcomeConfiguration.class, custom);
         System.out.println(welcome.getText());
     }
 ```
