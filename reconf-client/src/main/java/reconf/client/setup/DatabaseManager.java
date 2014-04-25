@@ -165,33 +165,6 @@ public class DatabaseManager implements ShutdownBean {
         }
     }
 
-    public Map<String, String> getProductComponentPropertyValue() {
-        Map<String, String> result = new HashMap<String, String>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = getConnection();
-            stmt = conn.prepareStatement("SELECT FULL_PROP, VALUE FROM PUBLIC.CLS_METHOD_PROP_VALUE_V2");
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                result.put(rs.getString("FULL_PROP"), rs.getString("VALUE"));
-            }
-
-        } catch (Exception e) {
-            LoggerHolder.getLog().warn(msg.format("error.db", "getProductComponentPropertyValue"), e);
-            return Collections.EMPTY_MAP;
-
-        } finally {
-            close(rs);
-            close(stmt);
-            close(conn);
-        }
-        return result;
-    }
-
     public boolean temporaryUpsert(String fullProperty, Method method, String value) {
         synchronized (dataSource) {
             if (dataSource.isClosed()) {
