@@ -86,7 +86,7 @@ The file below is an example of a very simple configuration file. There is an XS
 
 ```xml
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd">
+xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd">
     <local-cache>
         <location>/export/application/local-cache</location>
     </local-cache>
@@ -112,7 +112,7 @@ import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
     pollingRate=10, pollingTimeUnit=TimeUnit.MINUTES)
-public interface WelcomeConfiguration {
+public interface Configuration {
 
     @ConfigurationItem("welcome.text")
     String getText();
@@ -129,9 +129,8 @@ Configuration repositories are easily obtained via `get` method provided by the 
 
 ```java
     public static void main(String[] args) {
-        WelcomeConfiguration welcome = ConfigurationRepositoryFactory
-            .get(WelcomeConfiguration.class);
-        System.out.println(welcome.getText());
+        Configuration conf = ConfigurationRepositoryFactory.get(Configuration.class);
+        System.out.println(conf.getText());
     }
 ```
 
@@ -253,7 +252,7 @@ import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
     pollingRate=10, pollingTimeUnit=TimeUnit.MINUTES)
-public interface WelcomeConfiguration {
+public interface Configuration {
 
     @ConfigurationItem("welcome.text")
     String getText();
@@ -284,7 +283,7 @@ import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
     pollingRate=1, pollingTimeUnit=TimeUnit.HOURS)
-public interface WelcomeConfiguration {
+public interface Configuration {
 
     @ConfigurationItem("welcome.text")
     String getText();
@@ -307,16 +306,14 @@ Customizations are a feature that allows the developer to solve the following pr
         cust.setComponentItemPrefix("kp-");
         cust.setComponentItemSuffix("-ks");
 
-        WelcomeConfiguration welcome = ConfigurationRepositoryFactory
-            .get(WelcomeConfiguration.class);
+        Configuration conf = ConfigurationRepositoryFactory.get(Configuration.class);
 
-        WelcomeConfiguration customWelcome = ConfigurationRepositoryFactory
-            .get(WelcomeConfiguration.class, cust);
-        System.out.println(welcome.getText() + ", " + customWelcome.getText());
+        Configuration customConf = ConfigurationRepositoryFactory.get(Configuration.class, cust);
+        System.out.println(conf.getText() + ", " + customConf.getText());
     }
 ```
 
-The example above creates two repositories, both from the same interface. The "welcome" repository will behave just as expected, retrieving the configuration from the "my-product/hello-application/welcome.text" hierarchy. The second instance though, namely "customWelcome", will retrieve the configuration from the "my-product/cp-hello-application-cs/kp-welcome.text-ks" hierarchy.
+The example above creates two repositories, both from the same interface. The "conf" repository will behave just as expected, retrieving the configuration from "my-product/hello-application/welcome.text" hierarchy. The second instance though, named "customConf", will retrieve the configuration from "my-product/cp-hello-application-cs/kp-welcome.text-ks" hierarchy.
 
 <a name="organizing-log-messages"/>
 ### Organizing log messages
@@ -353,7 +350,7 @@ It's very common to define a reasonable polling rate for production environment 
 
 ```xml
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd">
+xsi:noNamespaceSchemaLocation="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd">
     <local-cache>
         <location>/export/application/local-cache</location>
     </local-cache>
@@ -395,7 +392,7 @@ import reconf.client.annotations.*;
 
 @ConfigurationRepository(product="my-product", component="hello-application",
     pollingRate=10, pollingTimeUnit=TimeUnit.MINUTES)
-public interface WelcomeConfiguration {
+public interface Configuration {
 
     @ConfigurationItem("welcome.text")
     String getText();
@@ -406,26 +403,26 @@ The xml should look like this.
 
 ```xml
 <bean class="reconf.spring.RepositoryConfigurationBean">
-    <property name="configInterface" value="example.WelcomeConfiguration" />
+    <property name="configInterface" value="example.Configuration" />
 </bean>
 ```
 
 <a name="using-customizations-with-spring"/>
 ### Using Customizations with Spring
 
-The xml excerpt below creates two beans, a regular "welcome" and a custom "customWelcome" detailed in [ConfigurationRepository reuse through Customizations](#configurationrepository-reuse-through-customizations).
+The xml excerpt below creates two beans, a regular "conf" and a custom "customConf" detailed in [ConfigurationRepository reuse through Customizations](#configurationrepository-reuse-through-customizations).
 
 ```xml
-<bean id="customWelcome" class="reconf.spring.RepositoryConfigurationBean">
-    <property name="configInterface" value="example.WelcomeConfiguration"/>
+<bean id="customConf" class="reconf.spring.RepositoryConfigurationBean">
+    <property name="configInterface" value="example.Configuration"/>
     <property name="componentPrefix" value="cp-"/>
     <property name="componentSuffix" value="-cs"/>
     <property name="componentItemPrefix" value="kp-"/>
     <property name="componentItemSuffix" value="-ks"/>
 </bean>
 
-<bean id="welcome" class="reconf.spring.RepositoryConfigurationBean">
-    <property name="configInterface" value="example.WelcomeConfiguration"/>
+<bean id="conf" class="reconf.spring.RepositoryConfigurationBean">
+    <property name="configInterface" value="example.Configuration"/>
 </bean>
 ```
 
@@ -453,16 +450,15 @@ To listen to such events, the application developer must provide an implementati
                     "] exception [" + event.getError() + "]");
             }
         });
-        WelcomeConfiguration welcome = ConfigurationRepositoryFactory
-            .get(WelcomeConfiguration.class, custom);
-        System.out.println(welcome.getText());
+        Configuration conf = ConfigurationRepositoryFactory.get(Configuration.class, custom);
+        System.out.println(conf.getText());
     }
 ```
 
 ```xml
     <!-- example 2 -->
-    <bean id="welcomeConfiguration" class="reconf.spring.RepositoryConfigurationBean">
-        <property name="configInterface" value="reconf.driver.WelcomeConfiguration"/>
+    <bean id="conf" class="reconf.spring.RepositoryConfigurationBean">
+        <property name="configInterface" value="reconf.driver.Configuration"/>
         <property name="configurationItemListeners">
             <util:list>
                 <bean class="reconf.driver.MyListener"/>
