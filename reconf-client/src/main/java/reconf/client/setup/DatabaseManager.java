@@ -313,14 +313,14 @@ public class DatabaseManager implements ShutdownBean {
     }
 
     private void createTable() throws Exception {
-            execute("CREATE TABLE PUBLIC.CLS_METHOD_PROP_VALUE_V2     " +
-                    "(NAM_CLASS VARCHAR(255) NOT NULL,                " +
-                    " NAM_METHOD VARCHAR(255) NOT NULL,               " +
-                    " FULL_PROP LONGVARCHAR NOT NULL,                 " +
-                    " VALUE LONGVARCHAR,                              " +
-                    " NEW_VALUE LONGVARCHAR,                          " +
-                    " UPDATED TIMESTAMP,                              " +
-                    " PRIMARY KEY (NAM_CLASS, NAM_METHOD, FULL_PROP)) ");
+        execute("CREATE TABLE PUBLIC.CLS_METHOD_PROP_VALUE_V2     " +
+                "(NAM_CLASS VARCHAR(255) NOT NULL,                " +
+                " NAM_METHOD VARCHAR(255) NOT NULL,               " +
+                " FULL_PROP LONGVARCHAR NOT NULL,                 " +
+                " VALUE LONGVARCHAR,                              " +
+                " NEW_VALUE LONGVARCHAR,                          " +
+                " UPDATED TIMESTAMP,                              " +
+                " PRIMARY KEY (NAM_CLASS, NAM_METHOD, FULL_PROP)) ");
     }
 
     private void cleanTable() throws Exception {
