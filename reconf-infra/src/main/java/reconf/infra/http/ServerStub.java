@@ -54,8 +54,9 @@ public class ServerStub {
                 .addHeaderField("X-ReConf-Protocol", PROTOCOL);
 
         int status = 0;
+        SimpleHttpResponse result = null;
         try {
-            SimpleHttpResponse result = sslVerify ? factory.execute(httpGet, timeout, timeunit, maxRetry) : factory.executeAvoidingSSL(httpGet, timeout, timeunit, maxRetry);
+            result = sslVerify ? factory.execute(httpGet, timeout, timeunit, maxRetry) : factory.executeAvoidingSSL(httpGet, timeout, timeunit, maxRetry);
             status = result.getStatusCode();
             if (status == 200) {
                 return result.getBodyAsString();
@@ -66,7 +67,8 @@ public class ServerStub {
             }
             throw new IllegalStateException(msg.format("error.http", status, httpGet.getURI()), e);
         }
-        throw new IllegalStateException(msg.format("error.generic", httpGet.getURI()));
+
+        throw new IllegalStateException(msg.format("error.http", result.getStatusCode(), httpGet.getURI()));
     }
 
     public String getComponent() {

@@ -20,7 +20,7 @@ import reconf.client.adapters.*;
 
 public interface ConfigurationSource {
 
-    String get();
+    String get() throws Throwable;
     void temporaryUpdate(String value);
     boolean isNew(String value);
     ConfigurationAdapter getAdapter();

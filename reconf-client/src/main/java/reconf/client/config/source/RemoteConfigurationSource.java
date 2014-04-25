@@ -19,7 +19,6 @@ import org.apache.commons.lang.*;
 import reconf.client.adapters.*;
 import reconf.infra.http.*;
 import reconf.infra.i18n.*;
-import reconf.infra.log.*;
 
 
 public class RemoteConfigurationSource implements ConfigurationSource {
@@ -45,13 +44,8 @@ public class RemoteConfigurationSource implements ConfigurationSource {
         this.adapter = adapter;
     }
 
-    public String get() {
-        try {
-            return stub.get(key);
-        } catch (Throwable t) {
-            LoggerHolder.getLog().error(msg.format("error.load", getClass().getName()), t);
-        }
-        return null;
+    public String get() throws Throwable {
+        return stub.get(key);
     }
 
     public ConfigurationAdapter getAdapter() {

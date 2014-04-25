@@ -52,15 +52,9 @@ public class DatabaseConfigurationSource implements ConfigurationSource {
         this.locator = locator;
     }
 
-    public String get() {
-        try {
-            DatabaseManager proxy = locator.databaseManagerLocator().find();
-            return proxy.get(fullProperty, method);
-
-        } catch (Throwable t) {
-            LoggerHolder.getLog().error(msg.format("error.read", getClass().getName()), t);
-        }
-        return null;
+    public String get() throws Throwable {
+        DatabaseManager proxy = locator.databaseManagerLocator().find();
+        return proxy.get(fullProperty, method);
     }
 
     public boolean isNew(String value) {

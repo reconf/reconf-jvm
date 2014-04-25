@@ -19,6 +19,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
 import reconf.client.config.source.*;
+import reconf.client.config.update.ConfigurationItemUpdateResult.Source;
 import reconf.client.proxy.*;
 import reconf.infra.log.*;
 
@@ -34,13 +35,14 @@ public class LocalConfigurationUpdater extends ConfigurationUpdater {
     }
 
     protected String getUpdaterType() {
-        return "local";
+        return "local-cache";
     }
 
     protected void update() {
 
         String value = null;
         ConfigurationSource obtained = null;
+        ConfigurationSourceHolder holder = null;
 
         try {
             if (Thread.currentThread().isInterrupted()) {
@@ -50,8 +52,17 @@ public class LocalConfigurationUpdater extends ConfigurationUpdater {
             }
 
             LoggerHolder.getLog().debug(msg.format("method.reload", getName(), methodCfg.getMethod().getName()));
-            ConfigurationSourceHolder holder = methodCfg.getConfigurationSourceHolder();
+            holder = methodCfg.getConfigurationSourceHolder();
             value = holder.getDb().get();
+
+        } catch (Throwable t) {
+            LoggerHolder.getLog().error(msg.format("error.load", getName()), t);
+            updateLastResultWithError(Source.localCache, methodCfg.getConfigurationItemElement(), null, t);
+            releaseLatch();
+            return;
+        }
+
+        try {
             if (value != null) {
                 obtained = holder.getDb();
             }

@@ -87,19 +87,36 @@ public abstract class ConfigurationUpdater extends ObservableThread {
 
         ConfigurationItemElement elem = methodCfg.getConfigurationItemElement();
         ConfigurationItemUpdateResult.Builder builder = null;
+
         try {
             if (newValue || isSync) {
                 builder = ConfigurationItemUpdateResult.Builder.update(ObjectConstructorFactory.get(clazz).construct(data));
 
             } else {
                 builder = ConfigurationItemUpdateResult.Builder.noChange();
-
             }
+
+            builder.valueRead(data.getValue())
+            .product(elem.getProduct())
+            .component(elem.getComponent())
+            .item(elem.getValue())
+            .method(methodCfg.getMethod())
+            .cast(methodCfg.getMethod().getReturnType())
+            .from(source);
+
         } catch (Throwable t) {
-            builder = ConfigurationItemUpdateResult.Builder.error(t);
+            updateLastResultWithError(source, elem, value, t);
+            return false;
         }
 
-        builder.valueRead(data.getValue())
+        lastResult = builder.build();
+        methodValue.put(methodCfg.getMethod(), lastResult);
+        return true;
+    }
+
+    protected void updateLastResultWithError(ConfigurationItemUpdateResult.Source source, ConfigurationItemElement elem, String value, Throwable t) {
+        ConfigurationItemUpdateResult.Builder builder = ConfigurationItemUpdateResult.Builder.error(t);
+        builder.valueRead(value)
         .product(elem.getProduct())
         .component(elem.getComponent())
         .item(elem.getValue())
@@ -109,7 +126,6 @@ public abstract class ConfigurationUpdater extends ObservableThread {
 
         lastResult = builder.build();
         methodValue.put(methodCfg.getMethod(), lastResult);
-        return lastResult.getError() == null ? true : false;
     }
 
     protected void releaseLatch() {

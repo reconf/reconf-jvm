@@ -19,6 +19,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
 import reconf.client.config.source.*;
+import reconf.client.config.update.ConfigurationItemUpdateResult.Source;
 import reconf.client.proxy.*;
 import reconf.infra.log.*;
 
@@ -34,7 +35,7 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
     }
 
     protected String getUpdaterType() {
-        return "remote";
+        return "server";
     }
 
     protected void update() {
@@ -42,6 +43,7 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
         String value = null;
         ConfigurationSource obtained = null;
         boolean newValue = false;
+        ConfigurationSourceHolder holder = null;
 
         try {
             if (Thread.currentThread().isInterrupted()) {
@@ -50,8 +52,17 @@ public class RemoteConfigurationUpdater extends ConfigurationUpdater {
             }
 
             LoggerHolder.getLog().debug(msg.format("method.reload", getName(), methodCfg.getMethod().getName()));
-            ConfigurationSourceHolder holder = methodCfg.getConfigurationSourceHolder();
+            holder = methodCfg.getConfigurationSourceHolder();
             value = holder.getRemote().get();
+
+        } catch (Throwable t) {
+            LoggerHolder.getLog().error(msg.format("error.load", getName()), t);
+            updateLastResultWithError(Source.server, methodCfg.getConfigurationItemElement(), null, t);
+            releaseLatch();
+            return;
+        }
+
+        try {
             if (null != value) {
                 obtained = holder.getRemote();
                 newValue = holder.getDb().isNew(value);

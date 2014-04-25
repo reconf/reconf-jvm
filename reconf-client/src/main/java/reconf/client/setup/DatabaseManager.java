@@ -156,7 +156,7 @@ public class DatabaseManager implements ShutdownBean {
 
         } catch (Exception e) {
             LoggerHolder.getLog().warn(msg.format("error.db", "get"), e);
-            return null;
+            throw new RuntimeException(e);
 
         } finally {
             close(rs);

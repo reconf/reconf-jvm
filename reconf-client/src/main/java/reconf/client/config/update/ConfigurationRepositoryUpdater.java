@@ -112,8 +112,8 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
                 }
             }
         }
-        validateLoadResult();
         Notifier.notify(listeners, toExecute, getName());
+        validateLoadResult();
     }
 
     private void waitFor(CountDownLatch latch) {
