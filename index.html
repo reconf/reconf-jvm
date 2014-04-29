@@ -31,7 +31,9 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h1>
+        <p><a href="https://travis-ci.org/reconf/reconf-jvm"><img src="https://travis-ci.org/reconf/reconf-jvm.svg?branch=master" alt="Build Status"></a></p>
+
+<h1>
 <a name="reconf-jvm-in-30-seconds" class="anchor" href="#reconf-jvm-in-30-seconds"><span class="octicon octicon-link"></span></a>ReConf JVM in 30 seconds</h1>
 
 <p>The ReConf JVM Project is a library that provides an easy way to utilize smart configurations in a Java application.</p>
@@ -81,10 +83,10 @@
 <li><a href="#configurationrepository-reuse-through-customizations">ConfigurationRepository reuse through Customizations</a></li>
 <li><a href="#organizing-log-messages">Organizing log messages</a></li>
 <li><a href="#localization-with-reconfxml">Localization with reconf.xml</a></li>
-<li><a href="#overriding-the-updatefrequency-annotation-with-reconfxml">Overriding the @UpdateFrequency annotation with reconf.xml</a></li>
 <li><a href="#reading-from-different-configuration-file">Reading from different configuration file</a></li>
 <li><a href="#integrating-with-spring">Integrating with Spring</a></li>
 <li><a href="#using-customizations-with-spring">Using Customizations with Spring</a></li>
+<li><a href="#using-notifications">Events and Listeners</a></li>
 </ul>
 </li>
 <li><a href="#troubleshooting">Troubleshooting</a></li>
@@ -135,7 +137,7 @@
 <div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>br.com.uol.reconf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>reconf-client<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.5.16<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.1.2<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div>
 
@@ -146,9 +148,10 @@
 
 <p>ReConf looks for a file named <strong>reconf.xml</strong> in the classpath. The bare minimum configuration must have two elements, the basic URL where the ReConf server can be found (like <a href="http://server.reconf.intranet">http://server.reconf.intranet</a>) and a directory to store the local cache (for example /export/application/local-cache).</p>
 
-<p>The file below is an example of a very simple configuration file. There is an XSD file available at <a href="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd">https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd</a>. </p>
+<p>The file below is an example of a very simple configuration file. There is an XSD file available at <a href="https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd">https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd</a>. </p>
 
-<div class="highlight highlight-xml"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd"</span><span class="nt">&gt;</span>
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;local-cache&gt;</span>
         <span class="nt">&lt;location&gt;</span>/export/application/local-cache<span class="nt">&lt;/location&gt;</span>
     <span class="nt">&lt;/local-cache&gt;</span>
@@ -167,15 +170,15 @@
 
 <p>In order to define a configuration repository, you must create a new Java interface and decorate it with the annotations provided by the reconf-client jar.</p>
 
-<p>The example below provides a very simple configuration repository where each <code>@ConfigurationItem</code> will update itself every 10 seconds.</p>
+<p>The example below provides a very simple configuration repository where each <code>@ConfigurationItem</code> will update itself every 10 minutes.</p>
 
 <div class="highlight highlight-java"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
 
-<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">product</span><span class="o">=</span><span class="s">"my-product"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"hello-application"</span><span class="o">)</span>
-<span class="nd">@UpdateFrequency</span><span class="o">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">10</span><span class="o">,</span> <span class="n">timeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">WelcomeConfiguration</span> <span class="o">{</span>
+<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">product</span><span class="o">=</span><span class="s">"my-product"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"hello-application"</span><span class="o">,</span>
+    <span class="n">pollingRate</span><span class="o">=</span><span class="mi">10</span><span class="o">,</span> <span class="n">pollingTimeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">MINUTES</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Configuration</span> <span class="o">{</span>
 
     <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="s">"welcome.text"</span><span class="o">)</span>
     <span class="n">String</span> <span class="nf">getText</span><span class="o">();</span>
@@ -193,8 +196,8 @@
 <p>Configuration repositories are easily obtained via <code>get</code> method provided by the reconf.client.proxy.ConfigurationRepositoryFactory class. Because creating a proxy is an expensive operation, this operation caches its result; meaning that calling it one or more times will return the same instance when the same arguments are provided.</p>
 
 <div class="highlight highlight-java"><pre>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">WelcomeConfiguration</span> <span class="n">welcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">welcome</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
+        <span class="n">Configuration</span> <span class="n">conf</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">Configuration</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">conf</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
     <span class="o">}</span>
 </pre></div>
 
@@ -220,57 +223,56 @@
 </tr></thead>
 <tbody>
 <tr>
-<td>java.lang.String</td>
-<td>'my simple String'</td>
-<td>"my simple String"</td>
-</tr>
-<tr>
-<td>java.lang.String</td>
+<td><code>j.l.String</code></td>
 <td>'\n'</td>
-<td>"\n" (a java.lang.String containing the new line symbol)</td>
+<td>"\n" (a j.l.String containing the new line symbol)</td>
 </tr>
 <tr>
-<td>boolean</td>
+<td><code>boolean</code></td>
 <td>'tRuE'</td>
 <td>true</td>
 </tr>
 <tr>
-<td>java.lang.Boolean</td>
+<td><code>j.l.Boolean</code></td>
 <td>'false'</td>
 <td>false</td>
 </tr>
 <tr>
-<td>char</td>
+<td><code>char</code></td>
 <td>'a'</td>
 <td>'a'</td>
 </tr>
 <tr>
-<td>java.lang.Character</td>
+<td><code>j.l.Character</code></td>
 <td>'\t'</td>
-<td>'\t' (a java.lang.Character containing the tab symbol)</td>
+<td>'\t' (a j.l.Character containing the tab symbol)</td>
 </tr>
 <tr>
-<td>java.lang.Character</td>
+<td><code>j.l.Character</code></td>
 <td>'ab'</td>
 <td>error!</td>
 </tr>
 <tr>
-<td>float</td>
+<td><code>float</code></td>
 <td>'1.2'</td>
 <td>1.2</td>
 </tr>
 <tr>
-<td>java.math.BigDecimal</td>
+<td><code>j.m.BigDecimal</code></td>
 <td>'1'</td>
 <td>1</td>
 </tr>
 <tr>
-<td>int</td>
+<td><code>int</code></td>
 <td>'10'</td>
 <td>10</td>
 </tr>
 </tbody>
-</table><h4>
+</table><blockquote>
+<p>j.l = java.lang; j.m = java.math</p>
+</blockquote>
+
+<h4>
 <a name="declaring-arrays-of-objects" class="anchor" href="#declaring-arrays-of-objects"><span class="octicon octicon-link"></span></a>Declaring arrays of objects</h4>
 
 <p>An array fits the "a collection of single objects" definition and so it must be declared inside square brackets. The table below shows a few examples.</p>
@@ -283,47 +285,56 @@
 </tr></thead>
 <tbody>
 <tr>
-<td>java.lang.String[ ]</td>
+<td><code>j.l.String</code></td>
+<td>'my simple String'</td>
+<td>"my simple String"</td>
+</tr>
+<tr>
+<td><code>j.l.String[ ]</code></td>
 <td>[ 'a', ' b', 'c' ]</td>
 <td>[ "a", " b", "c" ]</td>
 </tr>
 <tr>
-<td>java.lang.String[ ]</td>
+<td><code>j.l.String[ ]</code></td>
 <td>[ ]</td>
 <td>zero-sized String array</td>
 </tr>
 <tr>
-<td>java.lang.String[ ]</td>
+<td><code>j.l.String[ ]</code></td>
 <td>" "</td>
 <td>error! (no single quotes)</td>
 </tr>
 <tr>
-<td>boolean[ ]</td>
+<td><code>boolean[ ]</code></td>
 <td>[ 'true','false' ]</td>
 <td>[ true, false ]</td>
 </tr>
 <tr>
-<td>int[ ]</td>
+<td><code>int[ ]</code></td>
 <td>[ '1' , '2' ]</td>
 <td>[ 1, 2 ]</td>
 </tr>
 <tr>
-<td>java.math.BigDecimal[ ]</td>
+<td><code>j.m.BigDecimal[ ]</code></td>
 <td>[ '1', '10' ]</td>
 <td>[ 1, 10 ]</td>
 </tr>
 <tr>
-<td>char[ ]</td>
+<td><code>char[ ]</code></td>
 <td>[ 'a', '\n' ]</td>
 <td>[ 'a', '\n' ]</td>
 </tr>
 <tr>
-<td>float[ ]</td>
+<td><code>float[ ]</code></td>
 <td>[ '-1.01' ]</td>
 <td>[ -1.01 ]</td>
 </tr>
 </tbody>
-</table><h4>
+</table><blockquote>
+<p>j.l = java.lang; j.m = java.math</p>
+</blockquote>
+
+<h4>
 <a name="before-we-dive-into-collections-of-objects" class="anchor" href="#before-we-dive-into-collections-of-objects"><span class="octicon octicon-link"></span></a>Before we dive into Collections of objects</h4>
 
 <p>To group objects inside a Collection, there is no need to declare the returning type as a concrete implementation (like java.util.ArrayList or java.util.HashSet). The library is shipped with pre-selected implementations according to the type and, if you don't want to use the implementation we chose, simply use the class of choice as the returning type.</p>
@@ -335,59 +346,63 @@
 </tr></thead>
 <tbody>
 <tr>
-<td>java.util.Collection</td>
-<td>java.util.ArrayList</td>
+<td><code>j.u.Collection</code></td>
+<td><code>j.u.ArrayList</code></td>
 </tr>
 <tr>
-<td>java.util.List</td>
-<td>java.util.ArrayList</td>
+<td><code>j.u.List</code></td>
+<td><code>j.u.ArrayList</code></td>
 </tr>
 <tr>
-<td>java.util.Set</td>
-<td>java.util.HashSet</td>
+<td><code>j.u.Set</code></td>
+<td><code>j.u.HashSet</code></td>
 </tr>
 <tr>
-<td>java.util.SortedSet</td>
-<td>java.util.TreeSet</td>
+<td><code>j.u.SortedSet</code></td>
+<td><code>j.u.TreeSet</code></td>
 </tr>
 <tr>
-<td>java.util.NavigableSet</td>
-<td>java.util.TreeSet</td>
+<td><code>j.u.NavigableSet</code></td>
+<td><code>j.u.TreeSet</code></td>
 </tr>
 <tr>
-<td>java.util.Queue</td>
-<td>java.util.LinkedList</td>
+<td><code>j.u.Queue</code></td>
+<td><code>j.u.LinkedList</code></td>
 </tr>
 <tr>
-<td>java.util.concurrent.BlockingQueue</td>
-<td>java.util.concurrent.ArrayBlockingQueue</td>
+<td><code>j.u.concurrent.BlockingQueue</code></td>
+<td><code>j.u.concurrent.ArrayBlockingQueue</code></td>
 </tr>
 <tr>
-<td>java.util.concurrent.BlockingDeque</td>
-<td>java.util.concurrent.LinkedBlockingDeque</td>
+<td><code>j.u.concurrent.BlockingDeque</code></td>
+<td><code>j.u.concurrent.LinkedBlockingDeque</code></td>
 </tr>
 <tr>
-<td>java.util.Map</td>
-<td>java.util.HashMap</td>
+<td><code>j.u.Map</code></td>
+<td><code>j.u.HashMap</code></td>
 </tr>
 <tr>
-<td>java.util.concurrent.ConcurrentMap</td>
-<td>java.util.concurrent.ConcurrentHashMap</td>
+<td><code>j.u.concurrent.ConcurrentMap</code></td>
+<td><code>j.u.concurrent.ConcurrentHashMap</code></td>
 </tr>
 <tr>
-<td>java.util.concurrent.ConcurrentNavigableMap</td>
-<td>java.util.concurrent.ConcurrentSkipListMap</td>
+<td><code>j.u.concurrent.ConcurrentNavigableMap</code></td>
+<td><code>j.u.concurrent.ConcurrentSkipListMap</code></td>
 </tr>
 <tr>
-<td>java.util.NavigableMap</td>
-<td>java.util.TreeMap</td>
+<td><code>j.u.NavigableMap</code></td>
+<td><code>j.u.TreeMap</code></td>
 </tr>
 <tr>
-<td>java.util.SortedMap</td>
-<td>java.util.TreeMap</td>
+<td><code>j.u.SortedMap</code></td>
+<td><code>j.u.TreeMap</code></td>
 </tr>
 </tbody>
-</table><h4>
+</table><blockquote>
+<p>j.u = java.util</p>
+</blockquote>
+
+<h4>
 <a name="building-collections-of-objects" class="anchor" href="#building-collections-of-objects"><span class="octicon octicon-link"></span></a>Building Collections of objects</h4>
 
 <p>Collections of objects must be delimited by square brackets. The table below shows a few examples.</p>
@@ -400,52 +415,56 @@
 </tr></thead>
 <tbody>
 <tr>
-<td>java.util.Collection</td>
+<td><code>j.u.Collection&lt;j.l.String&gt;</code></td>
 <td>[ 'a', 'b', 'c' ]</td>
 <td>"a", "b", "c"</td>
 </tr>
 <tr>
-<td>java.util.Collection</td>
+<td><code>j.u.Collection&lt;j.l.String&gt;</code></td>
 <td>[ ]</td>
 <td>empty</td>
 </tr>
 <tr>
-<td>java.util.Collection&gt;</td>
+<td><code>j.u.Collection&lt;j.u.Collection&lt;j.l.String&gt;&gt;</code></td>
 <td>[ [ ] ]</td>
 <td>an empty collection containing an empty collection</td>
 </tr>
 <tr>
-<td>java.util.Collection&gt;</td>
+<td><code>j.u.Collection&lt;j.u.Collection&lt; j.l.String&gt;&gt;</code></td>
 <td>[ [ 'a' ], [ 'b' ] ]</td>
 <td>a collection containing two collections, one with "a" and the other with "b"</td>
 </tr>
 <tr>
-<td>java.util.Collection</td>
+<td><code>j.u.Collection&lt;j.l.String&gt;</code></td>
 <td>' '</td>
 <td>error! (no square brackets)</td>
 </tr>
 <tr>
-<td>java.util.Collection</td>
+<td><code>j.u.Collection&lt;j.l.Boolean&gt;</code></td>
 <td>[ 'true', 'false' ]</td>
 <td>true, false</td>
 </tr>
 <tr>
-<td>java.util.Collection</td>
+<td><code>j.u.Collection&lt;j.m.BigDecimal&gt;</code></td>
 <td>[ '1', '10' ]</td>
 <td>1, 10</td>
 </tr>
 <tr>
-<td>java.util.Collection</td>
+<td><code>j.u.Collection&lt;j.l.Character&gt;</code></td>
 <td>[ 'a', 'b' ]</td>
 <td>'a', 'b'</td>
 </tr>
 <tr>
-<td>java.util.Collection</td>
+<td><code>j.u.Collection&lt;j.l.Float&gt;</code></td>
 <td>[ '-1', '1.01' ]</td>
 <td>-1, 1.01</td>
 </tr>
 </tbody>
-</table><h4>
+</table><blockquote>
+<p>j.l = java.lang; j.m = java.math; j.u = java.util</p>
+</blockquote>
+
+<h4>
 <a name="building-maps" class="anchor" href="#building-maps"><span class="octicon octicon-link"></span></a>Building Maps</h4>
 
 <p>A Map is different from a Collection because it contains pairs of tuples of the form Key-Value, whereas a Collection is a container of objects with no relation among themselves. For this reason, the formatting part is different, but not that much, since a Map is a complex type. Just separate a key from its value by using a colon <code>:</code> and a pair of key-values from each other using a comma <code>,</code>.</p>
@@ -458,52 +477,56 @@
 </tr></thead>
 <tbody>
 <tr>
-<td>java.util.Map</td>
+<td><code>j.u.Map&lt;j.l.String,j.l.Character&gt;</code></td>
 <td>[ 'a':'b' , 'c':'d' ]</td>
 <td>{ "a" = 'b', "c" = 'd' }</td>
 </tr>
 <tr>
-<td>java.util.Map</td>
+<td><code>j.u.Map&lt;j.l.Object,j.l.Object&gt;</code></td>
 <td>[ ]</td>
 <td>empty</td>
 </tr>
 <tr>
-<td>java.util.Map&gt;</td>
+<td><code>j.u.Map&lt;j.l.String,j.u.List&lt;j.l.Object&gt;&gt;</code></td>
 <td>[ 'k' : [ ] ]</td>
 <td>{ "k" = [ ] } (the key "k" maps to an empty collection)</td>
 </tr>
 <tr>
-<td>java.util.Map&gt;</td>
+<td><code>j.u.Map&lt;j.l.String,j.u.List&lt;j.l.Integer&gt;&gt;</code></td>
 <td>[ 'k' : [ '1','2' ] ]</td>
 <td>{ "k" = [ 1,2 ] }</td>
 </tr>
 <tr>
-<td>java.util.Map</td>
+<td><code>j.u.Map&lt;j.l.Object,j.l.Object&gt;</code></td>
 <td>' '</td>
 <td>error! (no square brackets)</td>
 </tr>
 <tr>
-<td>java.util.Map</td>
+<td><code>j.u.Map&lt;j.l.String,j.l.String&gt;</code></td>
 <td>[ 'x' ]</td>
 <td>error! (a key must map to a value)</td>
 </tr>
 <tr>
-<td>java.util.Map</td>
+<td><code>j.u.Map&lt;j.l.String,j.l.String&gt;</code></td>
 <td>[ 'x' : 1 ]</td>
 <td>error! (no single quotes enclosing 1)</td>
 </tr>
 <tr>
-<td>java.util.Map</td>
+<td><code>j.u.Map&lt;j.l.String,j.l.Boolean&gt;</code></td>
 <td>[ 'true' : 'false' ]</td>
 <td>{ "true" = false }</td>
 </tr>
 <tr>
-<td>java.util.Map</td>
+<td><code>j.u.Map&lt;j.l.Integer,j.l.Integer&gt;</code></td>
 <td>[ '1' : '2' ]</td>
 <td>{ 1 = 2 }</td>
 </tr>
 </tbody>
-</table><p><a name="advanced-features"></a></p>
+</table><blockquote>
+<p>j.l = java.lang; j.u = java.util</p>
+</blockquote>
+
+<p><a name="advanced-features"></a></p>
 
 <h2>
 <a name="advanced-features" class="anchor" href="#advanced-features"><span class="octicon octicon-link"></span></a>Advanced Features</h2>
@@ -524,9 +547,9 @@
 <span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
 
-<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">product</span><span class="o">=</span><span class="s">"my-product"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"hello-application"</span><span class="o">)</span>
-<span class="nd">@UpdateFrequency</span><span class="o">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">10</span><span class="o">,</span> <span class="n">timeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">WelcomeConfiguration</span> <span class="o">{</span>
+<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">product</span><span class="o">=</span><span class="s">"my-product"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"hello-application"</span><span class="o">,</span>
+    <span class="n">pollingRate</span><span class="o">=</span><span class="mi">10</span><span class="o">,</span> <span class="n">pollingTimeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">MINUTES</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Configuration</span> <span class="o">{</span>
 
     <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="s">"welcome.text"</span><span class="o">)</span>
     <span class="n">String</span> <span class="nf">getText</span><span class="o">();</span>
@@ -537,35 +560,8 @@
     <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">value</span><span class="o">=</span><span class="s">"currency.code"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"goodbye-application"</span><span class="o">)</span>
     <span class="n">String</span> <span class="nf">getCurrencyCode</span><span class="o">();</span>
 
-    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">value</span><span class="o">=</span><span class="s">"minimum.age"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"general-configuration"</span><span class="o">,</span> <span class="n">product</span><span class="o">=</span><span class="s">"all-products"</span><span class="o">)</span>
-    <span class="kt">int</span> <span class="nf">getMinimumAge</span><span class="o">();</span>
-<span class="o">}</span>
-</pre></div>
-
-<h4>
-<a name="setting-up-a-specific-update-frequency-policy" class="anchor" href="#setting-up-a-specific-update-frequency-policy"><span class="octicon octicon-link"></span></a>Setting up a specific update frequency policy.</h4>
-
-<p>This example depicts a mixed repository in which the items "welcome.text" and "promotional.price" are updated on a ten-second basis. The <code>@DoNotUpdate</code> annotation causes the "currency.code" item to remain with its original value, obtained as soon as the repository is created. When applied to an item, the <code>@UpdateFrequency</code> annotation causes the item to be updated in a specific frequency, different than the one inherited. In the example below, the value of "minimum.age" will be updated once a day.</p>
-
-<div class="highlight highlight-java"><pre><span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
-
-<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">product</span><span class="o">=</span><span class="s">"my-product"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"hello-application"</span><span class="o">)</span>
-<span class="nd">@UpdateFrequency</span><span class="o">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">10</span><span class="o">,</span> <span class="n">timeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">WelcomeConfiguration</span> <span class="o">{</span>
-
-    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="s">"welcome.text"</span><span class="o">)</span>
-    <span class="n">String</span> <span class="nf">getText</span><span class="o">();</span>
-
-    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="s">"promotional.price"</span><span class="o">)</span>
-    <span class="n">BigDecimal</span> <span class="nf">getPrice</span><span class="o">();</span>
-
-    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="s">"currency.code"</span><span class="o">)</span> <span class="nd">@DoNotUpdate</span>
-    <span class="n">String</span> <span class="nf">getCurrencyCode</span><span class="o">();</span>
-
-    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="s">"minimum.age"</span><span class="o">)</span>
-    <span class="nd">@UpdateFrequency</span><span class="o">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="o">,</span> <span class="n">timeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">DAYS</span><span class="o">)</span>
+    <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="n">value</span><span class="o">=</span><span class="s">"minimum.age"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"general-configuration"</span><span class="o">,</span>
+        <span class="n">product</span><span class="o">=</span><span class="s">"all-products"</span><span class="o">)</span>
     <span class="kt">int</span> <span class="nf">getMinimumAge</span><span class="o">();</span>
 <span class="o">}</span>
 </pre></div>
@@ -575,7 +571,7 @@
 <h3>
 <a name="updating-a-configurationrepository-through-code" class="anchor" href="#updating-a-configurationrepository-through-code"><span class="octicon octicon-link"></span></a>Updating a ConfigurationRepository through code</h3>
 
-<p>There's a way to force an update operation of every <code>@ConfigurationItem</code> of a <code>@ConfigurationRepository</code>, regardless the presence of <code>@UpdateFrequency</code> or <code>@DoNotUpdate</code> annotations. To enable it, add a <strong>void</strong> method to the interface and annotate it with <code>@UpdateConfigurationRepository</code>. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime <code>UpdateConfigurationRepositoryException</code> is thrown to notify the application that a problem has occurred.</p>
+<p>There's a way to force an update operation of every <code>@ConfigurationItem</code> of a <code>@ConfigurationRepository</code>, regardless the update frequency parameters (rate and timeUnit). To enable it, add a <strong>void</strong> method to the interface and annotate it with <code>@UpdateConfigurationRepository</code>. When called, the method will block until all update operations have returned. In case everything goes ok, the local cache is updated; otherwise a runtime <code>UpdateConfigurationRepositoryException</code> is thrown to notify the application that a problem has occurred.</p>
 
 <div class="highlight highlight-java"><pre><span class="kn">package</span> <span class="n">examples</span><span class="o">;</span>
 
@@ -583,9 +579,9 @@
 <span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
 
-<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">component</span><span class="o">=</span><span class="s">"test"</span><span class="o">,</span> <span class="n">product</span><span class="o">=</span><span class="s">"test"</span><span class="o">)</span>
-<span class="nd">@UpdateFrequency</span><span class="o">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="o">,</span> <span class="n">timeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">HOURS</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">WelcomeConfiguration</span> <span class="o">{</span>
+<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">product</span><span class="o">=</span><span class="s">"my-product"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"hello-application"</span><span class="o">,</span>
+    <span class="n">pollingRate</span><span class="o">=</span><span class="mi">1</span><span class="o">,</span> <span class="n">pollingTimeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">HOURS</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Configuration</span> <span class="o">{</span>
 
     <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="s">"welcome.text"</span><span class="o">)</span>
     <span class="n">String</span> <span class="nf">getText</span><span class="o">();</span>
@@ -609,14 +605,14 @@
         <span class="n">cust</span><span class="o">.</span><span class="na">setComponentItemPrefix</span><span class="o">(</span><span class="s">"kp-"</span><span class="o">);</span>
         <span class="n">cust</span><span class="o">.</span><span class="na">setComponentItemSuffix</span><span class="o">(</span><span class="s">"-ks"</span><span class="o">);</span>
 
-        <span class="n">WelcomeConfiguration</span> <span class="n">welcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">Configuration</span> <span class="n">conf</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">Configuration</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
 
-        <span class="n">WelcomeConfiguration</span> <span class="n">customWelcome</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">WelcomeConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">cust</span><span class="o">);</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">welcome</span><span class="o">.</span><span class="na">getText</span><span class="o">()</span> <span class="o">+</span> <span class="s">", "</span> <span class="o">+</span> <span class="n">customWelcome</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
+        <span class="n">Configuration</span> <span class="n">customConf</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">Configuration</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">cust</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">conf</span><span class="o">.</span><span class="na">getText</span><span class="o">()</span> <span class="o">+</span> <span class="s">", "</span> <span class="o">+</span> <span class="n">customConf</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
     <span class="o">}</span>
 </pre></div>
 
-<p>The example above creates two repositories, both from the same interface. The "welcome" repository will behave just as expected, retrieving the configuration from the "my-product/hello-application/welcome.text" hierarchy. The second instance though, namely "customWelcome", will retrieve the configuration from the "my-product/cp-hello-application-cs/kp-welcome.text-ks" hierarchy.</p>
+<p>The example above creates two repositories, both from the same interface. The "conf" repository will behave just as expected, retrieving the configuration from "my-product/hello-application/welcome.text" hierarchy. The second instance though, named "customConf", will retrieve the configuration from "my-product/cp-hello-application-cs/kp-welcome.text-ks" hierarchy.</p>
 
 <p><a name="organizing-log-messages"></a></p>
 
@@ -637,7 +633,8 @@
 
 <p>To activate localized log messages, add the tag <code>locale</code> in the reconf.xml file. The locale must comply with the <a href="http://www.oracle.com/technetwork/java/javase/locales-137662.html">JDK 6 and JRE 6 Supported Locales</a>. Besides the default locale (en_US) the library also provides an additional one, Portuguese Brazil (pt_BR).</p>
 
-<div class="highlight highlight-xml"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd"</span><span class="nt">&gt;</span>
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;locale&gt;</span>pt_BR<span class="nt">&lt;/locale&gt;</span>
     <span class="nt">&lt;local-cache&gt;</span>
         <span class="nt">&lt;location&gt;</span>/export/application/local-cache<span class="nt">&lt;/location&gt;</span>
@@ -648,24 +645,25 @@
 <span class="nt">&lt;/configuration&gt;</span>
 </pre></div>
 
-<p><a name="overriding-the-updatefrequency-annotation-with-reconfxml"></a></p>
+<p><a name="overriding-polling-rate-with-reconfxml"></a></p>
 
 <h3>
-<a name="overriding-the-updatefrequency-annotation-with-reconfxml" class="anchor" href="#overriding-the-updatefrequency-annotation-with-reconfxml"><span class="octicon octicon-link"></span></a>Overriding the @UpdateFrequency annotation with reconf.xml</h3>
+<a name="overriding-polling-rate-parameters-with-reconfxml" class="anchor" href="#overriding-polling-rate-parameters-with-reconfxml"><span class="octicon octicon-link"></span></a>Overriding polling rate parameters with reconf.xml</h3>
 
-<p>It's very common to define a reasonable update frequency for production environment and a different one during testing. Adding a <code>configuration-repository-update-frequency</code> tag in the reconf.xml file will cause it to override the <code>@UpdateFrequency</code> settings of every configuration repository. It is important to notice that it won't affect items annotated with <code>@DoNotUpdate</code> or <code>@UpdateFrequency</code>.</p>
+<p>It's very common to define a reasonable polling rate for production environment and a different one during testing. Adding a <code>global-polling-frequency</code> tag in the reconf.xml file will cause it to override pollingRate and pollingTimeUnit of every configuration repository.</p>
 
-<div class="highlight highlight-xml"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-1.0.xsd"</span><span class="nt">&gt;</span>
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;configuration</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;local-cache&gt;</span>
         <span class="nt">&lt;location&gt;</span>/export/application/local-cache<span class="nt">&lt;/location&gt;</span>
     <span class="nt">&lt;/local-cache&gt;</span>
     <span class="nt">&lt;server&gt;</span>
         <span class="nt">&lt;url&gt;</span>http://server.reconf.intranet<span class="nt">&lt;/url&gt;</span>
     <span class="nt">&lt;/server&gt;</span>
-    <span class="nt">&lt;configuration-repository-update-frequency&gt;</span>
-        <span class="nt">&lt;interval&gt;</span>1<span class="nt">&lt;/interval&gt;</span>
-        <span class="nt">&lt;time-unit&gt;</span>SECONDS<span class="nt">&lt;/time-unit&gt;</span>
-    <span class="nt">&lt;/configuration-repository-update-frequency&gt;</span>
+    <span class="nt">&lt;global-polling-frequency&gt;</span>
+        <span class="nt">&lt;rate&gt;</span>1<span class="nt">&lt;/rate&gt;</span>
+        <span class="nt">&lt;time-unit&gt;</span>MINUTES<span class="nt">&lt;/time-unit&gt;</span>
+    <span class="nt">&lt;/global-polling-frequency&gt;</span>
 <span class="nt">&lt;/configuration&gt;</span>
 </pre></div>
 
@@ -686,7 +684,7 @@
 <div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>br.com.uol.reconf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>reconf-spring<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.5.16<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.1.2<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div>
 
@@ -699,9 +697,9 @@
 <span class="kn">import</span> <span class="nn">java.util.concurrent.*</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">reconf.client.annotations.*</span><span class="o">;</span>
 
-<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">product</span><span class="o">=</span><span class="s">"my-product"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"hello-application"</span><span class="o">)</span>
-<span class="nd">@UpdateFrequency</span><span class="o">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">10</span><span class="o">,</span> <span class="n">timeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">WelcomeConfiguration</span> <span class="o">{</span>
+<span class="nd">@ConfigurationRepository</span><span class="o">(</span><span class="n">product</span><span class="o">=</span><span class="s">"my-product"</span><span class="o">,</span> <span class="n">component</span><span class="o">=</span><span class="s">"hello-application"</span><span class="o">,</span>
+    <span class="n">pollingRate</span><span class="o">=</span><span class="mi">10</span><span class="o">,</span> <span class="n">pollingTimeUnit</span><span class="o">=</span><span class="n">TimeUnit</span><span class="o">.</span><span class="na">MINUTES</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Configuration</span> <span class="o">{</span>
 
     <span class="nd">@ConfigurationItem</span><span class="o">(</span><span class="s">"welcome.text"</span><span class="o">)</span>
     <span class="n">String</span> <span class="nf">getText</span><span class="o">();</span>
@@ -711,7 +709,7 @@
 <p>The xml should look like this.</p>
 
 <div class="highlight highlight-xml"><pre><span class="nt">&lt;bean</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configInterface"</span> <span class="na">value=</span><span class="s">"example.WelcomeConfiguration"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configInterface"</span> <span class="na">value=</span><span class="s">"example.Configuration"</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;/bean&gt;</span>
 </pre></div>
 
@@ -720,20 +718,80 @@
 <h3>
 <a name="using-customizations-with-spring" class="anchor" href="#using-customizations-with-spring"><span class="octicon octicon-link"></span></a>Using Customizations with Spring</h3>
 
-<p>The xml excerpt below creates two beans, a regular "welcome" and a custom "customWelcome" detailed in <a href="#configurationrepository-reuse-through-customizations">ConfigurationRepository reuse through Customizations</a>.</p>
+<p>The xml excerpt below creates two beans, a regular "conf" and a custom "customConf" detailed in <a href="#configurationrepository-reuse-through-customizations">ConfigurationRepository reuse through Customizations</a>.</p>
 
-<div class="highlight highlight-xml"><pre><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">"customWelcome"</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configInterface"</span> <span class="na">value=</span><span class="s">"example.WelcomeConfiguration"</span><span class="nt">/&gt;</span>
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">"customConf"</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configInterface"</span> <span class="na">value=</span><span class="s">"example.Configuration"</span><span class="nt">/&gt;</span>
     <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"componentPrefix"</span> <span class="na">value=</span><span class="s">"cp-"</span><span class="nt">/&gt;</span>
     <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"componentSuffix"</span> <span class="na">value=</span><span class="s">"-cs"</span><span class="nt">/&gt;</span>
     <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"componentItemPrefix"</span> <span class="na">value=</span><span class="s">"kp-"</span><span class="nt">/&gt;</span>
     <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"componentItemSuffix"</span> <span class="na">value=</span><span class="s">"-ks"</span><span class="nt">/&gt;</span>
 <span class="nt">&lt;/bean&gt;</span>
 
-<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">"welcome"</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configInterface"</span> <span class="na">value=</span><span class="s">"example.WelcomeConfiguration"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">"conf"</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configInterface"</span> <span class="na">value=</span><span class="s">"example.Configuration"</span><span class="nt">/&gt;</span>
 <span class="nt">&lt;/bean&gt;</span>
 </pre></div>
+
+<p><a name="using-notifications"></a></p>
+
+<h3>
+<a name="events-and-listeners" class="anchor" href="#events-and-listeners"><span class="octicon octicon-link"></span></a>Events and Listeners</h3>
+
+<p>The API fires notifications for certain kinds of events. The current version is capable of notifying clients of two significative events related to the <code>@ConfigurationItem</code> lifecycle: (1) the property is successfully updated; (2) the client is not able to build an object from the obtained value.</p>
+
+<p>To listen to such events, the application developer must provide an implementation of the <code>reconf.client.notification.ConfigurationItemListener</code> interface. There are two possible ways to register the listener. One is by adding it directly into the <a href="#configurationrepository-reuse-through-customizations">Customization</a> object (example 1). The other is during the beanwiring set up on Spring (example 2).</p>
+
+<div class="highlight highlight-java"><pre>    <span class="c1">// example 1</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">Customization</span> <span class="n">custom</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Customization</span><span class="o">();</span>
+        <span class="n">custom</span><span class="o">.</span><span class="na">addConfigurationItemListener</span><span class="o">(</span><span class="k">new</span> <span class="n">ConfigurationItemListener</span><span class="o">()</span> <span class="o">{</span>
+
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onEvent</span><span class="o">(</span><span class="n">UpdateNotification</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"updated value ["</span> <span class="o">+</span> <span class="n">event</span><span class="o">.</span><span class="na">getRawValue</span><span class="o">()</span> <span class="o">+</span> 
+                    <span class="s">"] read from ["</span> <span class="o">+</span> <span class="n">event</span><span class="o">.</span><span class="na">getSource</span><span class="o">()</span> <span class="o">+</span> <span class="s">"]"</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onEvent</span><span class="o">(</span><span class="n">ErrorNotification</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"error while updating a property. obtained value ["</span> <span class="o">+</span>
+                    <span class="n">event</span><span class="o">.</span><span class="na">getRawValue</span><span class="o">()</span> <span class="o">+</span> <span class="s">"] read from ["</span> <span class="o">+</span> <span class="n">event</span><span class="o">.</span><span class="na">getSource</span><span class="o">()</span> <span class="o">+</span>
+                    <span class="s">"] exception ["</span> <span class="o">+</span> <span class="n">event</span><span class="o">.</span><span class="na">getError</span><span class="o">()</span> <span class="o">+</span> <span class="s">"]"</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+        <span class="n">Configuration</span> <span class="n">conf</span> <span class="o">=</span> <span class="n">ConfigurationRepositoryFactory</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">Configuration</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">custom</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">conf</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
+    <span class="o">}</span>
+</pre></div>
+
+<div class="highlight highlight-xml"><pre>    <span class="c">&lt;!-- example 2 --&gt;</span>
+    <span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">"conf"</span> <span class="na">class=</span><span class="s">"reconf.spring.RepositoryConfigurationBean"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configInterface"</span> <span class="na">value=</span><span class="s">"reconf.driver.Configuration"</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"configurationItemListeners"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;util:list&gt;</span>
+                <span class="nt">&lt;bean</span> <span class="na">class=</span><span class="s">"reconf.driver.MyListener"</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;/util:list&gt;</span>
+        <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;/bean&gt;</span>
+</pre></div>
+
+<p>The basic attributes shared by both Notification events are:</p>
+
+<ul>
+<li>
+<code>java.lang.String</code> product</li>
+<li>
+<code>java.lang.String</code> component</li>
+<li>
+<code>java.lang.String</code> item</li>
+<li>
+<code>java.lang.reflect.Method</code> method</li>
+<li>
+<code>java.lang.Class</code> cast</li>
+<li>
+<code>java.lang.String</code> rawValue</li>
+<li>
+<code>reconf.client.config.update.ConfigurationItemUpdateResult.Source</code> source</li>
+</ul><p>The <code>ErrorNotification</code> class has an additional <code>java.lang.Throwable</code> throwable field, whilst the <code>UpdateNotification</code> class has a <code>java.lang.Object</code> newValue field containing the newly created object. </p>
 
 <p><a name="troubleshooting"></a></p>
 
@@ -748,7 +806,7 @@
 </ol><h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
-<p>Copyright 1996-2013 UOL Inc</p>
+<p>Copyright 1996-2014 UOL Inc</p>
 
 <p>Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
