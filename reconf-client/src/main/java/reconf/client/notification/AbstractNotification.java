@@ -19,7 +19,7 @@ import java.lang.reflect.*;
 import reconf.client.config.update.*;
 import reconf.client.config.update.ConfigurationItemUpdateResult.Source;
 
-public abstract class AbstractNotification {
+abstract class AbstractNotification {
 
     private String product;
     private String component;

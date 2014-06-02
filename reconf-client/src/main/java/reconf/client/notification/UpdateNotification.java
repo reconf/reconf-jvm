@@ -15,18 +15,8 @@
  */
 package reconf.client.notification;
 
-import reconf.client.config.update.*;
 
-public final class UpdateNotification extends AbstractNotification {
+public interface UpdateNotification extends Notification {
 
-    private final Object value;
-
-    public UpdateNotification(ConfigurationItemUpdateResult result) {
-        super(result);
-        this.value = result.getObject();
-    }
-
-    public Object getValue() {
-        return value;
-    }
+    Object getValue();
 }

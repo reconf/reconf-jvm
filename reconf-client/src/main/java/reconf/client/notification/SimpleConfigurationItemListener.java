@@ -1,5 +1,5 @@
 /*
- *    Copyright 1996-2014 UOL Inc
+ *    Copyright 1996-2013 UOL Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,8 +15,14 @@
  */
 package reconf.client.notification;
 
+public class SimpleConfigurationItemListener implements ConfigurationItemListener {
 
-public interface ErrorNotification extends Notification {
+    @Override
+    public void onEvent(ErrorNotification event) {
+    }
 
-    Throwable getError();
+    @Override
+    public void onEvent(UpdateNotification event) {
+    }
+
 }

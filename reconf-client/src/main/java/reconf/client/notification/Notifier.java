@@ -32,10 +32,10 @@ public class Notifier {
                     continue;
                 }
                 if (result.getType() == ConfigurationItemUpdateResult.Type.update) {
-                    notifyUpdate(name, listener, new UpdateNotification(updater.getLastResult()));
+                    notifyUpdate(name, listener, new StandardUpdateNotification(updater.getLastResult()));
                 }
                 if (result.getType() == ConfigurationItemUpdateResult.Type.error) {
-                    notifyError(name, listener, new ErrorNotification(updater.getLastResult()));
+                    notifyError(name, listener, new StandardErrorNotification(updater.getLastResult()));
                 }
             }
         }

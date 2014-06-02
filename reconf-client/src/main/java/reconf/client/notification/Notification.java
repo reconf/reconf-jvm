@@ -1,5 +1,5 @@
 /*
- *    Copyright 1996-2014 UOL Inc
+ *    Copyright 1996-2013 UOL Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,8 +15,15 @@
  */
 package reconf.client.notification;
 
+import java.lang.reflect.*;
+import reconf.client.config.update.ConfigurationItemUpdateResult.Source;
 
-public interface ErrorNotification extends Notification {
-
-    Throwable getError();
+public interface Notification {
+    String getProduct();
+    String getComponent();
+    String getItem();
+    Method getMethod();
+    Class<?> getCast();
+    String getRawValue();
+    Source getSource();
 }
