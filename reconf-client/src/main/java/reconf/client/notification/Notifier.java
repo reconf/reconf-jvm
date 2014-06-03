@@ -31,10 +31,11 @@ public class Notifier {
                 if (result == null) {
                     continue;
                 }
-                if (result.getType() == ConfigurationItemUpdateResult.Type.update) {
+                NotificationHeader header = new SimpleNotificationHeader(result);
+                if (result.getType() == ConfigurationItemUpdateResult.Type.update && listener.shouldNotifyUpdate(header)) {
                     notifyUpdate(name, listener, new StandardUpdateNotification(updater.getLastResult()));
                 }
-                if (result.getType() == ConfigurationItemUpdateResult.Type.error) {
+                if (result.getType() == ConfigurationItemUpdateResult.Type.error && listener.shouldNotifyError(header)) {
                     notifyError(name, listener, new StandardErrorNotification(updater.getLastResult()));
                 }
             }

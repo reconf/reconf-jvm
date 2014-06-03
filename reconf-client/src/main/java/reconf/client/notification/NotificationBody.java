@@ -17,11 +17,7 @@ package reconf.client.notification;
 
 import reconf.client.config.update.ConfigurationItemUpdateResult.Source;
 
-public interface Notification {
-    String getProduct();
-    String getComponent();
-    String getItem();
-    String getQualifier();
+public interface NotificationBody extends NotificationHeader {
     Class<?> getCast();
     String getRawValue();
     Source getSource();

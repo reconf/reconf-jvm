@@ -19,4 +19,6 @@ public interface ConfigurationItemListener {
 
     void onEvent(ErrorNotification event);
     void onEvent(UpdateNotification event);
+    boolean shouldNotifyError(NotificationHeader header);
+    boolean shouldNotifyUpdate(NotificationHeader header);
 }

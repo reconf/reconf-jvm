@@ -16,7 +16,7 @@
 package reconf.client.notification;
 
 
-public interface ErrorNotification extends Notification {
+public interface ErrorNotification extends NotificationBody {
 
     Throwable getError();
 }

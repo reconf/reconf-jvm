@@ -15,24 +15,9 @@
  */
 package reconf.client.notification;
 
-public class SimpleConfigurationItemListener implements ConfigurationItemListener {
-
-    @Override
-    public void onEvent(ErrorNotification event) {
-    }
-
-    @Override
-    public void onEvent(UpdateNotification event) {
-    }
-
-    @Override
-    public boolean shouldNotifyError(NotificationHeader header) {
-        return true;
-    }
-
-    @Override
-    public boolean shouldNotifyUpdate(NotificationHeader header) {
-        return true;
-    }
-
+public interface NotificationHeader {
+    String getProduct();
+    String getComponent();
+    String getItem();
+    String getQualifier();
 }

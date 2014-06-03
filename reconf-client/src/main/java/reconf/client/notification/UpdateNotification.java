@@ -16,7 +16,7 @@
 package reconf.client.notification;
 
 
-public interface UpdateNotification extends Notification {
+public interface UpdateNotification extends NotificationBody {
 
     Object getValue();
 }
