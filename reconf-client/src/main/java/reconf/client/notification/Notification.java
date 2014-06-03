@@ -15,14 +15,13 @@
  */
 package reconf.client.notification;
 
-import java.lang.reflect.*;
 import reconf.client.config.update.ConfigurationItemUpdateResult.Source;
 
 public interface Notification {
     String getProduct();
     String getComponent();
     String getItem();
-    Method getMethod();
+    String getQualifier();
     Class<?> getCast();
     String getRawValue();
     Source getSource();

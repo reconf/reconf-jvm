@@ -28,6 +28,7 @@ abstract class AbstractNotification {
     private Class<?> cast;
     private String rawValue;
     private Source source;
+    private String qualifier;
 
     public AbstractNotification(ConfigurationItemUpdateResult result) {
         this.product = result.getProduct();
@@ -37,6 +38,7 @@ abstract class AbstractNotification {
         this.cast = result.getCast();
         this.rawValue = result.getRawValue();
         this.source = result.getSource();
+        this.qualifier = result.getQualifier();
     }
 
     public String getProduct() {
@@ -49,6 +51,10 @@ abstract class AbstractNotification {
 
     public String getItem() {
         return item;
+    }
+
+    public String getQualifier() {
+        return qualifier;
     }
 
     public Method getMethod() {

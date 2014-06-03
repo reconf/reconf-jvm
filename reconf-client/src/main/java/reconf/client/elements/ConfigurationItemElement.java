@@ -33,6 +33,7 @@ public class ConfigurationItemElement {
     private String value;
     private String component;
     private String product;
+    private String qualifier;
     private Class<? extends ConfigurationAdapter> adapter;
 
     public static List<ConfigurationItemElement> from(ConfigurationRepositoryElement repository) {
@@ -60,6 +61,7 @@ public class ConfigurationItemElement {
                 resultItem.setMethod(method.getName());
                 resultItem.setAdapter(ann.adapter());
                 resultItem.setValue(ann.value());
+                resultItem.setQualifier(ann.qualifier());
             }
             resultItem.setMethod(method);
             defineItemProductComponentOverride(repository, resultItem, ann);
@@ -124,11 +126,19 @@ public class ConfigurationItemElement {
         this.product = product;
     }
 
+    public String getQualifier() {
+        return qualifier;
+    }
+    public void setQualifier(String qualifier) {
+        this.qualifier = qualifier;
+    }
+
     @Override
     public String toString() {
         ToStringBuilder result = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("method", getMethod());
         addToString(result, "product", getProduct());
         addToString(result, "component", getComponent());
+        addToString(result, "qualifier", getQualifier());
         result.append("value", getValue());
         return result.toString();
     }

@@ -35,6 +35,7 @@ public class ConfigurationItemUpdateResult {
     private String rawValue;
     private Throwable error;
     private Source source;
+    private String qualifier;
 
     private ConfigurationItemUpdateResult() { }
 
@@ -80,6 +81,10 @@ public class ConfigurationItemUpdateResult {
 
     public Source getSource() {
         return source;
+    }
+
+    public String getQualifier() {
+        return qualifier;
     }
 
     public static int countSuccess(Collection<ConfigurationItemUpdateResult> arg) {
@@ -156,6 +161,11 @@ public class ConfigurationItemUpdateResult {
 
         Builder from(Source source) {
             this.inner.source = source;
+            return this;
+        }
+
+        Builder qualifier(String qualifier) {
+            this.inner.qualifier = qualifier;
             return this;
         }
 
