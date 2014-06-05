@@ -218,7 +218,6 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
         List<ConfigurationUpdater> toExecute = new ArrayList<ConfigurationUpdater>();
         CountDownLatch latch = new CountDownLatch(data.getAll().size());
         Map<Method, ConfigurationItemUpdateResult> updateAtomic = new ConcurrentHashMap<Method, ConfigurationItemUpdateResult>();
-        Map<Method, ConfigurationItemUpdateResult> updateIndependent = new ConcurrentHashMap<Method, ConfigurationItemUpdateResult>();
 
         try {
             for (MethodConfiguration config : data.getAll()) {
@@ -236,7 +235,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             interruptAll(toExecute);
         }
 
-        if (updateAtomic.size() + updateIndependent.size() != data.getAll().size()) {
+        if (ConfigurationItemUpdateResult.countSuccess(updateAtomic.values()) != data.getAll().size()) {
             String error = msg.format("sync.error", getName());
             try {
                 Constructor<?> constructor = null;
@@ -254,12 +253,12 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
                 throw new UpdateConfigurationRepositoryException(error);
             }
         }
-        finishSync(updateAtomic, updateIndependent);
+        finishSync(updateAtomic);
         Notifier.notify(listeners, toExecute, getName());
         LoggerHolder.getLog().info(msg.format("sync.end", getName()));
     }
 
-    private void finishSync(Map<Method, ConfigurationItemUpdateResult> updateAtomic, Map<Method, ConfigurationItemUpdateResult> updateIndependent) {
+    private void finishSync(Map<Method, ConfigurationItemUpdateResult> updateAtomic) {
         Map<Method,Object> mergedAtomic = new ConcurrentHashMap<Method, Object>();
         for (Entry<Method, Object> each : methodValue.entrySet()) {
             mergedAtomic.put(each.getKey(), (!updateAtomic.containsKey(each.getKey()) ? each.getValue() : updateAtomic.get(each.getKey()).getObject()));
