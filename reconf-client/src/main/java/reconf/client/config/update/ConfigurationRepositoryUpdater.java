@@ -77,17 +77,25 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
 
     private void load() {
         CountDownLatch latch = new CountDownLatch(data.getAll().size() + data.getAtomicReload().size());
-        List<ConfigurationUpdater> toExecute = new ArrayList<ConfigurationUpdater>();
+        List<ConfigurationUpdater> toExecuteGlobal = new ArrayList<ConfigurationUpdater>();
+        List<ConfigurationUpdater> toExecuteLocal = new ArrayList<ConfigurationUpdater>();
+        List<ConfigurationUpdater> toExecuteRemote = new ArrayList<ConfigurationUpdater>();
 
         Map<Method, ConfigurationItemUpdateResult> remote = new ConcurrentHashMap<Method, ConfigurationItemUpdateResult>();
         Map<Method, ConfigurationItemUpdateResult> local = new ConcurrentHashMap<Method, ConfigurationItemUpdateResult>();
 
         try {
             for (MethodConfiguration config : data.getAll()) {
-                toExecute.add(locator.configurationUpdaterFactory().syncRemote(remote, config, latch));
-                toExecute.add(locator.configurationUpdaterFactory().syncLocal(local, config, latch));
+                ConfigurationUpdater remoteUpdater = locator.configurationUpdaterFactory().syncRemote(remote, config, latch);
+                ConfigurationUpdater localUpdater = locator.configurationUpdaterFactory().syncLocal(local, config, latch);
+
+                toExecuteRemote.add(remoteUpdater);
+                toExecuteLocal.add(localUpdater);
+
+                toExecuteGlobal.add(remoteUpdater);
+                toExecuteGlobal.add(localUpdater);
             }
-            for (ConfigurationUpdater thread : toExecute) {
+            for (ConfigurationUpdater thread : toExecuteGlobal) {
                 thread.start();
             }
             waitFor(latch);
@@ -96,7 +104,7 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
             LoggerHolder.getLog().error(msg.format("error.load", getName()), ignored);
 
         } finally {
-            interruptAll(toExecute);
+            interruptAll(toExecuteGlobal);
         }
 
         if (ConfigurationItemUpdateResult.countSuccess(remote.values()) < ConfigurationItemUpdateResult.countSuccess(local.values())) {
@@ -105,14 +113,15 @@ public class ConfigurationRepositoryUpdater extends ObservableThread {
                     methodValue.put(each.getKey(), each.getValue().getObject());
                 }
             }
+            Notifier.notify(listeners, toExecuteLocal, getName());
         } else {
             for (Entry<Method, ConfigurationItemUpdateResult> each : remote.entrySet()) {
                 if (each.getValue().isSuccess()) {
                     methodValue.put(each.getKey(), each.getValue().getObject());
                 }
             }
+            Notifier.notify(listeners, toExecuteRemote, getName());
         }
-        Notifier.notify(listeners, toExecute, getName());
         validateLoadResult();
     }
 
