@@ -137,7 +137,7 @@
 <div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>br.com.uol.reconf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>reconf-client<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>2.1.2<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.1.7<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div>
 
@@ -599,7 +599,7 @@
 <p>Customizations are a feature that allows the developer to solve the following problem: "Can I create two instances of the same ConfigurationRepository containing different configuration values?". In order to do that, we introduce the concept of Customizations. This feature provides a way to slightly change a configuration repository by adding prefixes and/or suffixes for components and/or configuration item names.</p>
 
 <div class="highlight highlight-java"><pre>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">Customization</span> <span class="n">cust</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Customization</span><span class="o">();</span>
+        <span class="n">Customization</span> <span class="n">cust</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Customization</span><span class="o">();</span>
         <span class="n">cust</span><span class="o">.</span><span class="na">setComponentPrefix</span><span class="o">(</span><span class="s">"cp-"</span><span class="o">);</span>
         <span class="n">cust</span><span class="o">.</span><span class="na">setComponentSuffix</span><span class="o">(</span><span class="s">"-cs"</span><span class="o">);</span>
         <span class="n">cust</span><span class="o">.</span><span class="na">setComponentItemPrefix</span><span class="o">(</span><span class="s">"kp-"</span><span class="o">);</span>
@@ -684,7 +684,7 @@
 <div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>br.com.uol.reconf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>reconf-spring<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>2.1.2<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.1.7<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div>
 
@@ -744,8 +744,8 @@
 
 <div class="highlight highlight-java"><pre>    <span class="c1">// example 1</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-        <span class="n">Customization</span> <span class="n">custom</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Customization</span><span class="o">();</span>
-        <span class="n">custom</span><span class="o">.</span><span class="na">addConfigurationItemListener</span><span class="o">(</span><span class="k">new</span> <span class="n">ConfigurationItemListener</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">Customization</span> <span class="n">custom</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Customization</span><span class="o">();</span>
+        <span class="n">custom</span><span class="o">.</span><span class="na">addConfigurationItemListener</span><span class="o">(</span><span class="k">new</span> <span class="nf">ConfigurationItemListener</span><span class="o">()</span> <span class="o">{</span>
 
             <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onEvent</span><span class="o">(</span><span class="n">UpdateNotification</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
                 <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"updated value ["</span> <span class="o">+</span> <span class="n">event</span><span class="o">.</span><span class="na">getRawValue</span><span class="o">()</span> <span class="o">+</span> 
