@@ -15,3 +15,5 @@ reconf-spring/.classpath
 reconf-spring/.project
 reconf-spring/.springBeans
 target/*
+**/*.iml
+**/.idea/**
