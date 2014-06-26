@@ -106,7 +106,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         boolean configurationAnnotationPresent = method.isAnnotationPresent(ConfigurationItem.class);
 
         if (!configurationAnnotationPresent && !updateAnnotationPresent) {
-            throw new IllegalArgumentException(msg.format("error.method", method));
+            return method.invoke(proxy, args);
         }
 
         if (updateAnnotationPresent) {
