@@ -166,10 +166,8 @@ public class DatabaseManager implements ShutdownBean {
     }
 
     public boolean temporaryUpsert(String fullProperty, Method method, String value) {
-        synchronized (dataSource) {
-            if (dataSource.isClosed()) {
-                return false;
-            }
+        if (dataSource.isClosed()) {
+            return false;
         }
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -209,10 +207,8 @@ public class DatabaseManager implements ShutdownBean {
     }
 
     public boolean isNew(String fullProperty, Method method, String value) {
-        synchronized (dataSource) {
-            if (dataSource.isClosed()) {
-                return false;
-            }
+        if (dataSource.isClosed()) {
+            return false;
         }
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -277,10 +273,8 @@ public class DatabaseManager implements ShutdownBean {
 
 
     public void commitTemporaryUpdate(Collection<String> fullProperties, Class<?> declaringClass) {
-        synchronized (dataSource) {
-            if (dataSource.isClosed()) {
-                return;
-            }
+        if (dataSource.isClosed()) {
+            return;
         }
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -324,10 +318,8 @@ public class DatabaseManager implements ShutdownBean {
     }
 
     private void cleanTable() throws Exception {
-        synchronized (dataSource) {
-            if (dataSource.isClosed()) {
-                return;
-            }
+        if (dataSource.isClosed()) {
+            return;
         }
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -347,7 +339,7 @@ public class DatabaseManager implements ShutdownBean {
         }
     }
 
-    private synchronized void execute(String cmd) throws Exception {
+    private void execute(String cmd) throws Exception {
         Connection conn = null;
         Statement stmt = null;
         try {
@@ -385,7 +377,7 @@ public class DatabaseManager implements ShutdownBean {
         }
     }
 
-    private synchronized Connection getConnection() throws SQLException {
+    private Connection getConnection() throws SQLException {
         if (dataSource == null) {
             throw new RuntimeException(msg.get("error.datasource.null"));
         }
@@ -397,16 +389,21 @@ public class DatabaseManager implements ShutdownBean {
         return conn;
     }
 
-    private synchronized void firstConnection(DatabaseURL arg) throws SQLException {
+    private void firstConnection(DatabaseURL arg) throws SQLException {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(arg.getDriverClassName());
         ds.setUrl(arg.buildInitalURL());
         ds.setUsername(arg.getLogin());
         ds.setPassword(arg.getPass());
+        ds.setMaxActive(20);
+        ds.setMinIdle(5);
+        ds.setTestOnBorrow(true);
+        ds.setTestWhileIdle(true);
+        ds.setMaxWait(20000);
         ds.getConnection().close();
     }
 
-    public synchronized void shutdown() {
+    public void shutdown() {
         if (!init) {
             return;
         }

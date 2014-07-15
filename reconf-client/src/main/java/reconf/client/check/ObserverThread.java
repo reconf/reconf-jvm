@@ -62,8 +62,10 @@ public class ObserverThread extends Thread {
                 }
 
                 for (ObservableThread add : toAdd) {
+                    LoggerHolder.getLog().info(msg.format("thread.starting", getName(), add.getName()));
                     toWatch.add(add);
                     add.start();
+                    LoggerHolder.getLog().info(msg.format("thread.running", getName(), add.getName()));
                 }
 
             } catch (Throwable t) {
