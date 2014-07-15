@@ -79,4 +79,8 @@ public class ObserverThread extends Thread {
             toWatch.add(thread);
         }
     }
+
+    public List<ObservableThread> getActiveThreads() {
+        return new ArrayList<ObservableThread>(toWatch);
+    }
 }

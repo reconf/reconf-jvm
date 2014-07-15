@@ -20,6 +20,7 @@ import java.util.*;
 import org.apache.commons.collections.*;
 import org.apache.commons.lang.*;
 import reconf.client.check.*;
+import reconf.client.config.update.*;
 import reconf.client.factory.*;
 import reconf.client.validation.*;
 import reconf.infra.http.*;
@@ -136,6 +137,22 @@ public class Environment {
     public static void addThreadToCheck(ObservableThread thread) {
         if (checker != null) {
             checker.add(thread);
+        }
+    }
+
+    public static void syncActiveUpdaters() {
+        List<ObservableThread> toSync = checker.getActiveThreads();
+        for (ObservableThread thread : toSync) {
+            if (!(thread instanceof ConfigurationRepositoryUpdater)) {
+                continue;
+            }
+            ConfigurationRepositoryUpdater updater = (ConfigurationRepositoryUpdater) thread;
+
+            try {
+                updater.syncNow(RuntimeException.class);
+            } catch (Exception e) {
+                //already logged
+            }
         }
     }
 }
