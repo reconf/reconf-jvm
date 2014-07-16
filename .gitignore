@@ -17,3 +17,6 @@ reconf-spring/.springBeans
 target/*
 **/*.iml
 **/.idea/**
+reconf-servlet/.settings/org.eclipse.core.resources.prefs
+reconf-servlet/.settings/org.eclipse.jdt.core.prefs
+reconf-servlet/.settings/org.eclipse.m2e.core.prefs

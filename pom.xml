@@ -223,5 +223,6 @@
         <module>reconf-infra</module>
         <module>reconf-client</module>
         <module>reconf-spring</module>
+        <module>reconf-servlet</module>
     </modules>
 </project>
