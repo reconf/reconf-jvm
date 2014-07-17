@@ -47,7 +47,20 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         }
 
         String key = arg.getName() + customization;
+//        if (customization.isBlank() && customization.emptyConfigurationItemListeners()) {
+//            Customization cachedCustomization = customCache.get(key);
+//            if (cachedCustomization != null) {
+//
+//            }
+//        }
+
         if (cache.containsKey(key)) {
+            //FIXME
+            //cust(blank, no listener), cust(blank, listener#1) - different
+            //cust(blank, listener#1), cust(blank, listener#2) -  different
+            //cust(one, no listener), cust(other, no listener) - different
+            //cust(blank, no listener), cust(blank, no listener) - equals
+
             Customization cachedCustomization = customCache.get(key);
             if (cachedCustomization != null) {
                 if (cachedCustomization.equals(customization) && !cachedCustomization.toCompare().equals(customization.toCompare())) {

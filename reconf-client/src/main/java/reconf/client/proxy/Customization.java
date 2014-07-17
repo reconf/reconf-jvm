@@ -88,13 +88,13 @@ public class Customization {
         return this.toString().equals(obj.toString());
     }
 
-    public boolean isValid() {
-        return StringUtils.isNotBlank(productPrefix) ||
-            StringUtils.isNotBlank(productSuffix) ||
-            StringUtils.isNotBlank(componentPrefix) ||
-            StringUtils.isNotBlank(componentSuffix) ||
-            StringUtils.isNotBlank(namePrefix) ||
-            StringUtils.isNotBlank(nameSuffix);
+    public boolean isBlank() {
+        return StringUtils.isBlank(productPrefix) &&
+            StringUtils.isBlank(productSuffix) &&
+            StringUtils.isBlank(componentPrefix) &&
+            StringUtils.isBlank(componentSuffix) &&
+            StringUtils.isBlank(namePrefix) &&
+            StringUtils.isBlank(nameSuffix);
     }
 
     @Override
@@ -167,8 +167,13 @@ public class Customization {
         }
         return builder.toString();
     }
+
     public Collection<ConfigurationItemListener> getConfigurationItemListeners() {
         return configurationItemListeners;
+    }
+
+    public boolean emptyConfigurationItemListeners() {
+        return configurationItemListeners.isEmpty();
     }
 
     public void setConfigurationItemListeners(Collection<ConfigurationItemListener> configurationItemListeners) {

@@ -25,7 +25,6 @@ import javax.servlet.http.*;
 public class AdminServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    public static final String DEFAULT_SYNC_URI = "/sync";
     private static final String CONTENT_TYPE = "application/json";
 
     private transient SyncServlet syncServlet;
@@ -40,7 +39,7 @@ public class AdminServlet extends HttpServlet {
         this.syncServlet = new SyncServlet();
         this.syncServlet.init(config);
 
-        this.syncUri = getParam(config.getInitParameter("sync-uri"), DEFAULT_SYNC_URI);
+        this.syncUri = getParam(config.getInitParameter("sync-uri"), SyncServlet.getDefaultURI());
     }
 
     @Override
@@ -77,5 +76,9 @@ public class AdminServlet extends HttpServlet {
 
     private static String getParam(String initParam, String defaultValue) {
         return initParam == null ? defaultValue : initParam;
+    }
+
+    public static String getContentType() {
+        return CONTENT_TYPE;
     }
 }
