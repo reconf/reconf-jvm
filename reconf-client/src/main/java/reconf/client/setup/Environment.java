@@ -140,8 +140,10 @@ public class Environment {
         }
     }
 
-    public static void syncActiveUpdaters() {
+    public static List<SyncResult> syncActiveConfigurationRepositoryUpdaters() {
         List<ObservableThread> toSync = checker.getActiveThreads();
+        List<SyncResult> result = new ArrayList<SyncResult>();
+
         for (ObservableThread thread : toSync) {
             if (!(thread instanceof ConfigurationRepositoryUpdater)) {
                 continue;
@@ -150,9 +152,12 @@ public class Environment {
 
             try {
                 updater.syncNow(RuntimeException.class);
+                result.add(new SyncResult(updater.getName()));
+
             } catch (Exception e) {
-                //already logged
+                result.add(new SyncResult(updater.getName(), e));
             }
         }
+        return result;
     }
 }

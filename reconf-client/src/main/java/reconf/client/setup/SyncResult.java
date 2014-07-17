@@ -13,19 +13,28 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.servlet;
+package reconf.client.setup;
 
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import reconf.client.setup.*;
+public class SyncResult {
 
-public class SyncServlet extends HttpServlet {
+    private final String name;
+    private final Throwable throwable;
 
-    private static final long serialVersionUID = 1L;
+    public SyncResult(String name) {
+        this.name = name;
+        this.throwable = null;
+    }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Environment.syncActiveConfigurationRepositoryUpdaters();
+    public SyncResult(String name, Throwable throwable) {
+        this.name = name;
+        this.throwable = throwable;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
     }
 }

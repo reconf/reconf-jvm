@@ -15,6 +15,8 @@
  */
 package reconf.servlet;
 
+import java.io.*;
+import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
@@ -23,5 +25,57 @@ import javax.servlet.http.*;
 public class AdminServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    public static final String DEFAULT_SYNC_URI = "/sync";
+    private static final String CONTENT_TYPE = "application/json";
 
+    private transient SyncServlet syncServlet;
+    private transient String syncUri;
+
+
+    private static final String BODY_TEMPLATE = "{ \"page\" : { \"title\" : \"%s\", \"href\" : \"%s\" }, \"function\" : [ { \"name\" : \"%s\", \"href\" : \"%s\" } ] }";
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        this.syncServlet = new SyncServlet();
+        this.syncServlet.init(config);
+
+        this.syncUri = getParam(config.getInitParameter("sync-uri"), DEFAULT_SYNC_URI);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String path = req.getContextPath() + req.getServletPath();
+
+        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
+        resp.setContentType(CONTENT_TYPE);
+        PrintWriter writer = resp.getWriter();
+
+        try {
+            resp.setContentType(CONTENT_TYPE);
+            writer.println(String.format(BODY_TEMPLATE, "ReConf Operational Menu", path, "sync", path + syncUri));
+
+        } finally {
+            writer.close();
+        }
+    }
+
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String uri = req.getPathInfo();
+        if (uri == null || uri.equals("/")) {
+            super.service(req, resp);
+
+        } else if (uri.equals(syncUri)) {
+            syncServlet.service(req, resp);
+
+        } else {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    private static String getParam(String initParam, String defaultValue) {
+        return initParam == null ? defaultValue : initParam;
+    }
 }
