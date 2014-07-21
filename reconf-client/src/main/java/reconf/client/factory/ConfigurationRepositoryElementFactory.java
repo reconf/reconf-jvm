@@ -64,8 +64,6 @@ public class ConfigurationRepositoryElementFactory {
         result.setRate(ann.pollingRate());
         result.setTimeUnit(ann.pollingTimeUnit());
         result.setConfigurationItems(ConfigurationItemElement.from(result));
-        LoggerHolder.getLog().info(msg.format("new", LineSeparator.value(), result.toString()));
-
         return result;
     }
 

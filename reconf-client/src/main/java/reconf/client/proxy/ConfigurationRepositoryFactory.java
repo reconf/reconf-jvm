@@ -16,15 +16,20 @@
 package reconf.client.proxy;
 
 import java.lang.reflect.*;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
+import org.apache.commons.collections.*;
 import reconf.client.annotations.*;
 import reconf.client.config.update.*;
 import reconf.client.elements.*;
 import reconf.client.factory.*;
 import reconf.client.locator.*;
+import reconf.client.notification.*;
 import reconf.client.setup.*;
 import reconf.infra.i18n.*;
+import reconf.infra.log.*;
+import reconf.infra.system.*;
 
 public class ConfigurationRepositoryFactory implements InvocationHandler {
 
@@ -33,13 +38,21 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
     private static ConfigurationRepositoryElementFactory factory;
     private static final ReentrantLock lock = new ReentrantLock();
     private static ConcurrentMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
-    private static ConcurrentMap<String, Customization> customCache = new ConcurrentHashMap<String, Customization>();
+    private static ConcurrentMap<String, Collection<? extends ConfigurationItemListener>> listenerCache = new ConcurrentHashMap<String, Collection<? extends ConfigurationItemListener>>();
 
     public static synchronized <T> T get(Class<T> arg) {
-        return get(arg, null);
+        return get(arg, null, null);
     }
 
     public static synchronized <T> T get(Class<T> arg, Customization customization) {
+        return get(arg, customization, null);
+    }
+
+    public static synchronized <T> T get(Class<T> arg, Collection<? extends ConfigurationItemListener> configurationItemListeners) {
+        return get(arg, null, configurationItemListeners);
+    }
+
+    public static synchronized <T> T get(Class<T> arg, Customization customization, Collection<? extends ConfigurationItemListener> configurationItemListeners) {
         setUpIfNeeded();
 
         if (customization == null) {
@@ -47,35 +60,24 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         }
 
         String key = arg.getName() + customization;
-//        if (customization.isBlank() && customization.emptyConfigurationItemListeners()) {
-//            Customization cachedCustomization = customCache.get(key);
-//            if (cachedCustomization != null) {
-//
-//            }
-//        }
-
         if (cache.containsKey(key)) {
-            //FIXME
-            //cust(blank, no listener), cust(blank, listener#1) - different
-            //cust(blank, listener#1), cust(blank, listener#2) -  different
-            //cust(one, no listener), cust(other, no listener) - different
-            //cust(blank, no listener), cust(blank, no listener) - equals
-
-            Customization cachedCustomization = customCache.get(key);
-            if (cachedCustomization != null) {
-                if (cachedCustomization.equals(customization) && !cachedCustomization.toCompare().equals(customization.toCompare())) {
-                    throw new IllegalArgumentException(msg.format("error.customization", customization.toString()));
-                }
+            if (CollectionUtils.isEqualCollection(configurationItemListeners, listenerCache.get(key))) {
+                LoggerHolder.getLog().info(msg.format("cached.instance", arg.getName()));
+                return (T) cache.get(key);
             }
 
-            return (T) cache.get(key);
+            throw new IllegalArgumentException(msg.format("error.customization", arg.getName()));
         }
 
         ConfigurationRepositoryElement repo = Environment.getFactory().create(arg);
-
         repo.setCustomization(customization);
         repo.setComponent(customization.getCustomComponent(repo.getComponent()));
         repo.setProduct(customization.getCustomProduct(repo.getProduct()));
+        if (configurationItemListeners != null) {
+            for (ConfigurationItemListener listener : configurationItemListeners) {
+                repo.addConfigurationItemListener(listener);
+            }
+        }
 
         for (ConfigurationItemElement item : repo.getConfigurationItems()) {
             item.setProduct(repo.getProduct());
@@ -83,9 +85,11 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
             item.setValue(customization.getCustomItem(item.getValue()));
         }
 
+        LoggerHolder.getLog().info(msg.format("new.instance", LineSeparator.value(), repo.toString()));
+
         Object result = newInstance(arg, repo);
         cache.put(key, result);
-        customCache.put(key, customization);
+        listenerCache.put(key, configurationItemListeners == null ? Collections.EMPTY_LIST : configurationItemListeners);
 
         return (T) result;
     }

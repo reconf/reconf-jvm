@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.lang.builder.*;
+import reconf.client.notification.*;
 import reconf.client.proxy.*;
 import reconf.client.setup.*;
 import reconf.infra.system.*;
@@ -31,6 +32,7 @@ public class ConfigurationRepositoryElement {
     private String component;
     private Integer rate;
     private TimeUnit timeUnit;
+    private Collection<ConfigurationItemListener> configurationItemListeners = new ArrayList<ConfigurationItemListener>();
 
     private Class<?> interfaceClass;
     private List<ConfigurationItemElement> configurationItems = new ArrayList<ConfigurationItemElement>();
@@ -113,6 +115,21 @@ public class ConfigurationRepositoryElement {
         this.timeUnit = timeUnit;
     }
 
+
+    public Collection<ConfigurationItemListener> getConfigurationItemListeners() {
+        return configurationItemListeners;
+    }
+    public void setConfigurationItemListeners(Collection<ConfigurationItemListener> configurationItemListeners) {
+        if (configurationItemListeners != null) {
+            this.configurationItemListeners = configurationItemListeners;
+        }
+    }
+    public void addConfigurationItemListener(ConfigurationItemListener configurationItemListener) {
+        if (configurationItemListener != null) {
+            this.configurationItemListeners.add(configurationItemListener);
+        }
+    }
+
     @Override
     public String toString() {
         ToStringBuilder result = new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -121,6 +138,12 @@ public class ConfigurationRepositoryElement {
         .append("component", getComponent())
         .append("pollingRate", getRate())
         .append("pollingTimeUnit", getTimeUnit());
+        if (!configurationItemListeners.isEmpty()) {
+            List<ConfigurationItemListener> asList = new ArrayList<ConfigurationItemListener>(configurationItemListeners);
+            for (int i = 0; i < asList.size(); i++) {
+                result.append("item-listener-" + (i+1), asList.get(i));
+            }
+        }
 
         result.append("@ConfigurationItems", LineSeparator.value() + getConfigurationItems());
         return result.toString();

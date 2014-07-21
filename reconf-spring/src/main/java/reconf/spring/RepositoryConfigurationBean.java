@@ -25,9 +25,10 @@ public class RepositoryConfigurationBean implements FactoryBean {
 
     private Class<?> configInterface;
     private Customization customization = new Customization();
+    private Collection<ConfigurationItemListener> configurationItemListeners = new ArrayList<ConfigurationItemListener>();
 
     public Object getObject() throws Exception {
-        return ConfigurationRepositoryFactory.get(getConfigInterface(), getCustomization());
+        return ConfigurationRepositoryFactory.get(getConfigInterface(), getCustomization(), configurationItemListeners);
     }
 
     public Class<?> getObjectType() {
@@ -75,6 +76,8 @@ public class RepositoryConfigurationBean implements FactoryBean {
     }
 
     public void setConfigurationItemListeners(Collection<ConfigurationItemListener> configurationItemListeners) {
-        this.customization.setConfigurationItemListeners(configurationItemListeners);
+        if (configurationItemListeners != null) {
+            this.configurationItemListeners = configurationItemListeners;
+        }
     }
 }

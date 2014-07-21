@@ -15,9 +15,7 @@
  */
 package reconf.client.proxy;
 
-import java.util.*;
 import org.apache.commons.lang.*;
-import reconf.client.notification.*;
 
 
 public class Customization {
@@ -28,7 +26,6 @@ public class Customization {
     private String componentSuffix;
     private String namePrefix;
     private String nameSuffix;
-    private Collection<ConfigurationItemListener> configurationItemListeners = new ArrayList<ConfigurationItemListener>();
 
     public String getProductPrefix() {
         return productPrefix;
@@ -108,16 +105,6 @@ public class Customization {
             .toString();
     }
 
-    public String toCompare() {
-        Set<String> listenerNames = new TreeSet<String>();
-        for (ConfigurationItemListener listener : configurationItemListeners) {
-            listenerNames.add(listener.toString());
-        }
-
-        String partial = this.toString();
-        return partial += "listeners " + listenerNames.toString();
-    }
-
     public String getCustomProduct(String originalProduct) {
         if (StringUtils.isBlank(originalProduct) || (StringUtils.isBlank(getProductPrefix()) && StringUtils.isBlank(getProductSuffix()))) {
             return originalProduct;
@@ -166,25 +153,5 @@ public class Customization {
             builder.append(getComponentItemSuffix());
         }
         return builder.toString();
-    }
-
-    public Collection<ConfigurationItemListener> getConfigurationItemListeners() {
-        return configurationItemListeners;
-    }
-
-    public boolean emptyConfigurationItemListeners() {
-        return configurationItemListeners.isEmpty();
-    }
-
-    public void setConfigurationItemListeners(Collection<ConfigurationItemListener> configurationItemListeners) {
-        if (configurationItemListeners != null) {
-            this.configurationItemListeners = configurationItemListeners;
-        }
-    }
-
-    public void addConfigurationItemListener(ConfigurationItemListener configurationItemListener) {
-        if (configurationItemListener != null) {
-            this.configurationItemListeners.add(configurationItemListener);
-        }
     }
 }
