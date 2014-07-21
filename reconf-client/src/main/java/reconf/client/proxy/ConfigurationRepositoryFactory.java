@@ -58,6 +58,9 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         if (customization == null) {
             customization = new Customization();
         }
+        if (configurationItemListeners == null) {
+            configurationItemListeners = Collections.EMPTY_LIST;
+        }
 
         String key = arg.getName() + customization;
         if (cache.containsKey(key)) {
@@ -89,8 +92,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
 
         Object result = newInstance(arg, repo);
         cache.put(key, result);
-        listenerCache.put(key, configurationItemListeners == null ? Collections.EMPTY_LIST : configurationItemListeners);
-
+        listenerCache.put(key, configurationItemListeners);
         return (T) result;
     }
 
