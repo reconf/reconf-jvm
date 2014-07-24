@@ -4,21 +4,21 @@
 
 The ReConf JVM Project is a library that provides an easy way to utilize smart configurations in a Java application.
 
-### Smart configurations
+## Smart configurations
 
 A smart configuration is capable of automatically reloading itself from time to time - no need to restart the application. Each configuration item is a key-value pair written in a special - yet simple - format, which allows the library to create the appropriate Java object according to its type.
 
-### Just enough XML
+## Just enough XML
 
 ReConf Client relies on a simple and straightforward XML configuration file, just enough to know a little bit about the execution environment.
 
-### Get rid of boilerplate code
+## Get rid of boilerplate code
 
 Just create a plain old Java interface, decorate it with a few custom annotations, call a factory method and that's it! Your application is good to go.
 
 # ReConf JVM Integration Guide
 
-#### Table of Contents 
+## Table of Contents
 
 * [What are the benefits of using it?](#what-are-the-benefits-of-using-it)
 * [And the minimum requirements?](#and-the-minimum-requirements)
@@ -40,6 +40,8 @@ Just create a plain old Java interface, decorate it with a few custom annotation
  * [Using Customizations with Spring](#using-customizations-with-spring)
  * [Events and Listeners](#using-notifications)
 * [Troubleshooting](#troubleshooting)
+* [Remote Administration With ReConf Servlet](#servlet)
+* [License](#license)
 
 <a name="what-are-the-benefits-of-using-it"/>
 ## What are the benefits of using it?
@@ -82,7 +84,7 @@ Add these lines to the `pom.xml` file
 
 ReConf looks for a file named **reconf.xml** in the classpath. The bare minimum configuration must have two elements, the basic URL where the ReConf server can be found (like http://server.reconf.intranet) and a directory to store the local cache (for example /export/application/local-cache).
 
-The file below is an example of a very simple configuration file. There is an XSD file available at https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd. 
+The file below is an example of a very simple configuration file. There is an XSD file available at https://raw.github.com/reconf/reconf-jvm/master/schema/reconf-2.0.xsd.
 
 ```xml
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -371,7 +373,7 @@ To read a different configuration file, start the application with `-Dreconf.cli
 <a name="integrating-with-spring"/>
 ### Integrating with Spring
 
-The package `reconf-spring` provides a class for easy integration with Spring, including the use of @Autowired annotation. Add the following dependency to the `pom.xml` file.
+The package `reconf-spring` provides a class for easy integration with Spring, including the use of `@Autowired` annotation. Add the following dependency to the `pom.xml` file.
 
 ```xml
 <dependency>
@@ -440,7 +442,7 @@ To listen to such events, the application developer must provide an implementati
         custom.addConfigurationItemListener(new ConfigurationItemListener() {
 
             public void onEvent(UpdateNotification event) {
-                System.out.println("updated value [" + event.getRawValue() + 
+                System.out.println("updated value [" + event.getRawValue() +
                     "] read from [" + event.getSource() + "]");
             }
 
@@ -476,7 +478,7 @@ The basic attributes shared by both Notification events are:
 * `java.lang.String` rawValue
 * `reconf.client.config.update.ConfigurationItemUpdateResult.Source` source
 
-The `ErrorNotification` class has an additional `java.lang.Throwable` throwable field, whilst the `UpdateNotification` class has a `java.lang.Object` newValue field containing the newly created object. 
+The `ErrorNotification` class has an additional `java.lang.Throwable` throwable field, whilst the `UpdateNotification` class has a `java.lang.Object` newValue field containing the newly created object.
 
 <a name="troubleshooting"/>
 ## Troubleshooting
@@ -486,7 +488,72 @@ The `ErrorNotification` class has an additional `java.lang.Throwable` throwable 
 3. Try to delete everything inside the local-cache directory defined in the reconf.xml file.
 4. Enable DEBUG logging and look for strange messages.
 
-## License
+<a name="servlet"/>
+# Remote Administration With ReConf Servlet
+
+The package `reconf-servlet` enables users and/or applications the remote administration of certain aspects of the framework via an HTTP API. Add the following dependency to the `pom.xml` file.
+
+```xml
+<dependency>
+    <groupId>br.com.uol.reconf</groupId>
+    <artifactId>reconf-servlet</artifactId>
+    <version>2.1.10</version>
+</dependency>
+```
+
+For now, the only functionality available is "sync", which results in immediate reload of every `@ConfigurationRepository` active. Internally, the framework queries the current value of all `@ConfigurationItem` in the reconf-server. If one of them fails, the sync is cancelled and a rollback is made. The rollback only applies to the specific `@ConfigurationRepository` that failed. Overall result is returned as a JSON, with distinct "success" fields for every repository.
+
+To use it, map the `reconf.servlet.AdminServlet` and fire an HTTP GET request.
+
+```sh
+# displays the option menu
+curl -G -v localhost:8080/reconf
+
+# calls the sync functionality
+curl -G -v localhost:8080/reconf/sync
+```
+
+## Integration with Web Applications
+
+If you are running ReConf inside a web application, just declare the servlet inside `WEB-INF/web.xml` file and choose a mapping pattern to access it, like the example below.
+
+```xml
+<servlet>
+    <servlet-name>reconf</servlet-name>
+    <servlet-class>reconf.servlet.AdminServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>reconf</servlet-name>
+    <url-pattern>/reconf/*</url-pattern>
+</servlet-mapping>
+```
+
+## Integration with Standalone Applications
+
+In a standalone application, there is the need to start an embedded servlet container in order to make the `reconf.servlet.AdminServlet` available.
+
+The snippet below assumes that the family of `org.eclipse.jetty` packages (jetty-server and jetty-servlet) are configured under the dependencies tag of the `pom.xml` file.
+
+```java
+import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.servlet.*;
+import reconf.servlet.*;
+
+public class ReconfServlet {
+
+    public static void main(String[] args) throws Exception {
+        Server server = new Server(8080);
+        ServletContextHandler handler = new ServletContextHandler();
+        handler.setContextPath("/");
+        handler.addServlet(AdminServlet.class, "/reconf/*");
+        server.setHandler(handler);
+        server.start();
+    }
+}
+```
+
+<a name="license"/>
+# License
 
  Copyright 1996-2014 UOL Inc
 
