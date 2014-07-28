@@ -108,6 +108,10 @@ public class DatabaseManager implements ShutdownBean {
         ds.setUrl(arg.buildRuntimeURL());
         ds.setUsername(arg.getLogin());
         ds.setPassword(arg.getPass());
+        ds.setMaxActive(30);
+        ds.setMinIdle(5);
+        ds.setTestOnBorrow(true);
+        ds.setMaxWait(5000);
         return ds;
     }
 
@@ -166,9 +170,6 @@ public class DatabaseManager implements ShutdownBean {
     }
 
     public boolean temporaryUpsert(String fullProperty, Method method, String value) {
-        if (dataSource.isClosed()) {
-            return false;
-        }
         Connection conn = null;
         PreparedStatement stmt = null;
 
@@ -207,9 +208,6 @@ public class DatabaseManager implements ShutdownBean {
     }
 
     public boolean isNew(String fullProperty, Method method, String value) {
-        if (dataSource.isClosed()) {
-            return false;
-        }
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -273,9 +271,6 @@ public class DatabaseManager implements ShutdownBean {
 
 
     public void commitTemporaryUpdate(Collection<String> fullProperties, Class<?> declaringClass) {
-        if (dataSource.isClosed()) {
-            return;
-        }
         Connection conn = null;
         PreparedStatement stmt = null;
         String qry = String.format(COMMIT_TEMP_CHANGES, StringUtils.join(toUpper(fullProperties), ","));
@@ -318,9 +313,6 @@ public class DatabaseManager implements ShutdownBean {
     }
 
     private void cleanTable() throws Exception {
-        if (dataSource.isClosed()) {
-            return;
-        }
         Connection conn = null;
         PreparedStatement stmt = null;
 
@@ -395,12 +387,6 @@ public class DatabaseManager implements ShutdownBean {
         ds.setUrl(arg.buildInitalURL());
         ds.setUsername(arg.getLogin());
         ds.setPassword(arg.getPass());
-        ds.setMaxActive(20);
-        ds.setMinIdle(5);
-        ds.setTestOnBorrow(true);
-        ds.setTestWhileIdle(true);
-        ds.setMaxWait(20000);
-        ds.getConnection().close();
     }
 
     public void shutdown() {
