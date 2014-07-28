@@ -102,19 +102,6 @@ public class DatabaseManager implements ShutdownBean {
         }
     }
 
-    private BasicDataSource createDataSource(DatabaseURL arg) {
-        BasicDataSource ds = new BasicDataSource();
-        ds.setDriverClassName(arg.getDriverClassName());
-        ds.setUrl(arg.buildRuntimeURL());
-        ds.setUsername(arg.getLogin());
-        ds.setPassword(arg.getPass());
-        ds.setMaxActive(30);
-        ds.setMinIdle(5);
-        ds.setTestOnBorrow(true);
-        ds.setMaxWait(5000);
-        return ds;
-    }
-
     private boolean tableExists() throws Exception {
         Connection conn = null;
         Statement stmt = null;
@@ -387,6 +374,20 @@ public class DatabaseManager implements ShutdownBean {
         ds.setUrl(arg.buildInitalURL());
         ds.setUsername(arg.getLogin());
         ds.setPassword(arg.getPass());
+        ds.getConnection().close();
+    }
+
+    private BasicDataSource createDataSource(DatabaseURL arg) {
+        BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName(arg.getDriverClassName());
+        ds.setUrl(arg.buildRuntimeURL());
+        ds.setUsername(arg.getLogin());
+        ds.setPassword(arg.getPass());
+        ds.setMaxActive(30);
+        ds.setMinIdle(5);
+        ds.setTestOnBorrow(true);
+        ds.setMaxWait(5000);
+        return ds;
     }
 
     public void shutdown() {
