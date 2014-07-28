@@ -141,7 +141,7 @@ public class ConfigurationRepositoryElement {
         if (!configurationItemListeners.isEmpty()) {
             List<ConfigurationItemListener> asList = new ArrayList<ConfigurationItemListener>(configurationItemListeners);
             for (int i = 0; i < asList.size(); i++) {
-                result.append("item-listener-" + (i+1), asList.get(i));
+                result.append("item-listener-" + (i+1), asList.get(i).getClass().getName());
             }
         }
 

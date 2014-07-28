@@ -75,7 +75,7 @@ Add these lines to the `pom.xml` file
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-client</artifactId>
-    <version>2.1.10</version>
+    <version>2.1.11</version>
 </dependency>
 ```
 
@@ -379,7 +379,7 @@ The package `reconf-spring` provides a class for easy integration with Spring, i
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-spring</artifactId>
-    <version>2.1.10</version>
+    <version>2.1.11</version>
 </dependency>
 ```
 
@@ -497,7 +497,7 @@ The package `reconf-servlet` enables users and/or applications the remote admini
 <dependency>
     <groupId>br.com.uol.reconf</groupId>
     <artifactId>reconf-servlet</artifactId>
-    <version>2.1.10</version>
+    <version>2.1.11</version>
 </dependency>
 ```
 
