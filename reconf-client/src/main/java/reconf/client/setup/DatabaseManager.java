@@ -369,12 +369,18 @@ public class DatabaseManager implements ShutdownBean {
     }
 
     private void firstConnection(DatabaseURL arg) throws SQLException {
-        BasicDataSource ds = new BasicDataSource();
-        ds.setDriverClassName(arg.getDriverClassName());
-        ds.setUrl(arg.buildInitalURL());
-        ds.setUsername(arg.getLogin());
-        ds.setPassword(arg.getPass());
-        ds.getConnection().close();
+
+        Connection conn = null;
+        try {
+            Class.forName(arg.getDriverClassName());
+            conn = DriverManager.getConnection(arg.buildInitalURL(), arg.getLogin(), arg.getPass());
+
+        } catch (ClassNotFoundException e) {
+            throw new SQLException(e);
+
+        } finally {
+            close(conn);
+        }
     }
 
     private BasicDataSource createDataSource(DatabaseURL arg) {
