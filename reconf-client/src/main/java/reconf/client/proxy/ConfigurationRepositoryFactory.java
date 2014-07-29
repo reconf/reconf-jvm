@@ -125,7 +125,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
         boolean configurationAnnotationPresent = method.isAnnotationPresent(ConfigurationItem.class);
 
         if (!configurationAnnotationPresent && !updateAnnotationPresent) {
-            return method.invoke(proxy, args);
+            return method.invoke(this, args);
         }
 
         if (updateAnnotationPresent) {
