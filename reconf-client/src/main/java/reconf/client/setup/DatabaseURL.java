@@ -26,6 +26,7 @@ import reconf.infra.i18n.*;
 /**
  * http://hsqldb.org/doc/2.0/guide/dbproperties-chapt.html
  */
+@SuppressWarnings("serial")
 public class DatabaseURL {
 
     private static final MessagesBundle msg = MessagesBundle.getBundle(DatabaseURL.class);
@@ -49,7 +50,6 @@ public class DatabaseURL {
     }
 
     private static final Map<String, String> baseParams = new LinkedHashMap<String, String>() {
-        private static final long serialVersionUID = 1L;
         {
             put("hsqldb.lock_file", "false");
             put("shutdown", "true");
@@ -57,7 +57,6 @@ public class DatabaseURL {
     };
 
     private static final Map<String, String> cryptParams = new LinkedHashMap<String, String>() {
-        private static final long serialVersionUID = 1L;
         {
             put("crypt_key", cryptKey);
             put("crypt_type", "AES");
@@ -66,14 +65,12 @@ public class DatabaseURL {
     };
 
     private static final Map<String, String> baseInitialParams = new LinkedHashMap<String, String>() {
-        private static final long serialVersionUID = 1L;
         {
             putAll(baseParams);
         }
     };
 
     private static final Map<String, String> baseRuntimeParams = new LinkedHashMap<String, String>() {
-        private static final long serialVersionUID = 1L;
         {
             putAll(baseParams);
             put("ifexists", "true");

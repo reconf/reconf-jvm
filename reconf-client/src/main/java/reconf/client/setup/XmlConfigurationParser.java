@@ -84,7 +84,7 @@ public class XmlConfigurationParser extends DefaultHandler {
             File file = null;
             try {
                 file = new File(temp);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) { }
             localCacheSettings.setBackupLocation(file);
         }
         if (StringUtils.equalsIgnoreCase("max-log-file-size-mb", tag)) {

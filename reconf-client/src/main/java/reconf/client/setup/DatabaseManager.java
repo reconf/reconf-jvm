@@ -336,24 +336,21 @@ public class DatabaseManager implements ShutdownBean {
         if (null == arg) return;
         try {
             arg.close();
-        } catch (Exception e) {
-        }
+        } catch (Exception ignored) { }
     }
 
     public static void close(ResultSet arg) {
         if (null == arg) return;
         try {
             arg.close();
-        } catch (Exception e) {
-        }
+        } catch (Exception ignored) { }
     }
 
     public static void close(Connection arg) {
         if (null == arg) return;
         try {
             arg.close();
-        } catch (Exception e) {
-        }
+        } catch (Exception ignored) { }
     }
 
     private Connection getConnection() throws SQLException {

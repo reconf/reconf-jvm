@@ -103,16 +103,8 @@ public class MapConstructor implements ObjectConstructor {
 
         StringParser parser = new StringParser(data);
         for (Entry<String, String> each : parser.getTokensAsMap().entrySet()) {
-
-            Object value;
-            if (valueType instanceof Class) {
-                value = ObjectConstructorFactory.get(valueType).construct(new MethodData(data.getMethod(), valueType, each.getValue()));
-
-            } else {
-                value = ObjectConstructorFactory.get(valueType).construct(new MethodData(data.getMethod(), valueType, each.getValue()));
-            }
+            Object value = ObjectConstructorFactory.get(valueType).construct(new MethodData(data.getMethod(), valueType, each.getValue()));
             mapInstance.put(ObjectConstructorFactory.get(keyType).construct(new MethodData(data.getMethod(), keyType, each.getKey())), value);
-
         }
 
         return mapInstance;
