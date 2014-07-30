@@ -92,7 +92,7 @@ public class ConfigurationRepositoryFactory implements InvocationHandler {
 
         Object result = newInstance(arg, repo);
         cache.put(key, result);
-        listenerCache.put(key, configurationItemListeners);
+        listenerCache.put(key, ((configurationItemListeners != null) ? configurationItemListeners : CollectionUtils.EMPTY_COLLECTION));
         return (T) result;
     }
 

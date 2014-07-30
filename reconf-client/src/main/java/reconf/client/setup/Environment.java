@@ -48,7 +48,7 @@ public class Environment {
 
             String prop = System.getProperty(SYSTEM_PROPERTY);
             if (StringUtils.isNotBlank(prop)) {
-                LoggerHolder.getLog().info(String.format("system property [%] found. trying to read file [%s]", SYSTEM_PROPERTY, prop));
+                LoggerHolder.getLog().info(String.format("system property [%s] found. trying to read file [%s]", SYSTEM_PROPERTY, prop));
                 raw = InputStreamReader.read(new FileInputStream(new File(prop)));
 
             } else {

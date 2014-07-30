@@ -91,11 +91,11 @@ public class XmlConfigurationParser extends DefaultHandler {
             localCacheSettings.setMaxLogFileSize(tempAsInteger());
         }
         if (StringUtils.equalsIgnoreCase("compressed", tag)) {
-            Boolean bool = null;
             try {
-                bool = Boolean.valueOf(temp);
-            } catch (Exception ignored) {}
-            localCacheSettings.setCompressed(bool);
+                localCacheSettings.setCompressed(Boolean.valueOf(temp));
+            } catch (Exception ignored) {
+                localCacheSettings.setCompressed(false);
+            }
         }
     }
 
