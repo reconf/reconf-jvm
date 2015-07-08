@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
  */
 package reconf.infra.http;
 
-import java.util.concurrent.*;
-import reconf.infra.http.layer.*;
-import reconf.infra.i18n.*;
+import java.util.concurrent.TimeUnit;
+import reconf.infra.http.layer.SimpleHttpRequest;
+import reconf.infra.http.layer.SimpleHttpResponse;
+import reconf.infra.i18n.MessagesBundle;
 
 public class ServerStub {
 

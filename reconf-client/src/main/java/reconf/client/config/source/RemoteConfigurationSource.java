@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package reconf.client.config.source;
 
-import org.apache.commons.lang.*;
-import reconf.client.adapters.*;
-import reconf.infra.http.*;
-import reconf.infra.i18n.*;
+import org.apache.commons.lang3.StringUtils;
+import reconf.client.adapters.ConfigurationAdapter;
+import reconf.infra.http.ServerStub;
+import reconf.infra.i18n.MessagesBundle;
 
 
 public class RemoteConfigurationSource implements ConfigurationSource {

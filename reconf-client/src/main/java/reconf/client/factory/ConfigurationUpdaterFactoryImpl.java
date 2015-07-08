@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,11 +15,14 @@
  */
 package reconf.client.factory;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.*;
-import reconf.client.config.update.*;
-import reconf.client.proxy.*;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import reconf.client.config.update.ConfigurationItemUpdateResult;
+import reconf.client.config.update.ConfigurationUpdater;
+import reconf.client.config.update.LocalConfigurationUpdater;
+import reconf.client.config.update.RemoteConfigurationUpdater;
+import reconf.client.proxy.MethodConfiguration;
 
 
 public class ConfigurationUpdaterFactoryImpl implements ConfigurationUpdaterFactory {

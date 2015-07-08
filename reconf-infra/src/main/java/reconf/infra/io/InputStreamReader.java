@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
  */
 package reconf.infra.io;
 
-import java.io.*;
-import java.util.*;
-import org.apache.commons.io.*;
-import reconf.infra.log.*;
-import reconf.infra.system.*;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.apache.commons.io.IOUtils;
+import reconf.infra.log.LoggerHolder;
+import reconf.infra.system.LineSeparator;
 
 
 public class InputStreamReader {

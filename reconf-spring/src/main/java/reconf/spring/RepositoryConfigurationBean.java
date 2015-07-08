@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
  */
 package reconf.spring;
 
-import java.util.*;
-import org.springframework.beans.factory.*;
-import reconf.client.notification.*;
-import reconf.client.proxy.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.springframework.beans.factory.FactoryBean;
+import reconf.client.notification.ConfigurationItemListener;
+import reconf.client.proxy.ConfigurationRepositoryFactory;
+import reconf.client.proxy.Customization;
 
 @SuppressWarnings("rawtypes")
 public class RepositoryConfigurationBean implements FactoryBean {

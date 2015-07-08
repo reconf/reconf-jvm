@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
  */
 package reconf.client.constructors;
 
-import java.lang.reflect.*;
-import java.util.*;
-import reconf.client.factory.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
+import java.util.List;
+import reconf.client.factory.ObjectConstructorFactory;
 
 
 public class ArrayConstructor implements ObjectConstructor {

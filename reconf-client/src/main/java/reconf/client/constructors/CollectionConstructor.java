@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,12 +15,27 @@
  */
 package reconf.client.constructors;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.*;
-import org.apache.commons.lang.*;
-import reconf.client.factory.*;
-import reconf.infra.i18n.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NavigableSet;
+import java.util.Queue;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import org.apache.commons.lang3.ArrayUtils;
+import reconf.client.factory.ObjectConstructorFactory;
+import reconf.infra.i18n.MessagesBundle;
 
 
 public class CollectionConstructor implements ObjectConstructor {

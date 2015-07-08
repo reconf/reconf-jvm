@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,14 +15,17 @@
  */
 package reconf.client.elements;
 
-import java.lang.reflect.*;
-import java.util.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.lang.builder.*;
-import reconf.client.adapters.*;
-import reconf.client.annotations.*;
-import reconf.infra.i18n.*;
-import reconf.infra.throwables.*;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import reconf.client.adapters.ConfigurationAdapter;
+import reconf.client.annotations.ConfigurationItem;
+import reconf.client.annotations.UpdateConfigurationRepository;
+import reconf.infra.i18n.MessagesBundle;
+import reconf.infra.throwables.ReConfInitializationError;
 
 
 public class ConfigurationItemElement {

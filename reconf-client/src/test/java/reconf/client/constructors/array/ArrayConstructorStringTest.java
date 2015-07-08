@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
  */
 package reconf.client.constructors.array;
 
-import java.lang.reflect.*;
-import org.junit.*;
-import reconf.client.constructors.*;
+import java.lang.reflect.Method;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import reconf.client.constructors.ArrayConstructor;
+import reconf.client.constructors.MethodData;
 
 
 public class ArrayConstructorStringTest {

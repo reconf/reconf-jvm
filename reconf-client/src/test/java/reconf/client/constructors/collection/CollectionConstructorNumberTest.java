@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,10 +15,14 @@
  */
 package reconf.client.constructors.collection;
 
-import java.lang.reflect.*;
-import java.util.*;
-import org.junit.*;
-import reconf.client.constructors.*;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.TreeSet;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import reconf.client.constructors.CollectionConstructor;
+import reconf.client.constructors.MethodData;
 
 
 public class CollectionConstructorNumberTest {

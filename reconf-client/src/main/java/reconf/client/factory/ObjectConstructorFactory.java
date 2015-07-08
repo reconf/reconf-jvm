@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,9 +15,16 @@
  */
 package reconf.client.factory;
 
-import java.lang.reflect.*;
-import java.util.*;
-import reconf.client.constructors.*;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.Map;
+import reconf.client.constructors.ArrayConstructor;
+import reconf.client.constructors.CollectionConstructor;
+import reconf.client.constructors.MapConstructor;
+import reconf.client.constructors.ObjectConstructor;
+import reconf.client.constructors.SimpleConstructor;
 
 
 public final class ObjectConstructorFactory {

@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,12 +15,14 @@
  */
 package reconf.client.check;
 
-import java.util.*;
-import java.util.concurrent.*;
-import org.apache.commons.collections.*;
-import org.apache.commons.lang.exception.*;
-import reconf.infra.i18n.*;
-import reconf.infra.log.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import reconf.infra.i18n.MessagesBundle;
+import reconf.infra.log.LoggerHolder;
 
 public class ObserverThread extends Thread {
 
@@ -69,7 +71,7 @@ public class ObserverThread extends Thread {
                 }
 
             } catch (Throwable t) {
-                LoggerHolder.getLog().error(msg.format("error", getName(), ExceptionUtils.getFullStackTrace(t)));
+                LoggerHolder.getLog().error(msg.format("error", getName(), ExceptionUtils.getStackTrace(t)));
             }
         }
     }

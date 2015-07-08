@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
  */
 package reconf.client.annotations;
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.*;
-import java.lang.annotation.*;
-import org.apache.commons.lang.*;
-import reconf.client.adapters.*;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import org.apache.commons.lang3.StringUtils;
+import reconf.client.adapters.ConfigurationAdapter;
+import reconf.client.adapters.NoConfigurationAdapter;
 
 
 @Target(METHOD)

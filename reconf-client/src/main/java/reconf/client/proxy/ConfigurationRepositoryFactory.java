@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,21 +15,27 @@
  */
 package reconf.client.proxy;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.locks.*;
-import org.apache.commons.collections.*;
-import reconf.client.annotations.*;
-import reconf.client.config.update.*;
-import reconf.client.elements.*;
-import reconf.client.factory.*;
-import reconf.client.locator.*;
-import reconf.client.notification.*;
-import reconf.client.setup.*;
-import reconf.infra.i18n.*;
-import reconf.infra.log.*;
-import reconf.infra.system.*;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.ReentrantLock;
+import org.apache.commons.collections4.CollectionUtils;
+import reconf.client.annotations.ConfigurationItem;
+import reconf.client.annotations.UpdateConfigurationRepository;
+import reconf.client.config.update.ConfigurationRepositoryUpdater;
+import reconf.client.elements.ConfigurationItemElement;
+import reconf.client.elements.ConfigurationRepositoryElement;
+import reconf.client.factory.ConfigurationRepositoryElementFactory;
+import reconf.client.locator.ServiceLocator;
+import reconf.client.notification.ConfigurationItemListener;
+import reconf.client.setup.Environment;
+import reconf.infra.i18n.MessagesBundle;
+import reconf.infra.log.LoggerHolder;
+import reconf.infra.system.LineSeparator;
 
 public class ConfigurationRepositoryFactory implements InvocationHandler {
 

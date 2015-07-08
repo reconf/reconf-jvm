@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,16 +15,22 @@
  */
 package reconf.client.proxy;
 
-import java.lang.reflect.*;
-import java.util.concurrent.*;
-import org.apache.commons.lang.*;
-import reconf.client.adapters.*;
-import reconf.client.config.source.*;
-import reconf.client.elements.*;
-import reconf.client.locator.*;
-import reconf.client.setup.*;
-import reconf.infra.http.*;
-import reconf.infra.i18n.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import reconf.client.adapters.ConfigurationAdapter;
+import reconf.client.config.source.ConfigurationSourceHolder;
+import reconf.client.config.source.DatabaseConfigurationSource;
+import reconf.client.config.source.RemoteConfigurationSource;
+import reconf.client.elements.ConfigurationItemElement;
+import reconf.client.elements.ConfigurationRepositoryElement;
+import reconf.client.elements.FullPropertyElement;
+import reconf.client.locator.ServiceLocator;
+import reconf.client.setup.ConnectionSettings;
+import reconf.infra.http.ServerStub;
+import reconf.infra.i18n.MessagesBundle;
 
 
 public class MethodConfiguration {

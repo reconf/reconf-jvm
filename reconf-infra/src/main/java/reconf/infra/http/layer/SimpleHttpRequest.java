@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
  */
 package reconf.infra.http.layer;
 
-import java.io.*;
-import java.net.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.client.utils.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 
 public class SimpleHttpRequest extends HttpEntityEnclosingRequestBase {
 

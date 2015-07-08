@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,20 +15,31 @@
  */
 package reconf.client.config.update;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.*;
-import org.apache.commons.lang.*;
-import reconf.client.check.*;
-import reconf.client.elements.*;
-import reconf.client.locator.*;
-import reconf.client.notification.*;
-import reconf.client.proxy.*;
-import reconf.infra.i18n.*;
-import reconf.infra.log.*;
-import reconf.infra.system.*;
-import reconf.infra.throwables.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.StringUtils;
+import reconf.client.check.ObservableThread;
+import reconf.client.elements.ConfigurationRepositoryElement;
+import reconf.client.locator.ServiceLocator;
+import reconf.client.notification.ConfigurationItemListener;
+import reconf.client.notification.Notifier;
+import reconf.client.proxy.ConfigurationRepositoryFactory;
+import reconf.client.proxy.MethodConfiguration;
+import reconf.infra.i18n.MessagesBundle;
+import reconf.infra.log.LoggerHolder;
+import reconf.infra.system.LineSeparator;
+import reconf.infra.throwables.ReConfInitializationError;
+import reconf.infra.throwables.UpdateConfigurationRepositoryException;
 
 
 public class ConfigurationRepositoryUpdater extends ObservableThread {

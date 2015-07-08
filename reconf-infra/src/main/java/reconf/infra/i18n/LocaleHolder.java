@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
  */
 package reconf.infra.i18n;
 
-import java.util.*;
-import org.apache.commons.lang.*;
-import reconf.infra.log.*;
+import java.util.Locale;
+import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
+import reconf.infra.log.LoggerHolder;
 
 
 public final class LocaleHolder {

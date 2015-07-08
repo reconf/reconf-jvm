@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,10 +15,13 @@
  */
 package reconf.client.constructors;
 
-import java.lang.reflect.*;
-import java.util.*;
-import org.apache.commons.lang.*;
-import reconf.infra.i18n.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.lang3.CharUtils;
+import org.apache.commons.lang3.StringUtils;
+import reconf.infra.i18n.MessagesBundle;
 
 
 public class SimpleConstructor implements ObjectConstructor {

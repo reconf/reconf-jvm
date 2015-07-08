@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,18 +15,21 @@
  */
 package reconf.client.factory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.commons.collections.*;
-import org.apache.commons.lang.*;
-import reconf.client.annotations.*;
-import reconf.client.elements.*;
-import reconf.client.setup.*;
-import reconf.client.validation.*;
-import reconf.infra.i18n.*;
-import reconf.infra.log.*;
-import reconf.infra.system.*;
-import reconf.infra.throwables.*;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import reconf.client.annotations.ConfigurationRepository;
+import reconf.client.elements.ConfigurationItemElement;
+import reconf.client.elements.ConfigurationRepositoryElement;
+import reconf.client.setup.XmlConfiguration;
+import reconf.client.validation.ConfigurationRepositoryElementValidator;
+import reconf.infra.i18n.MessagesBundle;
+import reconf.infra.log.LoggerHolder;
+import reconf.infra.system.LineSeparator;
+import reconf.infra.throwables.ReConfInitializationError;
 
 
 public class ConfigurationRepositoryElementFactory {

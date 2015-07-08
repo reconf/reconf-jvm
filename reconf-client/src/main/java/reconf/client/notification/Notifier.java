@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,10 +15,11 @@
  */
 package reconf.client.notification;
 
-import java.util.*;
-import reconf.client.config.update.*;
-import reconf.infra.i18n.*;
-import reconf.infra.log.*;
+import java.util.Collection;
+import reconf.client.config.update.ConfigurationItemUpdateResult;
+import reconf.client.config.update.ConfigurationUpdater;
+import reconf.infra.i18n.MessagesBundle;
+import reconf.infra.log.LoggerHolder;
 
 public class Notifier {
 

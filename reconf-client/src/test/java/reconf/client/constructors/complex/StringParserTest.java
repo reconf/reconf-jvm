@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
  */
 package reconf.client.constructors.complex;
 
-import java.util.*;
-import org.apache.commons.lang.*;
-import org.junit.*;
-import reconf.client.constructors.*;
+import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
+import org.junit.Assert;
+import org.junit.Test;
+import reconf.client.constructors.MethodData;
+import reconf.client.constructors.StringParser;
 
 
 public class StringParserTest {

@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  */
 package reconf.client.config.update;
 
-import java.lang.reflect.*;
-import java.util.*;
-import org.apache.commons.collections.*;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import org.apache.commons.collections4.CollectionUtils;
 
 public class ConfigurationItemUpdateResult {
 

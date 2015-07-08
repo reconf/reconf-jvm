@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,12 +15,15 @@
  */
 package reconf.infra.http.layer;
 
-import java.io.*;
-import java.net.*;
-import javax.net.ssl.*;
-import org.apache.http.*;
-import org.apache.http.client.*;
-import org.apache.http.protocol.*;
+import java.io.IOException;
+import java.net.SocketException;
+import javax.net.ssl.SSLHandshakeException;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpRequest;
+import org.apache.http.NoHttpResponseException;
+import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpCoreContext;
 
 public class RetryHandler implements HttpRequestRetryHandler {
 

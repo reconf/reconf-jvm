@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package reconf.client.config.source;
 
-import reconf.client.adapters.*;
+import reconf.client.adapters.ConfigurationAdapter;
 
 
 public interface ConfigurationSource {

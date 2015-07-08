@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,13 +15,16 @@
  */
 package reconf.client.setup;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import javax.crypto.*;
-import javax.crypto.spec.*;
-import org.apache.commons.codec.binary.*;
-import org.apache.commons.lang.StringUtils;
-import reconf.infra.i18n.*;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
+import reconf.infra.i18n.MessagesBundle;
 
 /**
  * http://hsqldb.org/doc/2.0/guide/dbproperties-chapt.html

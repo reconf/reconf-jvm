@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
  */
 package reconf.client.config.update;
 
-import java.util.*;
-import reconf.client.elements.*;
-import reconf.client.locator.*;
-import reconf.client.proxy.*;
+import java.util.ArrayList;
+import java.util.List;
+import reconf.client.elements.ConfigurationItemElement;
+import reconf.client.elements.ConfigurationRepositoryElement;
+import reconf.client.locator.ServiceLocator;
+import reconf.client.proxy.MethodConfiguration;
 
 
 public class ConfigurationRepositoryData {

@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,21 +15,26 @@
  */
 package reconf.client.setup;
 
-import java.io.*;
-import java.util.*;
-import org.apache.commons.collections.*;
-import org.apache.commons.lang.*;
-import reconf.client.check.*;
-import reconf.client.config.update.*;
-import reconf.client.factory.*;
-import reconf.client.validation.*;
-import reconf.infra.http.*;
-import reconf.infra.i18n.*;
-import reconf.infra.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import reconf.client.check.ObservableThread;
+import reconf.client.check.ObserverThread;
+import reconf.client.config.update.ConfigurationRepositoryUpdater;
+import reconf.client.factory.ConfigurationRepositoryElementFactory;
+import reconf.client.validation.XmlConfigurationValidator;
+import reconf.infra.http.LocalHostname;
+import reconf.infra.i18n.LocaleHolder;
+import reconf.infra.i18n.MessagesBundle;
+import reconf.infra.io.ClasspathReader;
 import reconf.infra.io.InputStreamReader;
-import reconf.infra.log.*;
-import reconf.infra.system.*;
-import reconf.infra.throwables.*;
+import reconf.infra.log.LoggerHolder;
+import reconf.infra.system.LineSeparator;
+import reconf.infra.throwables.ReConfInitializationError;
 
 
 public class Environment {

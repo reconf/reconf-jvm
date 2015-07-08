@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,14 +15,21 @@
  */
 package reconf.infra.http.layer;
 
-import java.net.*;
-import java.security.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import org.apache.http.*;
-import org.apache.http.client.config.*;
-import org.apache.http.impl.client.*;
-import reconf.infra.i18n.*;
+import java.net.URISyntaxException;
+import java.security.GeneralSecurityException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.http.RequestLine;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import reconf.infra.i18n.MessagesBundle;
 
 public class SimpleHttpClient {
 
@@ -89,7 +96,6 @@ public class SimpleHttpClient {
         int timemillis = (int) TimeUnit.MILLISECONDS.convert(timeout, timeUnit);
         return RequestConfig.custom()
                 .setCookieSpec(CookieSpecs.IGNORE_COOKIES)
-                .setStaleConnectionCheckEnabled(false)
                 .setConnectTimeout(timemillis)
                 .setSocketTimeout(timemillis)
                 .setConnectionRequestTimeout(timemillis)

@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,18 +15,22 @@
  */
 package reconf.client.config.update;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.*;
-import org.apache.commons.lang.*;
-import reconf.client.check.*;
-import reconf.client.config.source.*;
-import reconf.client.constructors.*;
-import reconf.client.elements.*;
-import reconf.client.factory.*;
-import reconf.client.proxy.*;
-import reconf.infra.i18n.*;
-import reconf.infra.log.*;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.StringUtils;
+import reconf.client.check.ObservableThread;
+import reconf.client.config.source.ConfigurationSource;
+import reconf.client.constructors.MethodData;
+import reconf.client.elements.ConfigurationItemElement;
+import reconf.client.factory.ObjectConstructorFactory;
+import reconf.client.proxy.MethodConfiguration;
+import reconf.infra.i18n.MessagesBundle;
+import reconf.infra.log.LoggerHolder;
 
 
 public abstract class ConfigurationUpdater extends ObservableThread {

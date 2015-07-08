@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,17 +15,27 @@
  */
 package reconf.client.setup;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.sql.*;
-import java.util.*;
-import org.apache.commons.dbcp.*;
-import org.apache.commons.io.*;
-import org.apache.commons.lang.*;
-import reconf.infra.i18n.*;
-import reconf.infra.log.*;
-import reconf.infra.shutdown.*;
-import reconf.infra.throwables.*;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import reconf.infra.i18n.MessagesBundle;
+import reconf.infra.log.LoggerHolder;
+import reconf.infra.shutdown.ShutdownBean;
+import reconf.infra.shutdown.ShutdownInterceptor;
+import reconf.infra.throwables.ReConfInitializationError;
 
 
 public class DatabaseManager implements ShutdownBean {

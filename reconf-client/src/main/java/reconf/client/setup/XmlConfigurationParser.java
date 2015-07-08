@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,16 +15,18 @@
  */
 package reconf.client.setup;
 
-import java.io.*;
-import java.util.concurrent.*;
-import javax.xml.parsers.*;
-import org.apache.commons.io.*;
-import org.apache.commons.lang.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
-import reconf.infra.log.*;
-import reconf.infra.system.*;
-import reconf.infra.throwables.*;
+import java.io.File;
+import java.util.concurrent.TimeUnit;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+import reconf.infra.log.LoggerHolder;
+import reconf.infra.system.LineSeparator;
+import reconf.infra.throwables.ReConfInitializationError;
 
 
 public class XmlConfigurationParser extends DefaultHandler {

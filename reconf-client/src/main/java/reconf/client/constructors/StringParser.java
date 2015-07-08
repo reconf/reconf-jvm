@@ -1,5 +1,5 @@
 /*
- *    Copyright 2013-2014 ReConf Team
+ *    Copyright 2013-2015 ReConf Team
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,10 +15,14 @@
  */
 package reconf.client.constructors;
 
-import java.util.*;
-import org.apache.commons.lang.*;
-import reconf.infra.i18n.*;
-import reconf.infra.system.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import org.apache.commons.lang3.StringUtils;
+import reconf.infra.i18n.MessagesBundle;
+import reconf.infra.system.LineSeparator;
 
 
 public class StringParser {
