@@ -13,10 +13,11 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.client.notification;
+package reconf.infra.system;
 
-public interface NotificationHeader {
-    String getProduct();
-    String getComponent();
-    String getItem();
+public class FileSeparator {
+
+    public static String value() {
+        return System.getProperty("file.separator");
+    }
 }

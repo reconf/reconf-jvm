@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import reconf.infra.http.layer.SimpleHttpRequest;
 import reconf.infra.http.layer.SimpleHttpResponse;
 import reconf.infra.i18n.MessagesBundle;
+import reconf.infra.system.LocalHostname;
 
 public class ServerStub {
 

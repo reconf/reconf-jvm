@@ -13,11 +13,12 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package reconf.infra.http;
+package reconf.infra.system;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import org.apache.commons.lang3.StringUtils;
 
 
 public class LocalHostname {
@@ -30,7 +31,7 @@ public class LocalHostname {
 
     private static String fallbackStrategy() {
         try {
-            return InetAddress.getLocalHost().getHostName();
+            return StringUtils.stripAccents(InetAddress.getLocalHost().getHostName());
         } catch (Exception e) {
             return null;
         }
@@ -42,7 +43,7 @@ public class LocalHostname {
             Process proc = Runtime.getRuntime().exec("hostname");
             proc.waitFor();
             in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            return in.readLine();
+            return StringUtils.stripAccents(in.readLine());
         } catch (Exception e) {
             return null;
 

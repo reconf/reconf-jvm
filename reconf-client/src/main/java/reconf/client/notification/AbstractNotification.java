@@ -38,7 +38,6 @@ abstract class AbstractNotification {
         this.cast = result.getCast();
         this.rawValue = result.getRawValue();
         this.source = result.getSource();
-        this.qualifier = result.getQualifier();
     }
 
     public String getProduct() {

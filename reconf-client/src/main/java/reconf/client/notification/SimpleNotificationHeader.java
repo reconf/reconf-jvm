@@ -22,13 +22,11 @@ public class SimpleNotificationHeader implements NotificationHeader {
     private final String product;
     private final String component;
     private final String item;
-    private final String qualifier;
 
     public SimpleNotificationHeader(ConfigurationItemUpdateResult result) {
         this.product = result.getProduct();
         this.component = result.getComponent();
         this.item = result.getItem();
-        this.qualifier = result.getQualifier();
     }
 
     @Override
@@ -44,11 +42,6 @@ public class SimpleNotificationHeader implements NotificationHeader {
     @Override
     public String getItem() {
         return item;
-    }
-
-    @Override
-    public String getQualifier() {
-        return qualifier;
     }
 
 }

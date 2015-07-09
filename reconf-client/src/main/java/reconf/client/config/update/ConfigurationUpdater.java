@@ -104,7 +104,6 @@ public abstract class ConfigurationUpdater extends ObservableThread {
             .product(elem.getProduct())
             .component(elem.getComponent())
             .item(elem.getValue())
-            .qualifier(elem.getQualifier())
             .method(methodCfg.getMethod())
             .cast(methodCfg.getMethod().getReturnType())
             .from(source);
@@ -125,7 +124,6 @@ public abstract class ConfigurationUpdater extends ObservableThread {
         .product(elem.getProduct())
         .component(elem.getComponent())
         .item(elem.getValue())
-        .qualifier(elem.getQualifier())
         .method(methodCfg.getMethod())
         .cast(methodCfg.getMethod().getReturnType())
         .from(source);

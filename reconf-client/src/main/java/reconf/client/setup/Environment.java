@@ -27,13 +27,13 @@ import reconf.client.check.ObserverThread;
 import reconf.client.config.update.ConfigurationRepositoryUpdater;
 import reconf.client.factory.ConfigurationRepositoryElementFactory;
 import reconf.client.validation.XmlConfigurationValidator;
-import reconf.infra.http.LocalHostname;
 import reconf.infra.i18n.LocaleHolder;
 import reconf.infra.i18n.MessagesBundle;
 import reconf.infra.io.ClasspathReader;
 import reconf.infra.io.InputStreamReader;
 import reconf.infra.log.LoggerHolder;
 import reconf.infra.system.LineSeparator;
+import reconf.infra.system.LocalHostname;
 import reconf.infra.throwables.ReConfInitializationError;
 
 

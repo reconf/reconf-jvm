@@ -35,21 +35,23 @@ import reconf.infra.i18n.MessagesBundle;
 import reconf.infra.log.LoggerHolder;
 import reconf.infra.shutdown.ShutdownBean;
 import reconf.infra.shutdown.ShutdownInterceptor;
+import reconf.infra.system.FileSeparator;
 import reconf.infra.throwables.ReConfInitializationError;
 
 
 public class DatabaseManager implements ShutdownBean {
 
+    private static final String DB_VERSION = "v3";
     private static final MessagesBundle msg = MessagesBundle.getBundle(DatabaseManager.class);
     private final File directory;
     private final BasicDataSource dataSource;
     private boolean init;
 
-    private final String TEMPORARY_INSERT = "INSERT INTO PUBLIC.CLS_METHOD_PROP_VALUE_V2 (NAM_CLASS, NAM_METHOD, FULL_PROP, NEW_VALUE, UPDATED) VALUES (?,?,?,?,?)";
-    private final String TEMPORARY_UPDATE = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET NEW_VALUE = ?, UPDATED = ? WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ? AND (UPDATED IS NULL OR VALUE <> ?)";
-    private final String COMMIT_TEMP_CHANGES = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET VALUE = NEW_VALUE, NEW_VALUE = NULL, UPDATED = ? WHERE FULL_PROP IN (%s) AND NAM_CLASS = ? AND NEW_VALUE IS NOT NULL";
-    private final String CLEAN_OLD_TEMP = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE_V2 SET NEW_VALUE = NULL, UPDATED = NULL";
-    private final String CHECK_IS_NEW = "SELECT 1 FROM PUBLIC.CLS_METHOD_PROP_VALUE_V2 WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ? AND (UPDATED IS NULL OR VALUE <> ?)";
+    private final String TEMPORARY_INSERT = "INSERT INTO PUBLIC.CLS_METHOD_PROP_VALUE (NAM_CLASS, NAM_METHOD, FULL_PROP, NEW_VALUE, UPDATED) VALUES (?,?,?,?,?)";
+    private final String TEMPORARY_UPDATE = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE SET NEW_VALUE = ?, UPDATED = ? WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ? AND (UPDATED IS NULL OR VALUE <> ?)";
+    private final String COMMIT_TEMP_CHANGES = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE SET VALUE = NEW_VALUE, NEW_VALUE = NULL, UPDATED = ? WHERE FULL_PROP IN (%s) AND NAM_CLASS = ? AND NEW_VALUE IS NOT NULL";
+    private final String CLEAN_OLD_TEMP = "UPDATE PUBLIC.CLS_METHOD_PROP_VALUE SET NEW_VALUE = NULL, UPDATED = NULL";
+    private final String CHECK_IS_NEW = "SELECT 1 FROM PUBLIC.CLS_METHOD_PROP_VALUE WHERE FULL_PROP = ? AND NAM_CLASS = ? AND NAM_METHOD = ? AND (UPDATED IS NULL OR VALUE <> ?)";
 
     public DatabaseManager(LocalCacheSettings config) {
         new ShutdownInterceptor(this).register();
@@ -58,7 +60,7 @@ public class DatabaseManager implements ShutdownBean {
                 throw new ReConfInitializationError(msg.get("error.dir.not.provided"));
             }
 
-            this.directory = config.getBackupLocation();
+            this.directory = new File(config.getBackupLocation().getPath() + FileSeparator.value() + DB_VERSION);
             provisionBackupDirectory();
 
             DatabaseURL url = DatabaseURL.location(directory.getPath()).encrypted();
@@ -118,11 +120,11 @@ public class DatabaseManager implements ShutdownBean {
         try {
             conn = getConnection();
             stmt = conn.createStatement();
-            stmt.execute("SELECT 1                                     " +
-                         "FROM   INFORMATION_SCHEMA.TABLES             " +
-                         "WHERE  TABLE_CATALOG = 'PUBLIC'              " +
-                         "AND    TABLE_SCHEMA = 'PUBLIC'               " +
-                         "AND    TABLE_NAME='CLS_METHOD_PROP_VALUE_V2' ");
+            stmt.execute("SELECT 1                                 " +
+                         "FROM   INFORMATION_SCHEMA.TABLES         " +
+                         "WHERE  TABLE_CATALOG = 'PUBLIC'          " +
+                         "AND    TABLE_SCHEMA = 'PUBLIC'           " +
+                         "AND    TABLE_NAME='CLS_METHOD_PROP_VALUE'");
             return stmt.getResultSet().next();
 
         } finally {
@@ -138,11 +140,11 @@ public class DatabaseManager implements ShutdownBean {
 
         try {
             conn = getConnection();
-            stmt = conn.prepareStatement("SELECT VALUE                           " +
-                                         "FROM   PUBLIC.CLS_METHOD_PROP_VALUE_V2 " +
-                                         "WHERE  FULL_PROP = ?                   " +
-                                         "AND    NAM_CLASS = ?                   " +
-                                         "AND    NAM_METHOD = ?                  ");
+            stmt = conn.prepareStatement("SELECT VALUE                        " +
+                                         "FROM   PUBLIC.CLS_METHOD_PROP_VALUE " +
+                                         "WHERE  FULL_PROP = ?                " +
+                                         "AND    NAM_CLASS = ?                " +
+                                         "AND    NAM_METHOD = ?               ");
 
             stmt.setString(1, StringUtils.upperCase(fullProperty));
             stmt.setString(2, method.getDeclaringClass().getName());
@@ -242,11 +244,11 @@ public class DatabaseManager implements ShutdownBean {
 
         try {
             conn = getConnection();
-            stmt = conn.prepareStatement("SELECT 1                               " +
-                                         "FROM   PUBLIC.CLS_METHOD_PROP_VALUE_V2 " +
-                                         "WHERE  FULL_PROP = ?                   " +
-                                         "AND    NAM_CLASS = ?                   " +
-                                         "AND    NAM_METHOD = ?                  ");
+            stmt = conn.prepareStatement("SELECT 1                            " +
+                                         "FROM   PUBLIC.CLS_METHOD_PROP_VALUE " +
+                                         "WHERE  FULL_PROP = ?                " +
+                                         "AND    NAM_CLASS = ?                " +
+                                         "AND    NAM_METHOD = ?               ");
 
             stmt.setString(1, StringUtils.upperCase(fullProperty));
             stmt.setString(2, method.getDeclaringClass().getName());
@@ -299,7 +301,7 @@ public class DatabaseManager implements ShutdownBean {
     }
 
     private void createTable() throws Exception {
-        execute("CREATE TABLE PUBLIC.CLS_METHOD_PROP_VALUE_V2     " +
+        execute("CREATE TABLE PUBLIC.CLS_METHOD_PROP_VALUE        " +
                 "(NAM_CLASS VARCHAR(255) NOT NULL,                " +
                 " NAM_METHOD VARCHAR(255) NOT NULL,               " +
                 " FULL_PROP LONGVARCHAR NOT NULL,                 " +
@@ -375,15 +377,12 @@ public class DatabaseManager implements ShutdownBean {
         return conn;
     }
 
-    private void firstConnection(DatabaseURL arg) throws SQLException {
+    private void firstConnection(DatabaseURL arg) throws Exception {
 
         Connection conn = null;
         try {
             Class.forName(arg.getDriverClassName());
             conn = DriverManager.getConnection(arg.buildInitalURL(), arg.getLogin(), arg.getPass());
-
-        } catch (ClassNotFoundException e) {
-            throw new SQLException(e);
 
         } finally {
             close(conn);

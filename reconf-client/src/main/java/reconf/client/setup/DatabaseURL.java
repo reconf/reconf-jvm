@@ -25,6 +25,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import reconf.infra.i18n.MessagesBundle;
+import reconf.infra.system.LocalHostname;
 
 /**
  * http://hsqldb.org/doc/2.0/guide/dbproperties-chapt.html
@@ -41,15 +42,28 @@ public class DatabaseURL {
     private Map<String, String> runtimeParams = new LinkedHashMap<String, String>();
 
     private static final String cryptKey;
+
     static {
         try {
-            SecretKeySpec key = new SecretKeySpec("abcdefghijklmnop".getBytes(), "AES");
+            SecretKeySpec key = new SecretKeySpec(getSecretKey(16).getBytes(), "AES");
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, key);
-            cryptKey = new String(Hex.encodeHex(cipher.doFinal("remoteconfigdb".getBytes())));
+            cryptKey = new String(Hex.encodeHex(cipher.doFinal("reconf_localdb".getBytes())));
         } catch (Exception e) {
-            throw new Error(msg.get("error.crypt.key"));
+            throw new Error(msg.get("error.crypt.key"), e);
         }
+    }
+
+    private static String getSecretKey(int keySize) {
+        String key = LocalHostname.getName();
+        int missing = keySize - StringUtils.length(key);
+        if (missing == 0) {
+            return key;
+        }
+        if (missing < 0) {
+            return StringUtils.substring(key, 0, keySize);
+        }
+        return key + StringUtils.repeat("#", missing);
     }
 
     private static final Map<String, String> baseParams = new LinkedHashMap<String, String>() {
